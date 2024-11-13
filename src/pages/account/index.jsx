@@ -4,17 +4,21 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from 'react-native-elements';
 import { getLoginStatus, getUserName, getUid } from '../../utils/tokenUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AssetOverview from '../../components/account/AssetOverview';
+
 
 import axios from 'axios';
 
-const data = [
-  { id: '1', title: '账户与安全', gotoPage: 'AccountSecurity' },
-  { id: '2', title: '推送设置', gotoPage: 'NotificationSettings' },
-  { id: '3', title: '在线客服', gotoPage: '' },
-  { id: '4', title: '加入社群', gotoPage: '' },
-  { id: '5', title: '检查更新', gotoPage: '' },
-  { id: '6', title: '分享应用', gotoPage: '' },
-];
+const getSettingsData = () => {
+  return [
+    { id: '1', title: '账户与安全', gotoPage: 'AccountSecurity' },
+    { id: '2', title: '推送设置', gotoPage: 'NotificationSettings' },
+    { id: '3', title: '在线客服', gotoPage: '' },
+    { id: '4', title: '加入社群', gotoPage: '' },
+    { id: '5', title: '检查更新', gotoPage: '' },
+    { id: '6', title: '分享应用', gotoPage: '' },
+  ];
+};
 
 const testFunction = async () => {
   console.log("testFunction called");
@@ -53,10 +57,47 @@ const AccountScreen = ({ navigation }) => {
     return unsubscribe; // 清理函数，移除监听器
   }, [navigation]);
 
+  const handleLogout = async () => {
+    Alert.alert(
+      '退出登录',
+      '确定要退出登录吗？',
+      [
+        {
+          text: '取消',
+          style: 'cancel',
+        },
+        {
+          text: '确定',
+          onPress: async () => {
+            await AsyncStorage.clear();
+            setIsLogin(false);
+            setUserName('No Name');
+            setUid('');
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.listItem} onPress={() => navigation.navigate('AccountStack', { screen: item.gotoPage })}>
-      <Text style={styles.listItemText}>{item.title}</Text>
-      {/* <Text style={styles.arrow}>›</Text> */}
+    <TouchableOpacity 
+      style={styles.listItem} 
+      onPress={() => {
+        if (item.gotoPage === 'logout') {
+          handleLogout();
+        } else {
+          navigation.navigate('AccountStack', { screen: item.gotoPage });
+        }
+      }}
+    >
+      <Text style={[
+        styles.listItemText,
+        item.textColor ? { color: item.textColor } : null
+      ]}>
+        {item.title}
+      </Text>
+      <Icon name="chevron-right" type="font-awesome" color="#ccc" size={14} />
     </TouchableOpacity>
   );
 
@@ -185,22 +226,31 @@ const AccountScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
           </View>
+          {/* 资产总览部分 */}
+          <AssetOverview navigation={navigation} />
 
           <View style={styles.Itemcontainer}>
             {/* 邀请返佣部分 */}
-            <Image source={require('../../../assets/invitation.png')} style={styles.inviteImage} />
 
             {/* 设置与服务部分 */}
             <View style={styles.settingsSection}>
               <Text style={styles.settingsTitle}>设置与服务</Text>
               <FlatList
-                data={data}
+                data={getSettingsData()}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
                 style={styles.settingsList}
                 scrollEnabled={false}
-                nestedScrollEnabled={true} // 允许嵌套滚动
+                nestedScrollEnabled={true}
               />
+              {isLogin && (
+                <TouchableOpacity 
+                  style={styles.logoutButton}
+                  onPress={handleLogout}
+                >
+                  <Text style={styles.logoutButtonText}>退出登录</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </LinearGradient>
@@ -242,7 +292,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   username: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '600',
     color: '#FFFFFF',
     marginBottom: 4,
@@ -384,47 +434,82 @@ const styles = StyleSheet.create({
 
   Itemcontainer: {
     flex: 1,
-    padding: 20,
+  },
+  inviteContainer: {
+    position: 'relative',
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginVertical: 16,
+    borderRadius: 12,
+    overflow: 'hidden', // 确保圆弧不会超出容器
+  },
+  inviteContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+  },
+  inviteLeft: {
+    flex: 1,
+  },
+  inviteTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 4,
+  },
+  inviteDesc: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 12,
+  },
+  inviteButton: {
+    backgroundColor: '#000',
+    borderRadius: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    alignSelf: 'flex-start',
+  },
+  inviteButtonText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '500',
   },
   inviteImage: {
-    width: '100%',
-    height: 150,
-    marginBottom: 20,
-    borderRadius: 10,
-    resizeMode: 'contain',
+    width: 80,
+    height: 80,
+    marginLeft: 16,
   },
   settingsSection: {
+    position: 'relative',
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    paddingTop: 20,
+    paddingBottom: 50,
+    marginTop: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   settingsTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 16,
+    paddingHorizontal: 26,
   },
   settingsList: {
-    marginTop: 10,
+    marginTop: 0,
   },
   listItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    paddingVertical: 16,
+    paddingHorizontal: 28,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#f5f5f5',
   },
   listItemText: {
-    fontSize: 16,
-  },
-  arrow: {
-    fontSize: 20,
-    color: '#ccc',
+    fontSize: 14,
+    color: '#333',
   },
 
   verticalDivider: {
@@ -474,18 +559,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  
-  username: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 4,
+
+  logoutButton: {
+    marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 20,
+    height: 44,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.5,
+    borderColor: '#FF3B30',
   },
-  
-  uid: {
-    fontSize: 12,
-    color: '#ddd',
-    maxWidth: 200, 
+  logoutButtonText: {
+    fontSize: 14,
+    color: '#FF3B30',
+    fontWeight: '500',
   },
 
 });

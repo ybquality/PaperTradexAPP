@@ -1,0 +1,5 @@
+export const BASE_URL = 'https://api.papertradex.io'
+export const ACCOUNT_LOGIN = '/api/user/auth/login'
+export const ACCOUNT_LOGIN_PHONE = '/api/user/auth/mobileLogin'
+export const GET_VERIFY_CODE = '/api/user/auth/getCode'
+export const REGISTER_ACCOUNT = '/api/user/auth/register'

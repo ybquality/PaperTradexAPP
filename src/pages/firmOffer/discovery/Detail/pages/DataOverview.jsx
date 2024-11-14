@@ -37,7 +37,7 @@ const AccountScreen = ({ route, navigation }) => {
                 console.log('showStatus: ', showStatus);
 
                 if (showStatus) {
-                    console.log('items1: ', response_data.firmOfferHisList);
+                    // console.log('items1: ', response_data.firmOfferHisList);
                     setItems(response_data.firmOfferHisList);
                 }
 

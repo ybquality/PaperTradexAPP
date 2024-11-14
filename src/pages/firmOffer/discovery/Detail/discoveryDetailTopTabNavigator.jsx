@@ -16,7 +16,7 @@ const DiscoveryDetailTobTabNavigator = ( {data} ) => {
       tabBar={(props) => (<CustomTopNavBar {...props}/>)}
     >
       <Tab.Screen name="数据概览" component={DataOverviewScreen} initialParams={data} />
-      <Tab.Screen name="持仓信息" component={PositionInformationScreen} />
+      <Tab.Screen name="持仓信息" component={PositionInformationScreen} initialParams={data}/>
     </Tab.Navigator>
   );
 };

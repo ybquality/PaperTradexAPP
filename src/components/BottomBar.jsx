@@ -4,9 +4,8 @@ import { MaterialIcons } from "@expo/vector-icons"; // 用于Icon
 import { useSafeAreaInsets } from 'react-native-safe-area-context'; // 引入安全区域的 Hook
 
 const BottomBar = ({ state, descriptors, navigation }) => {
-
   return (
-    <View style={[styles.container, ]}>
+    <View style={styles.container}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -33,22 +32,20 @@ const BottomBar = ({ state, descriptors, navigation }) => {
         return (
           <TouchableOpacity
             key={route.key}
-            style={[
-              styles.tab,
-              isFocused ? styles.selectedTab : null,
-            ]}
+            style={styles.tab}
             onPress={onPress}
           >
-            <View style={styles.iconContainer}>
+            {isFocused && <View style={styles.selectedBackground} />}
+            <View style={styles.content}>
               <MaterialIcons
                 name={options.tabBarIcon}
                 size={24}
                 color={isFocused ? 'black' : 'white'}
               />
+              <Text style={isFocused ? styles.selectedText : styles.text}>
+                {label}
+              </Text>
             </View>
-            <Text style={isFocused ? styles.selectedText : styles.text}>
-              {label}
-            </Text>
           </TouchableOpacity>
         );
       })}
@@ -59,34 +56,53 @@ const BottomBar = ({ state, descriptors, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 10, // 增加底部的间距，让组件悬浮
-    left: 20,   // 增加左侧留白
-    right: 20,  // 增加右侧留白
-    backgroundColor: 'black',
+    bottom: 10,
+    left: 16,
+    right: 16,
+    backgroundColor: '#000000',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 5,  // 增加垂直内边距，让按钮更大一些
-    borderRadius: 50,
+    borderRadius: 32,
+    height: 64,
   },
   tab: {
-    borderRadius: 50,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    flex: 1,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    marginHorizontal: 0,
   },
-  selectedTab: {
+  selectedBackground: {
+    position: 'absolute',
     backgroundColor: '#80FFE9',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    top: 0,
+    left: '50%',
+    transform: [
+      { translateX: -24 },
+      { translateY: 0 }
+    ],
   },
-  iconContainer: {
+  content: {
+    alignItems: 'center',
+    zIndex: 1,
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
   },
   text: {
     color: 'white',
     fontSize: 12,
+    marginTop: 2,
   },
   selectedText: {
     color: 'black',
     fontSize: 12,
+    marginTop: 2,
   },
 });
 

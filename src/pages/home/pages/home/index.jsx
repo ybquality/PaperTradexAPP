@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import StarTraders from '../../../../components/home/StarTraders';
+import Banner from '../../../../components/home/Banner';
 
 const HomeScreen = () => {
   // 模拟数据
@@ -54,12 +55,8 @@ const HomeScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* 顶部横幅图片 */}
-      <Image 
-        source={require('../../../../../assets/banner.png')} 
-        style={styles.bannerImage} 
-        resizeMode="cover"
-      />
+      {/* 替换静态横幅为轮播图组件 */}
+      <Banner />
 
       {/* 图片和文本按钮 */}
       <View style={styles.menuContainer}>
@@ -109,11 +106,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-  },
-  bannerImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 12,
   },
   menuContainer: {
     flexDirection: 'row',

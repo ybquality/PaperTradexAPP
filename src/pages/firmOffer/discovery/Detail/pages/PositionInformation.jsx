@@ -2,7 +2,16 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+import request from '../../../../../utils/request';
+
 const PositionInformationScreen = ({ navigation }) => {
+
+  const fetchData = async () => {
+
+    await request('/api/v1/user/info', 'GET');
+    
+  };
+  
   return (
     <View style={styles.screen}>
       <Text>PositionInformation Screen</Text>

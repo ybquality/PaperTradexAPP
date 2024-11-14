@@ -29,8 +29,8 @@ const AssetOverview = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>资产总览</Text>
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('AccountStack', { screen: 'Assets' })}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('AccountStack', { screen: 'AssetsStack' })}
           style={styles.moreButton}
         >
           <Text style={styles.moreText}>查看更多</Text>

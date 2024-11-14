@@ -12,6 +12,7 @@ import ResetPasswordScreen from './ResetPassword';
 import NotificationSettingsScreen from './NotificationSettings';
 import LoginScreen from './login';
 import RegisterScreen from './Register';
+import AssetsDetail from './assets/';
 
 const Stack = createStackNavigator();
 
@@ -95,6 +96,16 @@ const AccountStackNavigator = () => {
         options={{
             header: () => <CustomHeader />,
             headerTintColor: '#fff', // 返回按钮颜色
+          }}
+      />
+
+      <Stack.Screen 
+        name="AssetsStack"
+        component={AssetsDetail}
+        options={{
+            header: () => <CustomHeader />,
+            headerTintColor: '#fff', // 返回按钮颜色
+            headerShown: false
           }}
       />
     </Stack.Navigator>

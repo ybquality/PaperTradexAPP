@@ -70,7 +70,7 @@ const AccountDetail = ({ navigation, accountsInfo, accountName }) => {
         <View style={styles.assetItem}>
           <View style={styles.assetItemLeft}>
             <Icon 
-              // name="currency-usd-circle" 
+              name="currency-usd-circle" 
               type="material-community" 
               size={40} 
               color="#4CAF50" 

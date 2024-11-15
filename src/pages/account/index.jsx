@@ -194,7 +194,12 @@ const AccountScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <View style={styles.VIPcardContainer}>
+          <LinearGradient
+            colors={['#F4F4F4', '#AFAFAF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.VIPcardContainer}
+          >
             <View style={styles.topSection}>
                 <View style={styles.vipContainer}>
                     <Image source={require('../../../assets/VIP 1.png')} style={styles.vipIcon} />
@@ -225,7 +230,7 @@ const AccountScreen = ({ navigation }) => {
                     </View>
                 </TouchableOpacity>
             </View>
-          </View>
+          </LinearGradient>
           {/* 资产总览部分 */}
           <AssetOverview navigation={navigation} />
 
@@ -373,8 +378,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
-    backgroundColor: '#F4F4F4',
-    backgroundImage: 'linear-gradient(96.64deg, #F4F4F4 0%, #AFAFAF 100%)',
   },
   topSection: {
     flexDirection: 'row',

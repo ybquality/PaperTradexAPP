@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, FlatList, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, FlatList, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Modal from 'react-native-modal';
 
@@ -93,9 +93,17 @@ const CopyTradeScreen = ({ route, navigation }) => {
             //     Alert.alert('Error', responseData.msg);
             // }
 
+            if (responseData.code === 200) {
+                Alert.alert('成功！', '跟单设置修改成功', [
+                    { text: '确定', onPress: () => navigation.goBack() }
+                ]);
+            } else {
+                Alert.alert('失败', responseData.msg || '修改失败，请联系管理员');
+            }
         })
         .catch(error => {
             console.error(error);
+            Alert.alert('错误', '网络请求失败');
         });
     }
 
@@ -130,6 +138,18 @@ const CopyTradeScreen = ({ route, navigation }) => {
 
     }
 
+    // 添加验证函数
+    const isFormValid = () => {
+        const singleValue = parseFloat(singleTransslated);
+        const followValue = parseFloat(followPrice);
+        
+        return value && // 跟单账户已选择
+               singleTransslated && // 单笔跟单不为空
+               followPrice && // 最大跟单金额不为空
+               !isNaN(singleValue) && // 确保是有效数字
+               !isNaN(followValue) && 
+               followValue > 0; // 跟单金额大于0
+    };
 
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
@@ -140,65 +160,113 @@ const CopyTradeScreen = ({ route, navigation }) => {
     }
     return (
         <View style={styles.container}>
-            {/* 顶部部分: 头像和昵称 */}
-            <View style={styles.topSection}>
-                <Avatar
-                    size="large"
-                    rounded
-                    source={{ uri: data?.userPic }}  // 显示获取到的头像URL
-                    containerStyle={[styles.topAvatar, styles.topAvatarWithBorder]}
-                />
-                <Text style={styles.topNickname}>{data?.nickName || 'No Name'}</Text>
-            </View>
-
-            <View style={styles.middleSection}>
-
-                {/* Dropdown Input */}
-                <View style={styles.middleInputContainer}>
-                    <View style={styles.middleRow}>
-                        <Text style={styles.leftLabel}>跟单账户</Text>
+            <ScrollView 
+                style={styles.scrollContent} 
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.contentContainer}>
+                    {/* 顶部部分: 头像和昵称 */}
+                    <View style={styles.topSection}>
+                        <Avatar
+                            size="large"
+                            rounded
+                            source={{ uri: data?.userPic }}  // 显示获取到的头像URL
+                            containerStyle={[styles.topAvatar, styles.topAvatarWithBorder]}
+                        />
+                        <Text style={styles.topNickname}>{data?.nickName || 'No Name'}</Text>
                     </View>
-                    <Dropdown
-                        style={{ padding: 10, borderWidth: 1, borderRadius: 5, borderRadius:20, }}
-                        data={options}
-                        labelField="account_name"
-                        valueField="id"
-                        placeholder="请选择一个选项"
-                        value={value}
-                        onChange={(item) => testClick(item)}
-                    />
+
+                    <View style={styles.middleSection}>
+
+                        {/* Dropdown Input */}
+                        <View style={styles.middleInputContainer}>
+                            <View style={styles.middleRow}>
+                                <Text style={styles.leftLabel}>跟单账户</Text>
+                            </View>
+                            <Dropdown
+                                style={styles.dropdown}
+                                data={options}
+                                labelField="account_name"
+                                valueField="id"
+                                placeholder="请选择跟单账户"
+                                value={value}
+                                onChange={(item) => testClick(item)}
+                            />
+                        </View>
+
+                        {/* Text Input with Label on the Right */}
+                        <View style={styles.middleInputContainer}>
+                            <View style={styles.middleRow}>
+                                <Text style={styles.leftLabel}>单笔跟单</Text>
+                                <Text style={styles.rightLabel}>按比例</Text>
+                            </View>
+                            <View style={styles.inputWithUnit}>
+                                <TextInput 
+                                    value={singleTransslated} 
+                                    onChangeText={text => setSingleTransslated(text)} 
+                                    style={[styles.middleInput, styles.inputWithRightUnit]} 
+                                    placeholder="0.01 - 1000"
+                                    keyboardType="numeric" // 添加数字键盘类型
+                                    returnKeyType="done"
+                                />
+                                <Text style={styles.unitTextInside}>倍</Text>
+                            </View>
+                        </View>
+
+                        {/* Text Input with Unit (USDT) */}
+                        <View style={styles.middleInputContainer}>
+                            <View style={styles.middleRow}>
+                                <Text style={styles.leftLabel}>最大跟单金额</Text>
+                                <Text style={styles.availableText}>
+                                    可用 <Text style={styles.balanceAmount}>{balanceInfo?.total_balance || 0.00} USDT</Text>
+                                </Text>
+                            </View>
+                            <View style={styles.inputWithUnit}>
+                                <TextInput 
+                                    value={followPrice} 
+                                    onChangeText={text => setFollowPrice(text)} 
+                                    style={[styles.middleInput, styles.inputWithRightUnit]} 
+                                    placeholder="10 - 200000"
+                                    keyboardType="numeric" // 添加数字键盘类型
+                                    returnKeyType="done"
+                                />
+                                <Text style={styles.unitTextInside}>USDT</Text>
+                            </View>
+                        </View>
+
+
+                    </View>
                 </View>
+                <View style={styles.bottomPadding} />
+            </ScrollView>
 
-                {/* Text Input with Label on the Right */}
-                <View style={styles.middleInputContainer}>
-                    <View style={styles.middleRow}>
-                        <Text style={styles.leftLabel}>单笔跟单</Text>
-                        <Text style={styles.rightLabel}>按比例</Text>
-                    </View>
-                    <TextInput value={singleTransslated} onChangeText={text => setSingleTransslated(text)} style={styles.middleInput} placeholder="1-100" />
-                </View>
+            {/* 添加底部空白，确保滚动时内容不会被按钮遮挡 */}
+            <View style={styles.bottomPadding} />
 
-                {/* Text Input with Unit (USDT) */}
-                <View style={styles.middleInputContainer}>
-                    <View style={styles.middleRow}>
-                        <Text style={styles.leftLabel}>最大跟单金额</Text>
-                        <Text style={styles.availableText}>可用 {balanceInfo?.total_balance || 0.00} USDT</Text>
-                    </View>
-                    <View style={styles.middleRow}>
-                        <TextInput value={followPrice} onChangeText={text => setFollowPrice(text)} style={styles.middleInput} placeholder="请输入内容" />
-                        <Text style={styles.unitText}>USDT</Text>
-                    </View>
-                </View>
-
-
-            </View>
-
+            {/* 底部按钮 */}
             <View style={styles.bottomSection}>
-                <TouchableOpacity style={styles.bottomButton} onPress={() => { navigation.goBack(); }}>
+                <TouchableOpacity 
+                    style={[styles.bottomButton, styles.bottomButtonLeft]} 
+                    onPress={() => { navigation.goBack(); }}>
                     <Text style={styles.bottomButtonText}>取消</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.bottomButton} onPress={() => { changeCopyTrade(selectOption, parseInt(singleTransslated), parseInt(followPrice), traderId) }}>
-                    <Text style={styles.bottomButtonText}>确定</Text>
+                <TouchableOpacity 
+                    style={[
+                        styles.bottomButton, 
+                        styles.bottomButtonRight,
+                        !isFormValid() && styles.bottomButtonDisabled
+                    ]} 
+                    disabled={!isFormValid()}
+                    onPress={() => { 
+                        const singleValue = parseFloat(singleTransslated);
+                        const followValue = parseFloat(followPrice);
+                        changeCopyTrade(selectOption, singleValue, followValue, traderId);
+                    }}>
+                    <Text style={[
+                        styles.bottomButtonText,
+                        !isFormValid() && styles.bottomButtonTextDisabled
+                    ]}>确定</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -211,10 +279,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF',
-        justifyContent: 'space-between',
+    },
+    scrollContent: {
+        flex: 1,
+    },
+    contentContainer: {
         padding: 16,
     },
-
+    bottomPadding: {
+        height: 0, // 将高度从 100 减小到 20
+    },
     //==========顶部部分==========
     topSection: {
         flexDirection: 'row',
@@ -228,7 +302,7 @@ const styles = StyleSheet.create({
     },
     topAvatarWithBorder: {
         borderWidth: 2, // 边框宽度
-        borderColor: '#f3f3f3', // 边框颜色
+        borderColor: '#f3f3f3', // 边框���色
         shadowColor: '#000', // 阴影颜色
         shadowOpacity: 0.4, // 阴影透明度
         shadowRadius: 3, // 阴影半径
@@ -244,6 +318,7 @@ const styles = StyleSheet.create({
     //==========中间部分==========
     middleSection: {
         flex: 1,
+        paddingTop: 20,
     },
     middleInputContainer: {
         marginBottom: 20,
@@ -251,31 +326,38 @@ const styles = StyleSheet.create({
     middleRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginBottom: 8,
     },
     middleInput: {
         borderWidth: 1,
         borderColor: '#000',
-        paddingVertical: 16, // 增加到16或更高
-        borderRadius: 30,
-        padding: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 100,
         flex: 1,
-        minHeight: 50, // 确保有最小高度
+        height: 50,
     },
     leftLabel: {
-        fontSize: 16,
-        marginBottom: 5,
+        fontSize: 14,
+        fontWeight: '700',
     },
     rightLabel: {
-        fontSize: 16,
+        fontSize: 12,
+        fontWeight: '400',
         textAlign: 'right',
     },
     availableText: {
         fontSize: 12,
-        color: '#888',
+        fontWeight: '400',
+        color: '#00000066',
     },
     unitText: {
         fontSize: 16,
         padding: 10,
+    },
+    balanceAmount: {
+        fontWeight: '500',
+        color: '#000000',
     },
 
     modal: {
@@ -338,6 +420,10 @@ const styles = StyleSheet.create({
     bottomSection: {
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 16,
+        paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+        backgroundColor: '#FFF',
+        gap: 8,
     },
     bottomButton: {
         paddingVertical: 10,
@@ -348,6 +434,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#000',
         borderWidth: 1,
     },
+    bottomButtonLeft: {
+        marginRight: 4, // 减小右边距
+    },
+    bottomButtonRight: {
+        marginLeft: 4, // 减小左边距
+    },
     bottomButtonText: {
         color: '#FFF',
         fontSize: 16,
@@ -355,12 +447,11 @@ const styles = StyleSheet.create({
     },
     //==========底部部分==========
     dropdown: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
+        height: 50,
+        padding: 12,
         borderWidth: 1,
-        borderColor: '#ddd',
-        maxHeight: 150,
-        marginBottom: 10,
+        borderRadius: 100,
+        borderColor: '#000',
     },
     option: {
         flexDirection: 'row',
@@ -374,6 +465,29 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: 16,
+    },
+
+    inputWithUnit: {
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    inputWithRightUnit: {
+        paddingRight: 50, // 为单位文字预留空间
+    },
+    unitTextInside: {
+        position: 'absolute',
+        right: 16,
+        fontSize: 14,
+        color: '#000000',
+    },
+
+    bottomButtonDisabled: {
+        backgroundColor: '#E4E4E4', // 禁用时的背景色
+        borderColor: '#E4E4E4',
+    },
+    bottomButtonTextDisabled: {
+        color: '#999999', // 禁用时的文字颜色
     },
 
 

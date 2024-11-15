@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   rankingButton: {
-    backgroundColor: '#f5f5f5',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 15,

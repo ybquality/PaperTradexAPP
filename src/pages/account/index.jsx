@@ -5,7 +5,7 @@ import { Icon } from 'react-native-elements';
 import { getLoginStatus, getUserName, getUid } from '../../utils/tokenUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AssetOverview from '../../components/account/AssetOverview';
-
+import InviteCard from '../../components/InviteCard';
 
 import axios from 'axios';
 
@@ -234,10 +234,18 @@ const AccountScreen = ({ navigation }) => {
           <AssetOverview navigation={navigation} />
 
           <View style={styles.Itemcontainer}>
-            {/* 邀请返佣部分 */}
-
             {/* 设置与服务部分 */}
             <View style={styles.settingsSection}>
+              {/* 添加邀请卡片到设置区域内部最上方 */}
+              <View style={styles.inviteCardWrapper}>
+                <InviteCard 
+                  onPress={() => navigation.navigate('Invite')}
+                  style={{
+                    backgroundColor: '#F8F8F8',
+                  }}
+                />
+              </View>
+
               <Text style={styles.settingsTitle}>设置与服务</Text>
               <FlatList
                 data={getSettingsData()}
@@ -488,8 +496,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 50,
     marginTop: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
   },
   settingsTitle: {
     fontSize: 16,
@@ -580,6 +588,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
+  inviteCardWrapper: {
+    paddingHorizontal: 16,
+    marginBottom: 20,
+  },
 });
 
 

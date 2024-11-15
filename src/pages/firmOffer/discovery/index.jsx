@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, FlatList, ScrollView, RefreshControl } from 're
 import SearchBar from '../../../components/SearchBar';
 
 import FirmOfferCard from '../../../components/FirmOfferCard';
-import { Image } from 'expo-image';
+import InviteCard from '../../../components/InviteCard';
 
 import axios from 'axios';
 
@@ -49,11 +49,11 @@ const DiscoveryScreen = ({ navigation }) => {
     >
       <View style={styles.screen}>
         <SearchBar />
-        <View style={{ marginBottom: 20 }}>
-          <Image
-            source={require('../../../../assets/invitation.png')} // 你的图片文件
-            style={styles.image} // 使用样式来定义图片的尺寸
-          />
+        <View style={styles.inviteCardContainer}>
+          <InviteCard onPress={() => {
+            // 处理邀请卡片点击事件
+            navigation.navigate('Invite');
+          }} />
         </View>
         <Text style={{ fontSize: 20, fontWeight: 'bold', }}>
           实盘
@@ -66,7 +66,6 @@ const DiscoveryScreen = ({ navigation }) => {
           scrollEnabled={false}
           nestedScrollEnabled={true}
         />
-
       </View>
     </ScrollView>
   );
@@ -81,10 +80,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     paddingHorizontal: 16,
   },
-  image: {
-    width: '100%', // 设置图片的宽度为容器的100%
-    height: 130, // 设置图片的高度
-    contentFit: 'contain', // 保持图片的宽高比
+  inviteCardContainer: {
+    marginTop: 10,
+    marginBottom: 16,
   },
 });
 

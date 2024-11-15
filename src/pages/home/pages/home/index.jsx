@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import StarTraders from '../../../../components/home/StarTraders';
 import Banner from '../../../../components/home/Banner';
+import InviteCard from '../../../../components/InviteCard';
 
 const HomeScreen = () => {
   // 模拟数据
@@ -81,12 +82,10 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 邀请返佣卡片图片 */}
-      <Image 
-        source={require('../../../../../assets/invitation.png')} 
-        style={styles.inviteImage} 
-        resizeMode="contain"
-      />
+      <InviteCard onPress={() => {
+        // 处理邀请卡片点击事件
+        navigation.navigate('Invite');
+      }} />
 
       {/* 明星交易员部分 */}
       <StarTraders data={starTradersData} />
@@ -124,12 +123,6 @@ const styles = StyleSheet.create({
   menuText: {
     color: '#333',
     fontSize: 14,
-  },
-  inviteImage: {
-    width: '100%',
-    height: 120,
-    borderRadius: 12,
-    marginBottom: 20,
   },
   faqContainer: {
     backgroundColor: '#fff',

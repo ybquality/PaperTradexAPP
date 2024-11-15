@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 
-const EditApiForm = ({ onClose, onSave, initialValues }) => {
+import request from '../../utils/request';
+
+const EditApiForm = ({ onClose, onSave, initialValues, userBindExchangeId }) => {
   const [formData, setFormData] = useState({
     apiKey: initialValues.apiKey || '',
     secretKey: initialValues.secretKey || '',
@@ -14,8 +16,30 @@ const EditApiForm = ({ onClose, onSave, initialValues }) => {
   const [showSecretKey, setShowSecretKey] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+
+  // 修改账户信息函数
+  const changeExchangeApiInfo = async (user_bind_exchange_id, apiKey, secretKey, passPhrase) => {
+    // 这里添加修改名称逻辑
+
+    await request.put('/api/exchange/changeExchangeApiInfo', {user_bind_exchange_id: user_bind_exchange_id, api_key: apiKey, secret_key: secretKey, Passphrase: passPhrase})
+    .then(response => {
+      console.log(response);
+      if (response.data.code === 200) {
+        alert('修改成功');
+      }else{
+        alert(response.data.msg);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert('修改失败');  // 添加错误处理
+    })
+  }
+
+  
   // 保存api账户函数
   const handleSave = () => {
+    changeExchangeApiInfo(userBindExchangeId, formData.apiKey, formData.secretKey, formData.password)
     onSave(formData);
   };
 

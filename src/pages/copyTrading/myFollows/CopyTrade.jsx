@@ -22,12 +22,10 @@ const CopyTradeScreen = ({ route, navigation }) => {
     const data = {}
 
     const traderId = route.params.traderId
+    const principal = route.params.principal
+    const copyRatio = route.params.copyRatio
 
-    const [value, setValue] = useState(null);
-
-    
-
-    console.log('CopyTrade-traderId: ', traderId);
+    const [value, setValue] = useState(traderId);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -35,8 +33,8 @@ const CopyTradeScreen = ({ route, navigation }) => {
     const [selectOption, setSelectedOption] = useState({});
     const [balanceInfo, setBalanceInfo] = useState(null);
 
-    const [followPrice, setFollowPrice] = useState('');
-    const [singleTransslated, setSingleTransslated] = useState('');
+    const [followPrice, setFollowPrice] = useState(String(principal));
+    const [singleTransslated, setSingleTransslated] = useState(String(copyRatio));
 
     // 页面加载时请求API
     useEffect(() => {

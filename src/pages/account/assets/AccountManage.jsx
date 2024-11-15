@@ -4,17 +4,24 @@ import { Icon, Button } from 'react-native-elements';
 import { BottomSheet } from '@rneui/themed';
 import EditApiForm from '../../../components/account/EditApiForm';
 
+import request from '../../../utils/request';
+
 const AccountManage = ({ navigation, route }) => {
-  const accountName = route.params?.accountName;
+  console.log('AccountManage', route);
+  
+  const accountInfo = route.params.accountInfo;
+  
+  const accountName = accountInfo?.account_name;
+  
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   // 删除弹窗状态
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   
   // API模拟
   const [apiConfig, setApiConfig] = useState({
-    apiKey: 'APIKE1231233', 
-    secretKey: '123213dsad',
-    password: '123456',
+    apiKey: accountInfo.api_key, 
+    secretKey: accountInfo.secret_key,
+    password: accountInfo.passphrase,
     authTime: '2024/2/4'
   });
 
@@ -67,11 +74,45 @@ const AccountManage = ({ navigation, route }) => {
   );
 
   // 删除api账户函数
-  const handleDelete = () => {
+  const handleDelete = async (user_bind_exchange_id) => {
     // 这里添加删除逻辑
+    await request.delete('/api/exchange/deleteExchange?user_bind_exchange_id=' + user_bind_exchange_id)
+    .then(response => {
+
+      if (response.data.code === 200) {
+        alert('删除成功');
+      }else {
+        alert(response.data.msg);
+      }
+    })
+    .catch(error => {
+          console.error(error);
+    })
+
+    
+    
     setIsDeleteModalVisible(false);
     navigation.goBack(); // 删除后返回上一页
   };
+
+  // 修改账户名称函数
+  const changeExchangeApiName = async (newName, user_bind_exchange_id) => {
+    // 这里添加修改名称逻辑
+
+    await request.put('/api/exchange/changeExchangeApiName', {account_name: newName, user_bind_exchange_id: user_bind_exchange_id})
+    .then(response => {
+      console.log(response);
+      if (response.data.code === 200) {
+        alert('修改成功');
+      }else{
+        alert(response.data.msg);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert('修改失败');  // 添加错误处理
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -150,6 +191,7 @@ const AccountManage = ({ navigation, route }) => {
             setIsBottomSheetVisible(false);
           }}
           initialValues={apiConfig}
+          userBindExchangeId={accountInfo.id}
         />
       </BottomSheet>
 
@@ -173,7 +215,7 @@ const AccountManage = ({ navigation, route }) => {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={[styles.modalButton, styles.modalConfirmButton]}
-                onPress={handleDelete}
+                onPress={() => {handleDelete(accountInfo.id)}}
               >
                 <Text style={styles.modalConfirmText}>确定</Text>
               </TouchableOpacity>
@@ -213,6 +255,7 @@ const AccountManage = ({ navigation, route }) => {
                 style={[styles.modalButton, styles.modalConfirmButton]}
                 onPress={() => {
                   // 这里可以添加保存名称的逻辑
+                  changeExchangeApiName(editedName, accountInfo.id);
                   setIsEditingName(false);
                 }}
               >

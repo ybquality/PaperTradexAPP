@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import request from '../../utils/request';
+
 const AssetOverview = ({ navigation }) => {
+  
+  const [items, setItems] = useState([]);
+
+  const fetchData = async () => {
+    // 数据源还有余额没查询，暂时没有key来测试，还有就是接口报错问题没处理
+    await request.get('/api/exchange/getUserBindExchanges')
+    .then(response => {
+      // Handle successful response
+      setItems(response.data.data)
+    })
+    .catch(error => {
+      // Handle error
+      console.error(error);
+    });
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  
   const accounts = [
     {
       id: 1,
@@ -30,7 +53,7 @@ const AssetOverview = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.title}>资产总览</Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate('AccountStack', { screen: 'AssetsStack' })}
+          onPress={() => navigation.navigate('AccountStack', { screen: 'AssetsStack', params: {accountInfo: items}})}
           style={styles.moreButton}
         >
           <Text style={styles.moreText}>查看更多</Text>
@@ -51,17 +74,17 @@ const AssetOverview = ({ navigation }) => {
       </View>
 
       <View style={styles.accountList}>
-        {accounts.map(account => (
+        {items.map(account => (
           <TouchableOpacity 
             key={account.id}
             style={styles.accountItem}
-            onPress={() => navigation.navigate('AccountDetail', { accountId: 'OKX-1' })}
+            onPress={() => navigation.navigate('AccountStack', {screen: 'AssetsStack', params: {accountInfo: items, selectedAccount: account.account_name_new}})}
           >
             <View style={styles.accountLeft}>
-              <Image source={account.icon} style={styles.accountIcon} />
+              <Image source={account.logo} style={styles.accountIcon} />
               <View style={styles.accountInfo}>
                 <View style={styles.nameContainer}>
-                  <Text style={styles.accountName}>{account.name}</Text>
+                  <Text style={styles.accountName}>{account.account_name_new}</Text>
                   {account.tag && (
                     <View style={styles.tagContainer}>
                       <Text style={styles.tagText}>{account.tag}</Text>
@@ -71,7 +94,7 @@ const AssetOverview = ({ navigation }) => {
               </View>
             </View>
             <View style={styles.accountRight}>
-              <Text style={styles.accountValue}>{account.value}</Text>
+              <Text style={styles.accountValue}>{account.balance}</Text>
               <Icon name="chevron-right" type="font-awesome" color="#666" size={12} />
             </View>
           </TouchableOpacity>

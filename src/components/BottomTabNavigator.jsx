@@ -16,7 +16,7 @@ import ArticleUpdatesTopTabNavigator from '../pages/articleUpdates/copyTradingTo
 
 import DetailStackNavigator from '../pages/firmOffer/discovery/Detail/DetailStackNavigator';
 import AccountStackNavigator from '../pages/account/AccountStackNavigator';
-
+import HomeStackNavigator from '../pages/home/HomeStackNavigator';
 import MyFollowsStackNavigator from '../pages/copyTrading/myFollows/MyFollowsStackNavigator';
 
 const Tab = createBottomTabNavigator();
@@ -77,6 +77,11 @@ const BottomTabStackNavigator = () => {
       <Stack.Screen
         name="MyFollowsStack"
         component={MyFollowsStackNavigator}
+        options={{ headerShown: false }} // 隐藏顶部导航栏
+      />
+      <Stack.Screen
+        name="HomeStack"
+        component={HomeStackNavigator}
         options={{ headerShown: false }} // 隐藏顶部导航栏
       />
     </Stack.Navigator>

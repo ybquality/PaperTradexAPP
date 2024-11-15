@@ -4,17 +4,38 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, RefreshCon
 import { Icon, Button } from 'react-native-elements';
 import AccountDetail from '../../../components/account/AccountDetail';
 
+import request from '../../../utils/request';
+
 const AssetsDetail = ({ navigation, route }) => {
   // 从路由参数获取选中的账户ID
-  const selectedAccountId = route.params?.accountId;
+  const selectedAccountId = route.params?.selectedAccount;
+  const accountInfo = route.params?.accountInfo;
+  
+
+  console.log('Selected Account ID:', selectedAccountId);
+  console.log('Accounts Info:', accountInfo);
+  
   
   // 状态管理
   const [selectedTab, setSelectedTab] = useState(selectedAccountId || '总览');
-  const [accountList, setAccountList] = useState(['OKX-test', 'OKX-1']); // 这里之后替换为实际的账户列表
+  const [accountList, setAccountList] = useState(accountInfo || []); // 这里之后替换为实际的账户列表
 
   // 添加刷新状态管理
   const [refreshing, setRefreshing] = useState(false);
 
+  const fetchData = async () => {
+    // 数据源还有余额没查询，暂时没有key来测试，还有就是接口报错问题没处理
+    await request.get('/api/exchange/getUserBindExchanges')
+    .then(response => {
+      // Handle successful response
+      setAccountList(response.data.data);
+
+    })
+    .catch(error => {
+      // Handle error
+      console.error(error);
+    });
+  }
   // 模拟获取用户账户列表
   useEffect(() => {
     // 这里之后替换为实际的API调用
@@ -117,7 +138,7 @@ const AssetsDetail = ({ navigation, route }) => {
               <TouchableOpacity 
                 key={index}
                 style={styles.accountItem}
-                onPress={() => setSelectedTab(account)}
+                onPress={() => setSelectedTab(account.account_name_new)}
               >
                 <View style={styles.accountLeft}>
                   <Image 
@@ -125,9 +146,9 @@ const AssetsDetail = ({ navigation, route }) => {
                     style={styles.accountIcon}
                     resizeMode="contain"
                   />
-                  <Text style={styles.accountName}>{account}</Text>
+                  <Text style={styles.accountName}>{account.account_name_new}</Text>
                   {/* 异常状态标签 */}
-                  {account === 'OKX-1' && (
+                  {account.account_name_new === 'OKX-1' && (
                     <View style={styles.statusTag}>
                       <Text style={styles.statusText}>异常</Text>
                     </View>
@@ -149,7 +170,7 @@ const AssetsDetail = ({ navigation, route }) => {
         </ScrollView>
       );
     }
-    return <AccountDetail accountName={selectedTab} navigation={navigation} />;
+    return <AccountDetail accountName={selectedTab} navigation={navigation} accountsInfo={route.params?.accountInfo}/>;
   };
 
   return (
@@ -181,13 +202,13 @@ const AssetsDetail = ({ navigation, route }) => {
             <TouchableOpacity
               key={index}
               style={styles.tabItem}
-              onPress={() => setSelectedTab(account)}
+              onPress={() => setSelectedTab(account.account_name_new)}
             >
               <Text style={[
                 styles.tabText,
-                selectedTab === account && styles.tabTextActive
+                selectedTab === account.account_name_new && styles.tabTextActive
               ]}>
-                {account}
+                {account.account_name_new}
               </Text>
             </TouchableOpacity>
           ))}

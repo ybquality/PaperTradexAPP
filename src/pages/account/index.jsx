@@ -147,8 +147,7 @@ const AccountScreen = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.arrowButton}
                         onPress={() => {
-                            console.log('已登录');
-                            alert('已登录');
+                            navigation.navigate('AccountStack', { screen: 'UserInfo' });
                         }}
                     >
                         <Icon name="chevron-right" type="font-awesome" color="#A9A9A9" size={20} />

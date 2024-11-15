@@ -6,6 +6,9 @@ import request from '../utils/request';
 
 // 取消、修改 后回调到 “我的跟单” 的主页 然后刷新页面内容
 const MyFollowCard = ({ navigation, orderId, avatarUri, nickName, principal, copyRatio, netIncome, Yield, onCancelFollow}) => {
+
+  console.log('MyFollowCard:', orderId, avatarUri, nickName, principal, copyRatio, netIncome, Yield);
+  
   
   return (
     <Card containerStyle={styles.card}>
@@ -30,7 +33,7 @@ const MyFollowCard = ({ navigation, orderId, avatarUri, nickName, principal, cop
             onPress={() => { 
               navigation.navigate('MyFollowsStack', {
                 screen: 'CopyTrade', 
-                params: {traderId: orderId}
+                params: {traderId: orderId, principal: principal, copyRatio: copyRatio}
               })
             }}
           >

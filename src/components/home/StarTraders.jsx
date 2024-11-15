@@ -113,11 +113,11 @@ const StarTraders = ({ data }) => {
         <Text style={styles.sectionTitle}>明星交易员</Text>
         <TouchableOpacity 
           style={styles.rankingButton}
-          onPress={() => navigation.navigate('TraderRanking')}
+          onPress={() => navigation.navigate('HomeStack', {screen: 'TraderRanking'})}
           // 这里跳转到交易员排行榜页面
           // TraderRanking: 交易员排行榜页面
         >
-          <Text style={styles.rankingButtonText}>交易员排行榜 ></Text>
+          <Text style={styles.rankingButtonText}>交易员排行榜 &gt;</Text>
         </TouchableOpacity>
       </View>
       

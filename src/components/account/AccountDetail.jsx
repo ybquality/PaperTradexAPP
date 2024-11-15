@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-const AccountDetail = ({ accountName, navigation }) => {
+const AccountDetail = ({ navigation, accountsInfo, accountName }) => {
+  
+  const [ accountInfo, setAccountInfo ] = useState(null);
+  console.log('AccountDetail:', accountsInfo);
+  console.log('AccountDetail:', accountName);
+
+  useEffect(() => {
+    // 在 useEffect 中处理状态更新，避免无限循环
+    const matchingAccount = accountsInfo.find(element => element.account_name_new === accountName);
+    if (matchingAccount) {
+      setAccountInfo(matchingAccount);
+    }
+  }, [accountName, accountsInfo]); // 只有当 accountName 或 accountsInfo 改变时才执行
+  
   return (
     <View style={styles.container}>
       {/* 总资产区域 */}
@@ -41,7 +54,7 @@ const AccountDetail = ({ accountName, navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.actionButton}
-          onPress={() => navigation.navigate('AccountManage', { accountName })}
+          onPress={() => navigation.navigate('AccountManage', { accountInfo })}
         >
           <Text style={styles.actionText}>管理</Text>
         </TouchableOpacity>
@@ -57,7 +70,7 @@ const AccountDetail = ({ accountName, navigation }) => {
         <View style={styles.assetItem}>
           <View style={styles.assetItemLeft}>
             <Icon 
-              name="currency-usd-circle" 
+              // name="currency-usd-circle" 
               type="material-community" 
               size={40} 
               color="#4CAF50" 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
-import { Avatar } from 'react-native-elements';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, Platform, ScrollView, Image } from 'react-native';
+import { Avatar, Icon } from 'react-native-elements';
 import Modal from 'react-native-modal';
 
 import axios from 'axios';
@@ -111,93 +111,125 @@ const CopyTradeScreen = ({ route, navigation }) => {
     }
     return (
         <View style={styles.container}>
-            {/* 顶部部分: 头像和昵称 */}
-            <View style={styles.topSection}>
-                <Avatar
-                    size="large"
-                    rounded
-                    source={{ uri: data?.userPic }}  // 显示获取到的头像URL
-                    containerStyle={[styles.topAvatar, styles.topAvatarWithBorder]}
-                />
-                <Text style={styles.topNickname}>{data?.nickName || 'No Name'}</Text>
-            </View>
-
-            <View style={styles.middleSection}>
-
-                {/* Dropdown Input */}
-                <View style={styles.middleInputContainer}>
-                    <View style={styles.middleRow}>
-                        <Text style={styles.leftLabel}>跟单账户</Text>
+            <ScrollView 
+                style={styles.scrollContent} 
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.contentContainer}>
+                    {/* 顶部部分: 头像和昵称 */}
+                    <View style={styles.topSection}>
+                        <Avatar
+                            size="large"
+                            rounded
+                            source={{ uri: data?.userPic }}  // 显示获取到的头像URL
+                            containerStyle={[styles.topAvatar, styles.topAvatarWithBorder]}
+                        />
+                        <Text style={styles.topNickname}>{data?.nickName || 'No Name'}</Text>
                     </View>
-                    <TouchableOpacity onPress={toggleModal} style={styles.modalButton}>
-                            <Text>
-                                {selectedOption ? selectedOption.exchange_name : '请选择一个选项'}
-                            </Text>
-                    </TouchableOpacity>
 
-                    <Modal
-                        isVisible={isModalVisible}
-                        onBackdropPress={toggleModal}
-                        style={styles.modal}>
-                        <View style={styles.modalContent}>
-                            {options.map((option, index) => (
-                                <TouchableOpacity
-                                key={index}
-                                style={[
-                                    styles.modalText,
-                                    selectedOption === option && styles.selectedOption,
-                                ]}
-                                onPress={() => {
-                                    toggleModal();  //关闭底部弹出菜单
-                                    setSelectedOption(option);  //设置选中交易所的信息
-                                    balanceInquiry(option.id)   //获取选中交易所的余额信息
-                                }}>
-                                
-                                <Text style={styles.modalText}>{`${option.account_name} - ${option.exchange_name}`}</Text>
-                                </TouchableOpacity>
-                            ))}
+                    <View style={styles.middleSection}>
 
-                            {/* 底部按钮 */}
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity style={[styles.modalBottomButton, styles.modalLeftButton]}>
-                                    <Text style={styles.modalLeftButtonText}>专属客服</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.modalBottomButton, styles.modalRightButton]}
-                                    onPress={() => {
-                                        toggleModal();  //关闭底部弹出菜单
-                                        navigation.navigate('DetailStack', {screen: 'accessTradingAccount'}); //跳转
+                        {/* Dropdown Input */}
+                        <View style={styles.middleInputContainer}>
+                            <View style={styles.middleRow}>
+                                <Text style={styles.leftLabel}>跟单账户</Text>
+                            </View>
+                            <TouchableOpacity onPress={toggleModal} style={[styles.modalButton, styles.middleInput]}>
+                                <Text style={styles.modalButtonText}>
+                                    {selectedOption ? selectedOption.exchange_name : '请选择跟单账户'}
+                                </Text>
+                                <Icon
+                                    type="antdesign"
+                                    name="down"
+                                    size={20}
+                                    color="#000000"
+                                />
+                            </TouchableOpacity>
+
+                            <Modal
+                                isVisible={isModalVisible}
+                                onBackdropPress={toggleModal}
+                                style={styles.modal}>
+                                <View style={styles.modalContent}>
+                                    {options.map((option, index) => (
+                                        <TouchableOpacity
+                                        key={index}
+                                        style={[
+                                            styles.modalText,
+                                            selectedOption === option && styles.selectedOption,
+                                        ]}
+                                        onPress={() => {
+                                            toggleModal();  //关闭底部弹出菜单
+                                            setSelectedOption(option);  //设置选中交易所的信息
+                                            balanceInquiry(option.id)   //获取选中交易所的余额信息
                                         }}>
-                                    <Text style={styles.modalRightButtonText}>接入交易账户</Text>
-                                </TouchableOpacity>
+                                        
+                                        <Text style={styles.modalText}>{`${option.account_name} - ${option.exchange_name}`}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+
+                                    {/* 底部按钮 */}
+                                    <View style={styles.buttonContainer}>
+                                        <TouchableOpacity style={[styles.modalBottomButton, styles.modalLeftButton]}>
+                                            <Text style={styles.modalLeftButtonText}>专属客服</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.modalBottomButton, styles.modalRightButton]}
+                                            onPress={() => {
+                                                toggleModal();  //关闭底部弹出菜单
+                                                navigation.navigate('DetailStack', {screen: 'accessTradingAccount'}); //跳转
+                                                }}>
+                                            <Text style={styles.modalRightButtonText}>接入交易账户</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </Modal>
+                        </View>
+
+                        {/* Text Input with Label on the Right */}
+                        <View style={styles.middleInputContainer}>
+                            <View style={styles.middleRow}>
+                                <Text style={styles.leftLabel}>单笔跟单</Text>
+                                <Text style={styles.rightLabel}>按比例</Text>
+                            </View>
+                            <View style={styles.inputWithUnit}>
+                                <TextInput 
+                                    value={singleTransslated} 
+                                    onChangeText={text => setSingleTransslated(text)} 
+                                    style={[styles.middleInput, styles.inputWithRightUnit]} 
+                                    placeholder="0.01 - 1000"
+                                    keyboardType="numeric"
+                                    returnKeyType="done"
+                                />
+                                <Text style={styles.unitTextInside}>倍</Text>
                             </View>
                         </View>
-                    </Modal>
-                </View>
 
-                {/* Text Input with Label on the Right */}
-                <View style={styles.middleInputContainer}>
-                    <View style={styles.middleRow}>
-                        <Text style={styles.leftLabel}>单笔跟单</Text>
-                        <Text style={styles.rightLabel}>按比例</Text>
+                        {/* Text Input with Unit (USDT) */}
+                        <View style={styles.middleInputContainer}>
+                            <View style={styles.middleRow}>
+                                <Text style={styles.leftLabel}>最大跟单金额</Text>
+                                <Text style={styles.availableText}>可用 {balanceInfo?.total_balance || 0.00} USDT</Text>
+                            </View>
+                            <View style={styles.inputWithUnit}>
+                                <TextInput 
+                                    value={followPrice} 
+                                    onChangeText={text => setFollowPrice(text)} 
+                                    style={[styles.middleInput, styles.inputWithRightUnit]} 
+                                    placeholder="10 - 200000"
+                                    keyboardType="numeric"
+                                    returnKeyType="done"
+                                />
+                                <Text style={styles.unitTextInside}>USDT</Text>
+                            </View>
+                        </View>
+
+
                     </View>
-                    <TextInput value={singleTransslated} onChangeText={text => setSingleTransslated(text)} style={styles.middleInput} placeholder="1-100" />
                 </View>
-
-                {/* Text Input with Unit (USDT) */}
-                <View style={styles.middleInputContainer}>
-                    <View style={styles.middleRow}>
-                        <Text style={styles.leftLabel}>最大跟单金额</Text>
-                        <Text style={styles.availableText}>可用 {balanceInfo?.total_balance || 0.00} USDT</Text>
-                    </View>
-                    <View style={styles.middleRow}>
-                        <TextInput value={followPrice} onChangeText={text => setFollowPrice(text)} style={styles.middleInput} placeholder="请输入内容" />
-                        <Text style={styles.unitText}>USDT</Text>
-                    </View>
-                </View>
-
-
-            </View>
+                <View style={styles.bottomPadding} />
+            </ScrollView>
 
             <View style={styles.bottomSection}>
                 <TouchableOpacity style={styles.bottomButton} onPress={() => {
@@ -218,11 +250,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF',
-        justifyContent: 'space-between',
+    },
+    scrollContent: {
+        flex: 1,
+    },
+    contentContainer: {
         padding: 16,
     },
-
-    //==========顶部部分==========
+    bottomPadding: {
+        height: 60, // 为底部按钮预留空间
+    },
     topSection: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -251,6 +288,7 @@ const styles = StyleSheet.create({
     //==========中间部分==========
     middleSection: {
         flex: 1,
+        paddingTop: 16,
     },
     middleInputContainer: {
         marginBottom: 20,
@@ -258,27 +296,44 @@ const styles = StyleSheet.create({
     middleRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginBottom: 8,
     },
     middleInput: {
         borderWidth: 1,
         borderColor: '#000',
-        paddingVertical: 16, // 增加到16或更高
-        borderRadius: 30,
-        padding: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 100,
         flex: 1,
-        minHeight: 50, // 确保有最小高度
+        height: 50,
     },
     leftLabel: {
-        fontSize: 16,
-        marginBottom: 5,
+        fontSize: 14,
+        fontWeight: '700',
     },
     rightLabel: {
-        fontSize: 16,
+        fontSize: 12,
+        fontWeight: '400',
         textAlign: 'right',
     },
     availableText: {
         fontSize: 12,
-        color: '#888',
+        fontWeight: '400',
+        color: '#00000066',
+    },
+    unitTextInside: {
+        position: 'absolute',
+        right: 16,
+        fontSize: 14,
+        color: '#000000',
+    },
+    inputWithUnit: {
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    inputWithRightUnit: {
+        paddingRight: 50, // 为单位文字预留空间
     },
     unitText: {
         fontSize: 16,
@@ -309,10 +364,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     modalButton: {
-        padding: 10,                  // 内部间距
-        borderRadius: 20,             // 设置圆角
-        borderWidth: 1,               // 设置边框宽度
-        borderColor: '#000',          // 设置边框颜色
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 30,
+        minHeight: 50,
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    modalButtonText: {
+        fontSize: 14,
+        color: '#000000',
     },
     modalBottomButton: {
         paddingVertical: 10,
@@ -345,6 +409,9 @@ const styles = StyleSheet.create({
     bottomSection: {
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 16,
+        paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+        backgroundColor: '#FFF',
     },
     bottomButton: {
         paddingVertical: 10,

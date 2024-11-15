@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   yieldValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '700',
   },
   chartContainer: {
     height: 100,

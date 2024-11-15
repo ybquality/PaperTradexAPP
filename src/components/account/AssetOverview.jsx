@@ -6,19 +6,19 @@ const AssetOverview = ({ navigation }) => {
   const accounts = [
     {
       id: 1,
-      icon: 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Logo-OKX.png',  // OKX logo
+      icon: require('../../../assets/Exchanges/okx2.png'), 
       name: 'OKX-2',
       value: '$ 5.18'
     },
     {
       id: 2,
-      icon: 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Logo-OKX.png',
+      icon: require('../../../assets/Exchanges/okx2.png'), 
       name: '这里显示 交易所名字-备注名',
       value: '0'
     },
     {
       id: 3,
-      icon: 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Logo-OKX.png',
+      icon: require('../../../assets/Exchanges/okx2.png'), 
       name: 'OKX-1',
       tag: '异常',
       value: '0'
@@ -44,8 +44,6 @@ const AssetOverview = ({ navigation }) => {
           <Text style={styles.assetValue}>0.00</Text>
         </View>
         
-        <View style={styles.divider} />
-        
         <View style={[styles.assetItem, styles.rightAssetItem]}>
           <Text style={styles.assetLabel}>节省手续费(USDT)</Text>
           <Text style={styles.assetValue}>0.00</Text>
@@ -57,7 +55,7 @@ const AssetOverview = ({ navigation }) => {
           <TouchableOpacity 
             key={account.id}
             style={styles.accountItem}
-            onPress={() => navigation.navigate('AccountDetail', { accountId: account.id })}
+            onPress={() => navigation.navigate('AccountDetail', { accountId: 'OKX-1' })}
           >
             <View style={styles.accountLeft}>
               <Image source={account.icon} style={styles.accountIcon} />
@@ -137,12 +135,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  divider: {
-    width: 1,
-    height: 40,
-    backgroundColor: '#eee',
-    marginHorizontal: 16,
-  },
   accountList: {
   },
   accountItem: {
@@ -160,7 +152,7 @@ const styles = StyleSheet.create({
   accountIcon: {
     width: 32,
     height: 32,
-    marginRight: 12,
+    marginRight: 8,
   },
   accountInfo: {
     justifyContent: 'center',

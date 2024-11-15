@@ -13,6 +13,7 @@ import NotificationSettingsScreen from './NotificationSettings';
 import LoginScreen from './login';
 import RegisterScreen from './Register';
 import AssetsDetail from './assets/';
+import AccountManage from './assets/AccountManage';
 
 const Stack = createStackNavigator();
 
@@ -107,6 +108,14 @@ const AccountStackNavigator = () => {
             headerTintColor: '#fff', // 返回按钮颜色
             headerShown: false
           }}
+      />
+
+      <Stack.Screen 
+        name="AccountManage"
+        component={AccountManage}
+        options={{
+          headerShown: false
+        }}
       />
     </Stack.Navigator>
 

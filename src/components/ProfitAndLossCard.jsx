@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 
 const BAR_WIDTH = 10;// 柱状的宽度
 const BAR_GAP = 5; // 柱状之间的间距
@@ -9,86 +9,91 @@ const DailyProfitLossChart = ({ dailyData, selectedBar, setSelectedBar }) => {
   const maxValue = Math.max(...dailyData.map(item => Math.abs(item.profit)));
   
   return (
-    <View style={styles.container}>
-      <View style={styles.legendContainer}>
-        <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#22B573' }]} />
-          <Text style={styles.legendText}>盈利</Text>
-        </View>
-        <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#FF5C5C' }]} />
-          <Text style={styles.legendText}>亏损</Text>
-        </View>
-      </View>
-
-      <View style={styles.chartContainer}>
-        <View style={styles.yAxis}>
-          <Text style={styles.scaleText}>22.4K</Text>
-          <Text style={styles.scaleText}>12.4K</Text>
-          <Text style={styles.scaleText}>0</Text>
-          <Text style={styles.scaleText}>-12.4K</Text>
-          <Text style={styles.scaleText}>-22.4K</Text>
+    <TouchableWithoutFeedback onPress={() => setSelectedBar(null)}>
+      <View style={styles.container}>
+        <View style={styles.legendContainer}>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: '#22B573' }]} />
+            <Text style={styles.legendText}>盈利</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: '#FF5C5C' }]} />
+            <Text style={styles.legendText}>亏损</Text>
+          </View>
         </View>
 
-        <View style={styles.chartContent}>
-          {/* 零轴 */}
-          <View style={styles.zeroLine} />
-          
-          {/* 柱状图 */}
-          <View style={styles.barsContainer}>
-            {dailyData.map((item, index) => {
-              const barHeight = (Math.abs(item.profit) / maxValue) * 100;
-              const isProfit = item.profit >= 0;
-              
-              return (
-                <TouchableOpacity
-                  key={index}
-                  activeOpacity={0.7}
-                  onPress={(e) => {
-                    e.stopPropagation(); // 阻止事件冒泡
-                    setSelectedBar(index);
-                  }}
-                  style={styles.barWrapper}
-                >
-                  <View
-                    style={[
-                      styles.bar,
-                      {
-                        height: `${barHeight}%`,
-                        backgroundColor: isProfit ? '#22B573' : '#FF5C5C',
-                        // 如果是盈利，从中间往上长；如果是亏损，从中间往下长
-                        position: 'absolute',
-                        bottom: isProfit ? '50%' : 'auto',
-                        top: isProfit ? 'auto' : '50%',
-                      },
-                    ]}
-                  />
-                  
-                  {/* 浮动提示框 */}
-                  {selectedBar === index && (
-                    <View style={[
-                      styles.tooltip,
-                      {
-                        bottom: isProfit ? '52%' : 'auto',
-                        top: isProfit ? 'auto' : '52%',
-                      }
-                    ]}>
-                      <Text style={styles.tooltipText}>{item.date}</Text>
-                      <Text style={[
-                        styles.tooltipText,
-                        {color: isProfit ? '#22B573' : '#FF5C5C'}
-                      ]}>
-                        {isProfit ? '+' : ''}{item.profit}
-                      </Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
+        <View style={styles.chartContainer}>
+          <View style={styles.yAxis}>
+            <Text style={styles.scaleText}>22.4K</Text>
+            <Text style={styles.scaleText}>12.4K</Text>
+            <Text style={styles.scaleText}>0</Text>
+            <Text style={styles.scaleText}>-12.4K</Text>
+            <Text style={styles.scaleText}>-22.4K</Text>
+          </View>
+
+          <View style={styles.chartContent}>
+            {/* 零轴 */}
+            <View style={styles.zeroLine} />
+            
+            {/* 柱状图 */}
+            <View style={styles.barsContainer}>
+              {dailyData.map((item, index) => {
+                const barHeight = (Math.abs(item.profit) / maxValue) * 100;
+                const isProfit = item.profit >= 0;
+                
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.7}
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      setSelectedBar(selectedBar === index ? null : index);
+                    }}
+                    style={styles.barWrapper}
+                  >
+                    <View
+                      style={[
+                        styles.bar,
+                        {
+                          height: `${barHeight}%`,
+                          backgroundColor: isProfit ? '#22B573' : '#FF5C5C',
+                          // 如果是盈利，从中间往上长；如果是亏损，从中间往下长
+                          position: 'absolute',
+                          bottom: isProfit ? '50%' : 'auto',
+                          top: isProfit ? 'auto' : '50%',
+                        },
+                      ]}
+                    />
+                    
+                    {selectedBar === index && (
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={(e) => e.stopPropagation()}
+                        style={[
+                          styles.tooltip,
+                          {
+                            bottom: isProfit ? '52%' : 'auto',
+                            top: isProfit ? 'auto' : '52%',
+                          }
+                        ]}
+                      >
+                        <Text style={styles.tooltipText}>{item.date}</Text>
+                        <Text style={[
+                          styles.tooltipText,
+                          {color: isProfit ? '#22B573' : '#FF5C5C'}
+                        ]}>
+                          {isProfit ? '+' : ''}{item.profit}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

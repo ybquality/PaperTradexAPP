@@ -8,13 +8,13 @@ const ProfitCard = () => {
       <Text style={styles.title}>跟单总收益(USDT)</Text>
 
       {/* Total Profit */}
-      <Text style={styles.totalProfit}>2283.04</Text>
+      <Text style={styles.totalProfit}>-2283.04</Text>
 
       {/* Stats Row */}
       <View style={styles.statsContainer}>
         <View style={[styles.statItem, styles.leftAlign]}>
           <Text style={styles.statText}>今日收益</Text>
-          <Text style={styles.statValue}>$1000.00</Text>
+          <Text style={styles.statValue}>$N/A</Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statText}>总交易笔数</Text>

@@ -69,30 +69,38 @@ export default function LoginScreen({ navigation }) {
     }
 
     try {
-        const response = await api.post(GET_VERIFY_CODE, {
-            phone,
-        }, {
-            headers: { 'Content-Type': 'application/json' }
-        });
+      const response = await api.post(GET_VERIFY_CODE, {
+        phone,
+      }, {
+        headers: { 'Content-Type': 'application/json' }
+      });
 
-        if (response.data.code == 200) {
-            alert('发送验证码成功');
-            // 开始倒计时
-            setCountdown(60);
-            const timer = setInterval(() => {
-                setCountdown(prev => {
-                    if (prev <= 1) {
-                        clearInterval(timer);
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
-        }else{
-            alert(response.data.msg);
-        }
-        console.log(response.data);
-    } catch (error){}
+      if (response.data.code == 200) {
+        alert('发送验证码成功');
+        // 开始倒计时
+        setCountdown(60);
+        const timer = setInterval(() => {
+          setCountdown(prev => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      } else {
+        alert(response.data.msg);
+      }
+      console.log(response.data);
+    } catch (error) {
+      // 添加网络错误处理
+      if (error.message === 'Network Error') {
+        alert('网络连接失败，请检查网络后重试');
+      } else {
+        alert('发送验证码失败，请稍后重试');
+      }
+      console.log('Error:', error);
+    }
   }
 
   const handlePhoneLogin = async (phone, verifyCode, navigator) => {

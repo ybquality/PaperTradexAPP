@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-
+import InviteCard from '../../../../components/InviteCard';  // 导入 InviteCard 组件
 import request from '../../../../utils/request';
 
 
@@ -80,8 +80,10 @@ const ExchangeSettings = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-
-
+      {/* 添加 InviteCard 组件 */}
+      <View style={styles.cardContainer}>
+        <InviteCard />
+      </View>
 
       {/* 交易所选择 */}
       <Text style={styles.sectionTitle}>交易所</Text>
@@ -160,6 +162,9 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     flexGrow: 1,
+  },
+  cardContainer: {
+    marginBottom: 20,  // 添加底部间距
   },
   card: {
     flexDirection: 'row',

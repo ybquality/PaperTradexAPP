@@ -199,35 +199,41 @@ const AccountScreen = ({ navigation }) => {
             end={{ x: 1, y: 0 }}
             style={styles.VIPcardContainer}
           >
+            {/* 添加背景图片 */}
+            <Image 
+              source={require('../../../assets/img/backgroundpng.png')}
+              style={styles.vipBackgroundImage}
+            />
+            
             <View style={styles.topSection}>
-                <View style={styles.vipContainer}>
-                    <Image source={require('../../../assets/VIP 1.png')} style={styles.vipIcon} />
-                    <Text style={styles.vipText}>普通用户</Text>
-                </View>
-                <TouchableOpacity style={styles.buyVipButton}>
-                    <Text style={styles.buyVipText}>购买VIP</Text>
-                </TouchableOpacity>
+              <View style={styles.vipContainer}>
+                <Image source={require('../../../assets/VIP 1.png')} style={styles.vipIcon} />
+                <Text style={styles.vipText}>普通用户</Text>
+              </View>
+              <TouchableOpacity style={styles.buyVipButton}>
+                <Text style={styles.buyVipText}>购买VIP</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.bottomSection}>
-                <TouchableOpacity onPress={handleBalancePress} style={styles.detailBox}>
-                    <View style={styles.detailContent}>
-                        <Text style={styles.detailNumber}>0</Text>
-                        <Text style={styles.detailText}>VIP剩余天数</Text>
-                    </View>
-                </TouchableOpacity>
-                
-                <View style={styles.verticalDivider} />
-                
-                <TouchableOpacity 
-                    onPress={() => navigation.navigate('AccountStack', { screen: 'Balance' })} 
-                    style={styles.detailBox}
-                >
-                    <View style={styles.detailContent}>
-                        <Text style={styles.detailNumber}>0</Text>
-                        <Text style={styles.detailText}>余额</Text>
-                    </View>
-                </TouchableOpacity>
+              <TouchableOpacity onPress={handleBalancePress} style={styles.detailBox}>
+                <View style={styles.detailContent}>
+                  <Text style={styles.detailNumber}>0</Text>
+                  <Text style={styles.detailText}>VIP剩余天数</Text>
+                </View>
+              </TouchableOpacity>
+              
+              <View style={styles.verticalDivider} />
+              
+              <TouchableOpacity 
+                onPress={() => navigation.navigate('AccountStack', { screen: 'Balance' })} 
+                style={styles.detailBox}
+              >
+                <View style={styles.detailContent}>
+                  <Text style={styles.detailNumber}>0</Text>
+                  <Text style={styles.detailText}>余额</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </LinearGradient>
           {/* 资产总览部分 */}
@@ -380,11 +386,16 @@ const styles = StyleSheet.create({
     padding: 15,
     marginHorizontal: 16,
     marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  vipBackgroundImage: {
+    position: 'absolute',
+    top: 0,
+    right: 50,
+    width: 200,
+    height: '100%',
+    opacity: 0.8,
   },
   topSection: {
     flexDirection: 'row',

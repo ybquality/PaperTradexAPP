@@ -1,9 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
 const ProfitCard = () => {
   return (
     <View style={styles.card}>
+      {/* 添加背景图片 */}
+      <Image 
+        source={require('../../assets/Vector.png')}
+        style={styles.backgroundImage}
+      />
+      
       {/* Title */}
       <Text style={styles.title}>跟单总收益(USDT)</Text>
 
@@ -31,30 +37,39 @@ const ProfitCard = () => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#f9f9f9',  // 背景颜色
-    borderRadius: 10,  // 圆角
-    paddingVertical: 20,  // 只保留上下内边距
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    paddingVertical: 20,
     marginBottom: 20,
     width: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: -20,
+    right: -25,
+    width: '100%',
+    height: '100%',
+    // opacity: 0.1,
+    resizeMode: 'cover',
   },
   title: {
-    fontSize: 14,  // 标题字体大小
-    // fontWeight: 'bold',
+    fontSize: 14,
     color: '#333',
-    paddingHorizontal: 20, // 标题添加水平内边距
+    paddingHorizontal: 20,
   },
   totalProfit: {
-    fontSize: 36,  // 总收益字体大小
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#000',
-    // marginVertical: 5,
-    paddingHorizontal: 20, // 总收益添加水平内边距
+    paddingHorizontal: 20,
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
-    paddingHorizontal: 20, // 将水平内边距移到 statsContainer
+    paddingHorizontal: 20,
   },
   statItem: {
     alignItems: 'center',

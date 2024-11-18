@@ -61,8 +61,8 @@ const SubscriptionsScreen = ({ navigation }) => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={['#000']}  // Android
-              tintColor="#000"   // iOS
+              colors={['#00D0AC']}  // Android
+              tintColor="#00D0AC"   // iOS
             />
           }
           showsVerticalScrollIndicator={false}

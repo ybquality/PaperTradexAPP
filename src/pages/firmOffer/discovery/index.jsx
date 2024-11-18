@@ -44,7 +44,12 @@ const DiscoveryScreen = ({ navigation }) => {
     <ScrollView style={styles.scrollContainer}
       showsVerticalScrollIndicator={false} // 隐藏垂直滚动条
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#00D0AC']} // Android
+          tintColor="#00D0AC" // iOS
+        />
       }
     >
       <View style={styles.screen}>

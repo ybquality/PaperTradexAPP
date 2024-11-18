@@ -21,30 +21,27 @@ const ExpertCard = () => {
           </TouchableOpacity>
         </View>
 
-        {/* 数据部分 */}
-        <View style={styles.dataContainer}>
-          {/* 左侧数据 */}
-          <View style={styles.dataColumn}>
-            <View style={styles.dataRow}>
-              <Text style={styles.labelText}>投入本金</Text>
-              <Text style={styles.valueText}>$10,000.00</Text>
-            </View>
-            <View style={styles.dataRow}>
-              <Text style={styles.labelText}>跟单比例</Text>
-              <Text style={styles.valueText}>10%</Text>
-            </View>
+        {/* 上部数据 */}
+        <View style={styles.dataRow}>
+          <View>
+            <Text style={styles.labelText}>投入本金</Text>
+            <Text style={styles.valueText}>$10,000.00</Text>
           </View>
+          <View>
+            <Text style={[styles.labelText, styles.rightAlignText]}>净收益</Text>
+            <Text style={[styles.valueText, styles.profitText, styles.rightAlignText]}>$10,000.00</Text>
+          </View>
+        </View>
 
-          {/* 右侧数据 */}
-          <View style={[styles.dataColumn, styles.rightDataColumn]}>
-            <View style={styles.dataRow}>
-              <Text style={[styles.labelText, styles.rightAlignText]}>净收益</Text>
-              <Text style={[styles.valueText, styles.profitText, styles.rightAlignText]}>$10,000.00</Text>
-            </View>
-            <View style={styles.dataRow}>
-              <Text style={[styles.labelText, styles.rightAlignText]}>收益率</Text>
-              <Text style={[styles.valueText, styles.profitText, styles.rightAlignText]}>157%</Text>
-            </View>
+        {/* 下部数据 */}
+        <View style={styles.dataRow}>
+          <View style={styles.inlineData}>
+            <Text style={styles.labelText}>跟单比例</Text>
+            <Text style={styles.valueText}>10%</Text>
+          </View>
+          <View style={[styles.inlineData, styles.rightAlign]}>
+            <Text style={styles.labelText}>收益率</Text>
+            <Text style={[styles.valueText, styles.profitText]}>157%</Text>
           </View>
         </View>
       </View>
@@ -55,24 +52,24 @@ const ExpertCard = () => {
 const styles = StyleSheet.create({
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#333',
     marginBottom: 12,
     marginTop: 12,
     marginLeft: 10,
   },
   card: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 10,
+    borderRadius: 16,
     padding: 16,
     marginBottom: 12,
-    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(243, 243, 243, 1)',
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   header: {
     flexDirection: 'row',
@@ -100,31 +97,30 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
   },
-  dataContainer: {
+  dataRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 12,
   },
-  dataColumn: {
-    flex: 1,
+  inlineData: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
-  rightDataColumn: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  dataRow: {
-    marginBottom: 12,
+  rightAlign: {
+    justifyContent: 'flex-end',
   },
   labelText: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4,
   },
   valueText: {
     fontSize: 14,
     color: '#333',
+    fontWeight: '500',
   },
   profitText: {
-    color: '#22B573',
+    color: 'rgba(0, 208, 172, 1)',
   },
   rightAlignText: {
     textAlign: 'right',

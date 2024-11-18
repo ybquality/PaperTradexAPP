@@ -1,6 +1,6 @@
 // 首页
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
 
 import MyFollowCard from '../../../components/MyFollowCard';
 
@@ -8,6 +8,7 @@ import request from '../../../utils/request';
 
 const MyFollowsScreen = ({ navigation }) => {
   const [items, setItems] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleCancelFollowPress = async (orderId) => {
     // 在这里处理取消跟单的操作
@@ -43,7 +44,11 @@ const MyFollowsScreen = ({ navigation }) => {
     }
   }
 
-
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }, []);
 
   useEffect(() => {
 
@@ -72,10 +77,16 @@ const MyFollowsScreen = ({ navigation }) => {
         data={items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        scrollEnabled={false}
-        nestedScrollEnabled={true}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#00D0AC']} // Android
+            tintColor="#00D0AC" // iOS
+          />
+        }
       />
-      {/* <MyFollowCard></MyFollowCard> */}
     </View>
   );
 };

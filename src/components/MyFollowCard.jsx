@@ -73,16 +73,21 @@ const MyFollowCard = ({ navigation, orderId, avatarUri, nickName, principal, cop
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 10,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#d3d3d3',
-    shadowColor: 'transparent',
-    paddingLeft: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
+    borderColor: 'rgba(243, 243, 243, 1)',
+    padding: 16,
     backgroundColor: '#fff',
     marginHorizontal: 0,
-    marginVertical: 10,
+    marginVertical: 6,
+    shadowColor: 'transparent',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   
   topRow: {

@@ -64,8 +64,8 @@ const AssetsDetail = ({ navigation, route }) => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={['#80FFE9']}  // Android
-              tintColor="#80FFE9"   // iOS
+              colors={['#00D0AC']}  // Android
+              tintColor="#00D0AC"   // iOS
             />
           }
         >

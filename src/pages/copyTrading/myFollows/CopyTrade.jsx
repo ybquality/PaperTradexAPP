@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, FlatList, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Modal from 'react-native-modal';
+import { Slider } from '@rneui/themed';
 
 import { Dropdown } from 'react-native-element-dropdown';
 
@@ -35,6 +36,8 @@ const CopyTradeScreen = ({ route, navigation }) => {
 
     const [followPrice, setFollowPrice] = useState(String(principal));
     const [singleTransslated, setSingleTransslated] = useState(String(copyRatio));
+
+    const [sliderPosition, setSliderPosition] = useState(50);
 
     // 页面加载时请求API
     useEffect(() => {
@@ -232,7 +235,25 @@ const CopyTradeScreen = ({ route, navigation }) => {
                                 <Text style={styles.unitTextInside}>USDT</Text>
                             </View>
                         </View>
-
+                        {/* 跟单金额滑块 */}
+                        <View style={styles.sliderContainer}>
+                            <Slider
+                                value={sliderPosition}
+                                onValueChange={(value) => {
+                                    setSliderPosition(value);
+                                    const amount = (balanceInfo?.total_balance || 0) * (value / 100);
+                                    setFollowPrice(amount.toFixed(2));
+                                }}
+                                minimumValue={0}
+                                maximumValue={100}
+                                step={25}
+                                trackStyle={{ height: 2 }}
+                                thumbStyle={{ height: 12, width: 12, backgroundColor: '#000' }}
+                                minimumTrackTintColor="#000"
+                                maximumTrackTintColor="#E4E4E4"
+                                thumbTouchSize={{ width: 40, height: 40 }}
+                            />
+                        </View>
 
                     </View>
                 </View>
@@ -488,9 +509,11 @@ const styles = StyleSheet.create({
         color: '#999999', // 禁用时的文字颜色
     },
 
-
-
-
+    sliderContainer: {
+        marginTop: 16,
+        paddingHorizontal: 6,
+        height: 40,
+    },
 
 });
 

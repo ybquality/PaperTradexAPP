@@ -33,7 +33,7 @@ const MyFollowCard = ({ navigation, orderId, avatarUri, nickName, principal, cop
             onPress={() => { 
               navigation.navigate('MyFollowsStack', {
                 screen: 'CopyTrade', 
-                params: {traderId: orderId, principal: principal, copyRatio: copyRatio}
+                params: {traderId: orderId, principal, copyRatio, nickName, avatarUri}
               })
             }}
           >

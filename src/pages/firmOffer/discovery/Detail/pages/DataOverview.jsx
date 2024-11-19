@@ -6,10 +6,23 @@ import request from '../../../../../utils/request';
 
 // 卡片组件
 const InfoCard = ({ label, date, description }) => {
+    // 判断标签类型设置背景颜色
+    const getBgColor = (label) => {
+      if (label === '买入' || label === '买入开多') {
+        return 'rgba(128, 255, 233, 1)';
+      } else if (label === '卖出' || label === '卖出平多') {
+        return 'rgba(255, 153, 159, 1)';
+      }
+      return '#A8EBE4'; // 默认颜色
+    };
+
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <View style={styles.labelContainer}>
+          <View style={[
+            styles.labelContainer, 
+            { backgroundColor: getBgColor(label) }
+          ]}>
             <Text style={styles.labelText}>{label}</Text>
           </View>
           <Text style={styles.dateText}>{date}</Text>
@@ -17,7 +30,7 @@ const InfoCard = ({ label, date, description }) => {
         <Text style={styles.descriptionText}>{description}</Text>
       </View>
     );
-  };
+};
 
 const AccountScreen = ({ route, navigation }) => {
 
@@ -128,25 +141,6 @@ const AccountScreen = ({ route, navigation }) => {
                 scrollEnabled={false}
                 nestedScrollEnabled={true} // 允许嵌套滚动
             />
-            {/* <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                    <View style={styles.labelContainer}>
-                        <Text style={styles.labelText}>买入平空</Text>
-                    </View>
-                    <Text style={styles.dateText}>2024/08/01</Text>
-                </View>
-                <Text style={styles.descriptionText}>最大回测最大回测最大回测最大回测最大回测</Text>
-            </View>
-
-            <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                    <View style={styles.labelContainer}>
-                        <Text style={styles.labelText}>买入平空</Text>
-                    </View>
-                    <Text style={styles.dateText}>2024/08/01</Text>
-                </View>
-                <Text style={styles.descriptionText}>最大回测最大回测最大回测最大回测最大回测</Text>
-            </View> */}
 
         </View>
         </ScrollView>
@@ -159,13 +153,12 @@ const styles = StyleSheet.create({
       },
     container: {
         flex: 1,
-        padding: 16,
         backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 24,
+        marginBottom: 12,
     },
     column: {
         alignItems: 'flex-start',
@@ -176,21 +169,22 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     titleText: {
-        fontSize: 14,
-        color: '#999999',
+        fontSize: 12,
+        fontWeight: '400',
+        color: 'rgba(0, 0, 0, 0.4)',
         marginBottom: 4,
     },
     valueText: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: '#333333',
+        fontSize: 20,
+        fontWeight: '700',
+        color: 'rgba(0, 0, 0, 1)',
     },
     details: {
         marginBottom: 24,
     },
     detailsRow: {
         flexDirection: 'row',
-        marginBottom: 16,
+        marginBottom: 12,
     },
     detailItemLeft: {
         flex: 1,
@@ -206,7 +200,8 @@ const styles = StyleSheet.create({
     },
     detailLabel: {
         fontSize: 12,
-        color: '#999999',
+        fontWeight: '400',
+        color: 'rgba(0, 0, 0, 0.4)',
         marginBottom: 4,
         textAlign: 'center',
     },
@@ -239,17 +234,17 @@ const styles = StyleSheet.create({
     },
     latestOperationText: {
         fontSize: 16,
-        color: '#777',
-        marginBottom: 10,
+        fontWeight: '700',
+        color: 'rgba(0, 0, 0, 1)',
+        marginBottom: 12,
     },
     card: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        padding: 10,
-        marginVertical: 8,
-        borderColor: '#D3D3D3',
-        // 设置边框宽度，使边框可见
+        borderRadius: 16,
+        padding: 12,
+        marginBottom: 12,
         borderWidth: 1,
+        borderColor: 'rgba(243, 243, 243, 1)',
     },
     cardHeader: {
         flexDirection: 'row',
@@ -257,23 +252,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     labelContainer: {
-        backgroundColor: '#A8EBE4',
         borderRadius: 4,
         paddingHorizontal: 6,
         paddingVertical: 2,
     },
     labelText: {
-        color: '#000000',
-        fontSize: 14,
+        color: 'rgba(0, 0, 0, 1)',
+        fontSize: 12,
+        fontWeight: '500',
     },
     dateText: {
-        color: '#B0B0B0',
+        color: 'rgba(0, 0, 0, 0.4)',
         fontSize: 12,
+        fontWeight: '400',
     },
     descriptionText: {
-        color: '#B0B0B0',
+        color: 'rgba(0, 0, 0, 0.4)',
         fontSize: 12,
-        marginTop: 4,
+        fontWeight: '400',
+        marginTop: 8,
     },
 });
 

@@ -118,7 +118,10 @@ const FirmOfferCard = ({ item }) =>{
             </View>
 
             {/* 分割线 */}
-            <Card.Divider/>
+            <Card.Divider 
+                color="rgba(0, 0, 0, 0.04)"  // 更新分割线颜色
+                style={styles.divider}  // 添加样式以确保颜色正确应用
+            />
 
             {/* 总资产、最大回撤、收益额 */}
             <View style={styles.footer}>
@@ -151,19 +154,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 16,
+        marginBottom: 16,
     },
     yieldContainer: {
         flex: 1,
     },
     yieldLabel: {
-        fontSize: 14,
-        color: '#999999',
+        fontSize: 12,
+        color: 'rgba(0, 0, 0, 0.4)',
         marginBottom: 4,
+        fontWeight: '400',
     },
     yieldValue: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: '#333333',
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#000000',
     },
     chartContainer: {
         flex: 2,
@@ -175,13 +180,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     container: {
-        marginHorizontal: 0,
-        marginVertical: 10,
-        borderRadius: 10,
+        // marginHorizontal: 0,
+        // marginVertical: 10,
+        margin: 0,
+        marginBottom: 12,
+        borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#d3d3d3',
-        shadowColor: 'transparent', // 无阴影
-        padding: 10,
+        borderColor: 'rgba(243, 243, 243, 1)',
+        shadowColor: 'transparent',
+        padding: 16,
         backgroundColor: '#fff',
     },
     header: {
@@ -222,7 +229,7 @@ const styles = StyleSheet.create({
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 10,
+        // marginTop: 10,
         paddingHorizontal: 4,
     },
     footerItem: {
@@ -238,13 +245,18 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     footerText: {
-        color: '#808080',
-        fontSize: 14,
+        color: 'rgba(0, 0, 0, 0.4)',
+        fontSize: 12,
         marginBottom: 4,
+        fontWeight: '400',
     },
     footerValue: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
+    },
+    divider: {
+        backgroundColor: 'rgba(0, 0, 0, 0.04)',  // 确保分割线颜色正确
+        height: 1,
     },
 })
 

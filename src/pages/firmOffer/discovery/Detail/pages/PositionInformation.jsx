@@ -10,42 +10,57 @@ const PositionInformationScreen = ({ route, navigation }) => {
   const InfoCard = ({ item }) => {
     return (
       <View style={styles.card}>
-        {/* Header Section */}
+        {/* 第一行 */}
         <View style={styles.header}>
           <Text style={styles.pairText}>{item.instrumentId}</Text>
           <TouchableOpacity style={styles.leverageButton}>
-            <Text style={styles.leverageText}>{item.leverage}</Text>
+            <Text style={styles.leverageText}>{item.leverage}X</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Price and Rate Section */}
-        <View style={styles.priceSection}>
-          <Text style={styles.price}>${item.avgCost}</Text>
-          <Text style={styles.rate}>{item.pnlRatio}%</Text>
+        {/* 第二行 */}
+        <View style={styles.row}>
+          <View style={styles.leftAlign}>
+            <Text style={styles.label}>开仓均价</Text>
+            <Text style={styles.price}>${item.avgCost}</Text>
+          </View>
+          <View style={styles.rightAlign}>
+            <Text style={[styles.label, styles.textRight]}>持仓收益率</Text>
+            <Text style={[styles.price, styles.textRight, item.pnlRatio < 0 ? styles.negativeRate : styles.positiveRate]}>
+              {item.pnlRatio}%
+            </Text>
+          </View>
         </View>
 
-        {/* Details Section */}
-        <View style={styles.detailsSection}>
-          <View style={styles.detailItem}>
-            <Text style={styles.label}>持仓量</Text>
+        {/* 第三行 */}
+        <View style={styles.row}>
+          <View style={styles.infoItem}>
+            <Text style={styles.label}>未实现收益</Text>
+            <Text style={[styles.value, item.floatProfit < 0 ? styles.negativeRate : styles.positiveRate]}>
+              {item.floatProfit} {item.floatProfitUnit}
+            </Text>
+          </View>
+          <View style={[styles.infoItem, styles.centerAlign]}>
+            <Text style={[styles.label, styles.textCenter]}>保证金</Text>
+            <Text style={[styles.value, styles.textCenter]}>{item.margin} {item.marginUnit}</Text>
+          </View>
+          <View style={[styles.infoItem, styles.rightAlign]}>
+            <Text style={[styles.label, styles.textRight]}>仓位价值</Text>
+            <Text style={[styles.value, styles.textRight]}>{item.valueUsd}</Text>
+          </View>
+        </View>
+
+        {/* 第四行 */}
+        <View style={styles.row}>
+          <View style={styles.infoItem}>
+            <Text style={styles.label}>持仓数量</Text>
             <Text style={styles.value}>{item.amountNew} {item.amountUnitNew}</Text>
           </View>
-          <View style={styles.detailItem}>
-            <Text style={styles.label}>保证金</Text>
-            <Text style={styles.value}>{item.margin} {item.marginUnit}</Text>
+          <View style={[styles.infoItem, styles.centerAlign]}>
+            <Text style={[styles.label, styles.textCenter]}>预计爆仓价</Text>
+            <Text style={[styles.value, styles.textCenter]}>${item.liquiPrice}</Text>
           </View>
-          <View style={styles.detailItem}>
-            <Text style={styles.label}>持仓价值</Text>
-            <Text style={styles.value}>${item.valueUsd}</Text>
-          </View>
-          <View style={styles.detailItem}>
-            <Text style={styles.label}>收益</Text>
-            <Text style={styles.value}>{item.floatProfit} {item.floatProfitUnit}</Text>
-          </View>
-          <View style={styles.detailItem}>
-            <Text style={styles.label}>预计总价值</Text>
-            <Text style={styles.value}>$ {item.liquiPrice}</Text>
-          </View>
+          <View style={styles.infoItem}></View>
         </View>
       </View>
     );
@@ -95,63 +110,78 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 16,
     padding: 16,
-    margin: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0', // Light gray border without shadow
+    borderColor: 'rgba(243, 243, 243, 1)',
+    marginBottom: 12,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  infoItem: {
+    flex: 1,
   },
   pairText: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 16,
+    fontWeight: '700',
+    color: 'rgba(0, 0, 0, 1)',
   },
   leverageButton: {
-    backgroundColor: '#27C28A', // Green background color
+    backgroundColor: 'rgba(128, 255, 233, 1)',
     borderRadius: 5,
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
   leverageText: {
-    color: '#fff',
+    color: 'rgba(0, 0, 0, 1)',
     fontSize: 12,
-  },
-  priceSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  price: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  rate: {
-    fontSize: 20,
-    color: '#FF4D4F', // Red color for negative rate
-  },
-  detailsSection: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  detailItem: {
-    width: '48%', // Adjust width to have two items per row
-    marginBottom: 8,
+    fontWeight: '500',
   },
   label: {
     fontSize: 12,
-    color: '#999',
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.4)',
+    marginBottom: 4,
+  },
+  price: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: 'rgba(0, 0, 0, 1)',
   },
   value: {
     fontSize: 14,
-    color: '#333',
+    fontWeight: '500',
+    color: 'rgba(0, 0, 0, 1)',
+  },
+  negativeRate: {
+    color: '#FF4D4F',
+  },
+  positiveRate: {
+    color: '#27C28A',
+  },
+  leftAlign: {
+    alignItems: 'flex-start',
+  },
+  centerAlign: {
+    alignItems: 'center',
+  },
+  rightAlign: {
+    alignItems: 'flex-end',
+  },
+  textRight: {
+    textAlign: 'right',
+  },
+  textCenter: {
+    textAlign: 'center',
   },
 });
 

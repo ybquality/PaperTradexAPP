@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
-const BANNER_WIDTH = width - 40;
+const BANNER_WIDTH = width - 32;
 const BANNER_HEIGHT = 160;
 
 const Banner = () => {
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     width: BANNER_WIDTH,
     position: 'relative',
     alignSelf: 'center',
-    borderRadius: 8,
+    borderRadius: 16,
     overflow: 'hidden',
   },
   scrollView: {

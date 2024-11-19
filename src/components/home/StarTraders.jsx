@@ -1,7 +1,7 @@
 // 明星交易员滑块组件
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { Avatar } from '@rneui/themed';
+import { Avatar, Icon } from '@rneui/themed';
 import { LineChart } from 'react-native-svg-charts';
 import { Defs, LinearGradient, Stop, Path } from 'react-native-svg';
 import { curveBasis } from 'd3-shape';
@@ -69,14 +69,23 @@ const StarTraderCard = ({ item }) => {
     >
       <View style={styles.traderInfo}>
         <Avatar
-          size={24}
+          size={32}
           rounded
           source={{ uri: item.avatarUrl }}
           containerStyle={styles.avatar}
         />
         <View style={styles.nameContainer}>
           <Text style={styles.traderName}>{item.nickname}</Text>
-          <Text style={styles.followers}>{item.followers}</Text>
+          <View style={styles.followersContainer}>
+            <Icon
+              name="users"
+              type="feather"
+              size={12}
+              color="#666"
+              style={styles.followersIcon}
+            />
+            <Text style={styles.followers}>{item.followers}</Text>
+          </View>
         </View>
       </View>
       <View style={styles.chartRow}>
@@ -168,12 +177,12 @@ const styles = StyleSheet.create({
   traderCard: {
     backgroundColor: '#fff',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     width: 220,
     height: 120,
     marginRight: 12,
     borderWidth: 1,
-    borderColor: '#d3d3d3',
+    borderColor: '#F3F3F3',
   },
   traderInfo: {
     flexDirection: 'row',
@@ -192,13 +201,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   traderName: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'Roboto',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  followersContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // marginTop: 4,
+  },
+  followersIcon: {
+    marginRight: 4,
   },
   followers: {
     fontSize: 12,
     color: '#666',
-    marginTop: 4,
   },
   chartRow: {
     flexDirection: 'row',

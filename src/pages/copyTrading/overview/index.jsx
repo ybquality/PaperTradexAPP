@@ -37,12 +37,13 @@ const OverviewScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
+    backgroundColor: '#FFF',
   },
   screen: {
     flex: 1,
     backgroundColor: '#FFF',
-    paddingHorizontal: 16,
-    paddingBottom: 100,
+    padding: 16,
+    marginBottom: 80,
   },
 });
 

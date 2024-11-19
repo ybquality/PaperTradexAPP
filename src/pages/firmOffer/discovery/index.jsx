@@ -60,7 +60,7 @@ const DiscoveryScreen = ({ navigation }) => {
             navigation.navigate('Invite');
           }} />
         </View>
-        <Text style={{ fontSize: 20, fontWeight: 'bold', }}>
+        <Text style={{ fontSize: 16, fontWeight: '700', color: 'rgba(0, 0, 0, 1)',marginBottom: 12}}>
           实盘
         </Text>
         {/* <CardComponent {...cardData}/> */}
@@ -79,11 +79,13 @@ const DiscoveryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
+    backgroundColor: '#FFF',
   },
   screen: {
     flex: 1,
     backgroundColor: '#FFF',
-    paddingHorizontal: 16,
+    padding: 16,
+    marginBottom: 80,
   },
   inviteCardContainer: {
     marginTop: 10,

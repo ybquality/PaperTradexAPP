@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#FFF',
-    paddingHorizontal: 16,
+    padding: 16,
   },
   card: {
     backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 16,
-    marginTop: 12,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: 'rgba(243, 243, 243, 1)',
   },

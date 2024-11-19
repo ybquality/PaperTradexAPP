@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import StarTraders from '../../../../components/home/StarTraders';
 import Banner from '../../../../components/home/Banner';
+import HomeQuickMenu from '../../../../components/home/HomeQuickMenu';
+import HomeFAQ from '../../../../components/home/HomeFAQ';
 import InviteCard from '../../../../components/InviteCard';
 
 const HomeScreen = () => {
@@ -55,33 +57,15 @@ const HomeScreen = () => {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      {/* 替换静态横幅为轮播图组件 */}
+    <ScrollView 
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 轮播图 */}
       <Banner />
-
-      {/* 图片和文本按钮 */}
-      <View style={styles.menuContainer}>
-        <TouchableOpacity style={styles.menuButton}>
-          <Image source={require('../../../../../assets/GettingStarted.png')} style={styles.menuIcon} />
-          <Text style={styles.menuText}>新手入门</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuButton}>
-          <Image source={require('../../../../../assets/FAQ.png')} style={styles.menuIcon} />
-          <Text style={styles.menuText}>常见问题</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuButton}>
-          <Image source={require('../../../../../assets/ReferralRewards.png')} style={styles.menuIcon} />
-          <Text style={styles.menuText}>推荐奖励</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuButton}>
-          <Image source={require('../../../../../assets/Recharge.png')} style={styles.menuIcon} />
-          <Text style={styles.menuText}>充值</Text>
-        </TouchableOpacity>
-      </View>
-
+      {/* 快速菜单 */}
+      <HomeQuickMenu />
+      {/* 邀请返佣卡片 */}
       <InviteCard onPress={() => {
         // 处理邀请卡片点击事件
         navigation.navigate('Invite');
@@ -89,13 +73,7 @@ const HomeScreen = () => {
 
       {/* 明星交易员部分 */}
       <StarTraders data={starTradersData} />
-
-      {/* 常见问题部分 */}
-      <Text style={styles.sectionTitle}>常见问题</Text>
-      <View style={styles.faqContainer}>
-        <Text style={styles.faqText}>1. 如何充值？</Text>
-        <Text style={styles.faqText}>2. 如何提现？</Text>
-      </View>
+      <HomeFAQ />
     </ScrollView>
   );
 };
@@ -103,36 +81,8 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
     backgroundColor: '#fff',
-  },
-  menuContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 20,
-  },
-  menuButton: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  menuIcon: {
-    width: 40,
-    height: 40,
-    marginBottom: 5,
-  },
-  menuText: {
-    color: '#333',
-    fontSize: 14,
-  },
-  faqContainer: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 12,
-  },
-  faqText: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 10,
   },
 });
 

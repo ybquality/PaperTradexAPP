@@ -122,8 +122,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    padding: 16,
     gap: 16,
   },
   tab: {

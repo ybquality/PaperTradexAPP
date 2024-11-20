@@ -1,6 +1,7 @@
 // 首页
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, Text, Image, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { Tab, TabView, Text } from '@rneui/themed';
 
 import MyFollowCard from '../../../components/MyFollowCard';
 
@@ -8,8 +9,7 @@ import request from '../../../utils/request';
 
 const MyFollowsScreen = ({ navigation }) => {
   const [items, setItems] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState(null);
+  const [index, setIndex] = React.useState(0);
 
   const handleCancelFollowPress = async (orderId) => {
     // 在这里处理取消跟单的操作
@@ -34,23 +34,18 @@ const MyFollowsScreen = ({ navigation }) => {
 
       if (response.data.code === 200) {
         setItems(response.data.data);
-        setError(null);
-      } else if (response.data.code === 401) {
+      }else if (response.data.code === 400) {
         setItems(response.data.data);
-        setError(response.data.msg);
+        alert(response.data.msg)
       }
+
+      
     } catch (error) {
       console.error("Failed to fetch data:", error);
-      setItems([]);
-      setError('获取数据失败，请稍后重试');
     }
   }
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await fetchData();
-    setRefreshing(false);
-  }, []);
+
 
   useEffect(() => {
 
@@ -74,80 +69,57 @@ const MyFollowsScreen = ({ navigation }) => {
   );
   
   return (
-    <ScrollView 
-      style={styles.scrollContainer}
-      contentContainerStyle={styles.scrollContentContainer}
+    <ScrollView style={styles.scrollContainer}
       showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['#00D0AC']}
-          tintColor="#00D0AC"
-        />
-      }
+      nestedScrollEnabled={true} // 确保子组件可以滚动
     >
       <View style={styles.screen}>
-        <View style={[styles.contentContainer, !items.length && styles.emptyContentContainer]}>
-          {items.length > 0 ? (
-            <FlatList
-              data={items}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id.toString()}
-              scrollEnabled={false}
-              nestedScrollEnabled={true}
-            />
-          ) : (
-            <View style={styles.emptyContainer}>
-              <Image 
-                source={require('../../../../assets/icon/Empty.png')}
-                style={styles.emptyImage}
-              />
-              <Text style={styles.emptyText}>
-                {error ? error : '暂无跟单数据'}
-              </Text>
-            </View>
-          )}
-        </View>
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false} // 禁止 FlatList 自身滚动
+          nestedScrollEnabled={true}
+        />
+        {/* <MyFollowCard></MyFollowCard> */}
+          <Tab
+            value={index}
+            onChange={(e) => setIndex(e)}
+            indicatorStyle={{
+              backgroundColor: 'black',
+              height: 3,
+            }}
+
+          >
+            <Tab.Item title="当前持仓" titleStyle={{ fontSize: 12 }}/>
+            <Tab.Item title="历史持仓" titleStyle={{ fontSize: 12 }}/>
+          </Tab>
+          
+          <TabView value={index} onChange={setIndex} animationType="spring" style={{ flex: 1 }} >
+            <TabView.Item style={{ backgroundColor: 'red', flex: 1 }}>
+              <Text h1>当前持仓</Text>
+            </TabView.Item>
+            <TabView.Item style={{ backgroundColor: 'blue', flex: 1 }}>
+              <Text h1>历史持仓</Text>
+            </TabView.Item>
+          </TabView>
       </View>
     </ScrollView>
+
+
   );
 };
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    flex: 1,
-    backgroundColor: '#FFF',
-  },
-  scrollContentContainer: {
-    flexGrow: 1,
-    minHeight: '100%',
+    // flex: 1,
   },
   screen: {
     flex: 1,
     backgroundColor: '#FFF',
-    padding: 16,
-    marginBottom: 80,
+    paddingHorizontal: 16,
   },
-  contentContainer: {
-    flex: 1,
-  },
-  emptyContentContainer: {
-    minHeight: 400,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyImage: {
-    width: 120,
-    height: 120,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#666',
-  },
+
 });
 
 export default MyFollowsScreen;

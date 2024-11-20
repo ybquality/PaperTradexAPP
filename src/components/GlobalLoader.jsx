@@ -1,11 +1,12 @@
 // 页面加载动画
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Modal, StyleSheet, Animated } from 'react-native';
+import { View, Modal, StyleSheet, Animated, Easing } from 'react-native';
 import { loadingSubject } from '../utils/loadingManager';
 
 const GlobalLoader = () => {
   const [loading, setLoading] = useState(false);
-  const spinValue = useRef(new Animated.Value(0)).current;
+  const spinAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const subscription = loadingSubject.subscribe(
@@ -16,17 +17,55 @@ const GlobalLoader = () => {
 
   useEffect(() => {
     if (loading) {
-      Animated.loop(
-        Animated.timing(spinValue, {
+      // 重置动画值
+      spinAnim.setValue(0);
+      scaleAnim.setValue(1);
+
+      // 旋转动画
+      const startSpinAnimation = () => {
+        spinAnim.setValue(0);
+        Animated.timing(spinAnim, {
           toValue: 1,
-          duration: 2000,
+          duration: 1000,
+          easing: Easing.linear,
           useNativeDriver: true,
-        })
-      ).start();
+        }).start(() => {
+          if (loading) {
+            startSpinAnimation();
+          }
+        });
+      };
+
+      // 缩放动画
+      const pulseAnimation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(scaleAnim, {
+            toValue: 0.6,
+            duration: 500,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleAnim, {
+            toValue: 1,
+            duration: 500,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+
+      startSpinAnimation();
+      pulseAnimation.start();
+
+      return () => {
+        pulseAnimation.stop();
+        spinAnim.setValue(0);
+        scaleAnim.setValue(1);
+      };
     }
   }, [loading]);
 
-  const spin = spinValue.interpolate({
+  const spin = spinAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg']
   });
@@ -40,17 +79,23 @@ const GlobalLoader = () => {
       visible={loading}
       statusBarTranslucent={true}
     >
-      <View style={styles.modalBackground}>
-        <Animated.View style={[styles.threeBody, { transform: [{ rotate: spin }] }]}>
-          <View style={[styles.dot, styles.dot1]}>
-            <Animated.View style={styles.dotInner} />
-          </View>
-          <View style={[styles.dot, styles.dot2]}>
-            <Animated.View style={styles.dotInner} />
-          </View>
-          <View style={[styles.dot, styles.dot3]}>
-            <Animated.View style={styles.dotInner} />
-          </View>
+      <View style={styles.container}>
+        <Animated.View 
+          style={[
+            styles.loader,
+            {
+              transform: [{ rotate: spin }]
+            }
+          ]}
+        >
+          <Animated.View 
+            style={[
+              styles.innerDot,
+              {
+                transform: [{ scale: scaleAnim }]
+              }
+            ]}
+          />
         </Animated.View>
       </View>
     </Modal>
@@ -58,52 +103,28 @@ const GlobalLoader = () => {
 };
 
 const styles = StyleSheet.create({
-  modalBackground: {
+  container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'transparent',
   },
-  threeBody: {
-    width: 35,
-    height: 35,
-    position: 'relative',
+  loader: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: 'rgba(128, 255, 233, 0.2)',
+    borderTopColor: 'rgba(128, 255, 233, 1)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  dot: {
-    position: 'absolute',
-    height: '100%',
-    width: '30%',
-  },
-  dotInner: {
-    position: 'absolute',
-    width: '100%',
-    aspectRatio: 1,
-    backgroundColor: '#5D3FD3',
-    borderRadius: 50,
-  },
-  dot1: {
-    bottom: '5%',
-    left: 0,
-    transform: [
-      { rotate: '60deg' },
-      { translateY: 14 }  // 85% of height
-    ],
-  },
-  dot2: {
-    bottom: '5%',
-    right: 0,
-    transform: [
-      { rotate: '-60deg' },
-      { translateY: 14 }
-    ],
-  },
-  dot3: {
-    bottom: '-5%',
-    left: 0,
-    transform: [
-      { translateX: 20 }  // 116.666% of width
-    ],
-  },
+  innerDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(128, 255, 233, 0.3)',
+  }
 });
 
 export default GlobalLoader; 

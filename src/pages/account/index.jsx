@@ -128,7 +128,7 @@ const AccountScreen = ({ navigation }) => {
                 <View style={styles.leftSection}>
                     <Image
                         source={isLogin 
-                            ? { uri: 'https://example.com/avatar.png' }
+                            ? { uri: 'https://avatars.githubusercontent.com/u/65755259?v=4' }
                             : require('../../../assets/adaptive-icon.png')
                         }
                         style={styles.avatar}
@@ -150,7 +150,7 @@ const AccountScreen = ({ navigation }) => {
                             navigation.navigate('AccountStack', { screen: 'UserInfo' });
                         }}
                     >
-                        <Icon name="chevron-right" type="font-awesome" color="#A9A9A9" size={20} />
+                        <Icon name="chevron-right" type="feather" color="rgba(255, 255, 255, 0.6)" size={24} weight="bold" />
                     </TouchableOpacity>
                 )}
             </View>
@@ -177,7 +177,7 @@ const AccountScreen = ({ navigation }) => {
           {/* 新用户专享和交易账户按钮 */}
           <View style={[{ flexDirection: 'row' }, styles.buttonContainer]}>
             <View style={styles.newUserGiftView}>
-              <Icon name="gift" type="font-awesome" color="#fff" size={16} />
+              <Icon name="gift" type="font-awesome" color="rgba(255, 228, 133, 1)" size={16} />
               <Text style={styles.newUserGiftViewText}>新人专享</Text>
               <TouchableOpacity style={styles.newUserGiftViewButton} onPress={testFunction}>
                 <Text style={styles.newUserGiftViewButtonText}>领取</Text>
@@ -280,6 +280,7 @@ const AccountScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   gradientBackground: {
     flex: 1,
@@ -300,23 +301,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 48,
+    height: 48,
     borderRadius: 40,
+    borderWidth: 0.5,
+    borderColor: 'rgba(0, 0, 0, 0.4)',
     resizeMode: 'cover',
   },
   textContainer: {
-    marginLeft: 16,
+    marginLeft: 8,
     flex: 1,
   },
   username: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'rgba(255, 255, 255, 1)',
   },
   uid: {
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: '400',
     color: 'rgba(255, 255, 255, 0.6)',
     maxWidth: 200,
   },
@@ -334,7 +337,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 40,
-    marginTop: 16,
+    // marginTop: 16,
   },
   newUserGiftViewText: {
     color: 'rgba(226, 203, 140, 1)',
@@ -346,6 +349,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 32,
+    minHeight: 24,
     marginLeft: 10
   },
   newUserGiftViewButtonText: {
@@ -362,7 +366,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 40,
-    marginTop: 16,
+    // marginTop: 16,
   },
   transactionAccountViewText: {
     color: 'rgba(255, 255, 255, 1)',
@@ -374,6 +378,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 32,
+    minHeight: 24,
     marginLeft: 10
   },
   transactionAccountViewButtonText: {
@@ -382,10 +387,10 @@ const styles = StyleSheet.create({
   },
 
   VIPcardContainer: {
-    borderRadius: 10,
-    padding: 15,
+    borderRadius: 16,
+    padding: 16,
     marginHorizontal: 16,
-    marginVertical: 10,
+    marginVertical: 12,
     position: 'relative',
     overflow: 'hidden',
   },
@@ -430,7 +435,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    marginTop: 15,
+    marginTop: 5,
   },
   detailBox: {
     flex: 1,
@@ -504,11 +509,13 @@ const styles = StyleSheet.create({
   settingsSection: {
     position: 'relative',
     backgroundColor: '#fff',
-    paddingTop: 20,
+    paddingTop: 12,
     paddingBottom: 50,
-    marginTop: 20,
+    marginTop: 12,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    borderWidth: 0.5,
+    borderColor: 'rgba(0, 0, 0, 0.4)',
   },
   settingsTitle: {
     fontSize: 16,

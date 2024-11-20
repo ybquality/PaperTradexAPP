@@ -5,43 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import request from '../../utils/request';
 import api from '../../utils/Interceptor';
 import { ACCOUNT_LOGIN, ACCOUNT_LOGIN_PHONE, GET_VERIFY_CODE } from '../../utils/pathMap';
-
-
-const handleUsernamePasswordLogin = async (username, password, navigator) => {
-  try {
-      const response = await api.post(ACCOUNT_LOGIN, {
-          username,
-          password,
-      });
-      
-      if (response.data.code == 200) {
-          alert(response.data.msg);
-          const accessToken = response.data.data.accessToken;
-          const refreshToken = response.data.data.refreshToken;
-          const userName = response.data.data.userName;
-          const Uid = response.data.data.Uid;
-
-          // 存储 token
-          await AsyncStorage.multiSet([
-            ['accessToken', accessToken],
-            ['refreshToken', refreshToken],
-            ['userName', userName],
-            ['Uid', Uid],
-            ['isLogin', 'true']
-          ]);
-
-          // 读取存储的 accessToken
-          const storedAccessToken = await AsyncStorage.getItem('accessToken');
-          console.log('accessToken:', storedAccessToken);
-          navigator.goBack();
-      }else{
-        alert(response.data.msg);
-      }
-      console.log(response.data);
-  } catch (error) {
-      console.log('Error:', error);
-  }
-};
+import { Button, Dialog } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function LoginScreen({ navigation }) {
@@ -54,6 +19,11 @@ export default function LoginScreen({ navigation }) {
   
   const [isPhoneLogin, setIsPhoneLogin] = useState(true); // 控制切换
   const [countdown, setCountdown] = useState(0); // 移动到组件内部
+  const [isLoading, setIsLoading] = useState(false); // 添加加载状态
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // 修改手机号校验函数，验证前几位格式
   const isValidPhone = (phone) => {
@@ -68,6 +38,7 @@ export default function LoginScreen({ navigation }) {
       return;
     }
 
+    setIsLoading(true); // 开始加载
     try {
       const response = await api.post(GET_VERIFY_CODE, {
         phone,
@@ -91,7 +62,6 @@ export default function LoginScreen({ navigation }) {
       } else {
         alert(response.data.msg);
       }
-      console.log(response.data);
     } catch (error) {
       // 添加网络错误处理
       if (error.message === 'Network Error') {
@@ -100,44 +70,43 @@ export default function LoginScreen({ navigation }) {
         alert('发送验证码失败，请稍后重试');
       }
       console.log('Error:', error);
+    } finally {
+      setIsLoading(false); // 结束加载
     }
   }
 
   const handlePhoneLogin = async (phone, verifyCode, navigator) => {
+    setLoginLoading(true);
+    setDialogVisible(true);
+    setErrorMessage('');
     try {
-        console.log(1);
-      
-        const response = await api.post(ACCOUNT_LOGIN_PHONE, {
-            phone,
-            verifyCode,
-        });
-        console.log(2);
-        if (response.data.code === 200) {
-            alert(response.data.msg);
-            const accessToken = response.data.data.accessToken;
-            const refreshToken = response.data.data.refreshToken;
-            const userName = response.data.data.userName;
-            const Uid = response.data.data.Uid;
+      const response = await api.post(ACCOUNT_LOGIN_PHONE, {
+        phone,
+        verifyCode,
+      });
 
-            // 存储 token
-            await AsyncStorage.multiSet([
-              ['accessToken', accessToken],
-              ['refreshToken', refreshToken],
-              ['userName', userName],
-              ['Uid', Uid],
-              ['isLogin', 'true']
-            ]);
+      if (response.data.code === 200) {
+        const { accessToken, refreshToken, userName, Uid } = response.data.data;
+        // 存储 token
+        await AsyncStorage.multiSet([
+          ['accessToken', accessToken],
+          ['refreshToken', refreshToken],
+          ['userName', userName],
+          ['Uid', Uid],
+          ['isLogin', 'true']
+        ]);
 
-            // 读取存储的 accessToken
-            const storedAccessToken = await AsyncStorage.getItem('accessToken');
-            console.log('accessToken:', storedAccessToken);
-            navigator.goBack();
-        }else{
-          alert(response.data.msg);
-        }
+        setLoginSuccess(true);
+      } else {
+        setErrorMessage(response.data.msg);
+        setLoginSuccess(false);
+      }
     } catch (error) {
-        console.log('Error:', error);
-        alert('登录失败', response.data.msg);
+      console.log('Error:', error);
+      setErrorMessage('登录失败，请稍后重试');
+      setLoginSuccess(false);
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -148,6 +117,45 @@ export default function LoginScreen({ navigation }) {
 
   const isPasswordLoginValid = () => {
     return username.length > 0 && password.length > 0;
+  };
+
+  const handleConfirm = () => {
+    setDialogVisible(false);
+    if (loginSuccess) {
+      navigation.goBack();
+    }
+  };
+  const handleUsernamePasswordLogin = async (username, password, navigator) => {
+    setLoginLoading(true);
+    setDialogVisible(true);
+    setErrorMessage('');
+    try {
+      const response = await api.post(ACCOUNT_LOGIN, {
+        username,
+        password,
+      });
+      
+      if (response.data.code == 200) {
+        const { accessToken, refreshToken, userName, Uid } = response.data.data;
+        await AsyncStorage.multiSet([
+          ['accessToken', accessToken],
+          ['refreshToken', refreshToken],
+          ['userName', userName],
+          ['Uid', Uid],
+          ['isLogin', 'true']
+        ]);
+        setLoginSuccess(true);
+      } else {
+        setErrorMessage(response.data.msg);
+        setLoginSuccess(false);
+      }
+    } catch (error) {
+      console.log('Error:', error);
+      setErrorMessage('登录失败，请稍后重试');
+      setLoginSuccess(false);
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
   return (
@@ -180,18 +188,17 @@ export default function LoginScreen({ navigation }) {
                 placeholder="请输入验证码"
                 keyboardType="number-pad"
               />
-              <TouchableOpacity 
-                style={[
-                  styles.codeButton,
-                  countdown > 0 && { backgroundColor: '#cccccc' }
-                ]} 
+              <Button
+                loading={isLoading}
+                disabled={countdown > 0 || isLoading}
+                title={countdown > 0 ? `${countdown}s` : '获取验证码'}
                 onPress={() => sendVerifyCode(phone)}
-                disabled={countdown > 0}
-              >
-                <Text style={styles.codeButtonText}>
-                  {countdown > 0 ? `${countdown}s` : '获取验证码'}
-                </Text>
-              </TouchableOpacity>
+                buttonStyle={[
+                  styles.codeButton,
+                  countdown > 0 && styles.codeButtonDisabled
+                ]}
+                titleStyle={styles.codeButtonText}
+              />
             </View>
           </View>
         </>
@@ -262,6 +269,39 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.link}>注册</Text>
         </TouchableOpacity>
       </View>
+
+      <Dialog
+        isVisible={dialogVisible}
+        overlayStyle={styles.dialog}
+      >
+        <View style={styles.dialogContent}>
+          {loginLoading ? (
+            <Dialog.Loading />
+          ) : loginSuccess ? (
+            <>
+              <Icon name="check-circle" size={50} color="#00BFA5" />
+              <Text style={styles.dialogText}>登录成功</Text>
+              <Button
+                title="确认"
+                onPress={handleConfirm}
+                buttonStyle={styles.dialogButton}
+                containerStyle={styles.dialogButtonContainer}
+              />
+            </>
+          ) : (
+            <>
+              <Icon name="cancel" size={50} color="#FF6B6B" />
+              <Text style={styles.dialogErrorText}>{errorMessage}</Text>
+              <Button
+                title="确认"
+                onPress={handleConfirm}
+                buttonStyle={styles.dialogButton}
+                containerStyle={styles.dialogButtonContainer}
+              />
+            </>
+          )}
+        </View>
+      </Dialog>
     </SafeAreaView>
   );
 }
@@ -307,6 +347,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 25,
+    minWidth: 100, // 添加最小宽度确保按钮大小一致
+  },
+  codeButtonDisabled: {
+    backgroundColor: '#cccccc',
   },
   codeButtonText: {
     color: '#fff',
@@ -348,5 +392,33 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: '#cccccc',
+  },
+  dialog: {
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+  },
+  dialogContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dialogText: {
+    fontSize: 18,
+    marginVertical: 20,
+    color: '#333',
+  },
+  dialogButton: {
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    borderRadius: 25,
+    paddingVertical: 12,
+  },
+  dialogButtonContainer: {
+    width: '100%',
+
+  },
+  dialogErrorText: {
+    fontSize: 16,
+    marginVertical: 20,
+    textAlign: 'center',
   },
 });

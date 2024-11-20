@@ -1,8 +1,38 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
+import Svg, { Path } from 'react-native-svg';
 
-const ArticleUpdatesCard2 = ({ username, description, avatarUrl, time }) => {
+const ShareIconSvg = () => (
+  <Svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <Path
+      d="M10.64 2.27979C11.01 2.27979 11.32 2.57979 11.32 2.95979C11.32 3.32979 11.02 3.63979 10.64 3.63979C6.98996 3.63979 4.02996 6.59978 4.02996 10.2498C4.02996 13.8998 6.98996 16.8598 10.64 16.8598C14.29 16.8598 17.25 13.8998 17.25 10.2498C17.25 9.87979 17.55 9.56979 17.93 9.56979C18.3 9.56979 18.61 9.86979 18.61 10.2498C18.61 14.6498 15.05 18.2098 10.65 18.2098C6.24996 18.2098 2.68996 14.6498 2.68996 10.2498C2.67996 5.83978 6.23996 2.27979 10.64 2.27979ZM14.74 5.65979C14.49 5.39979 14.49 4.97978 14.75 4.72978C15.01 4.46978 15.42 4.46978 15.69 4.72978L16.85 5.89979C17.2 6.24978 17.2 6.81979 16.85 7.16979L15.68 8.33979C15.6183 8.40159 15.545 8.45062 15.4644 8.48407C15.3837 8.51753 15.2973 8.53475 15.21 8.53475C15.1227 8.53475 15.0362 8.51753 14.9555 8.48407C14.8749 8.45062 14.8016 8.40159 14.74 8.33979C14.6782 8.27811 14.6291 8.20485 14.5957 8.1242C14.5622 8.04355 14.545 7.9571 14.545 7.86979C14.545 7.78247 14.5622 7.69602 14.5957 7.61537C14.6291 7.53472 14.6782 7.46146 14.74 7.39979L14.94 7.19979H14.08C11.75 7.19979 10.95 8.18979 10.95 11.1998C10.95 11.5698 10.65 11.8598 10.29 11.8598C9.91996 11.8598 9.62996 11.5598 9.62996 11.1998C9.62996 7.47979 10.99 5.86979 14.08 5.86979H14.94L14.74 5.65979Z"
+      fill="rgba(0, 0, 0, 0.4)"
+    />
+  </Svg>
+);
+const CommentIconSvg = () => (
+  <Svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <Path
+      d="M9.46525 17.7871L6.6895 15.0889H2.5015C2.30424 15.0892 2.10886 15.0517 1.92655 14.9787C1.74425 14.9056 1.57861 14.7983 1.43912 14.6631C1.29963 14.5278 1.18905 14.3672 1.11369 14.1904C1.03834 14.0136 0.999705 13.8242 1 13.6329L1.0075 3.45529C1.0075 2.64946 1.675 2 2.509 2H17.4993C18.3288 2 19.0007 2.64946 19 3.45602L18.9925 13.6343C18.9925 14.438 18.3205 15.0889 17.4918 15.0889H13.312L10.525 17.7871C10.4554 17.8546 10.3728 17.9081 10.2819 17.9447C10.191 17.9812 10.0935 18 9.99513 18C9.89671 18 9.79927 17.9812 9.70835 17.9447C9.61743 17.9081 9.53483 17.8546 9.46525 17.7871ZM17.4932 13.6329L17.5 3.45529C17.5 3.45529 2.5075 3.45311 2.5075 3.45602C2.5075 3.45602 2.50075 13.6336 2.50225 13.6336H7C7.19875 13.6336 7.39 13.71 7.53025 13.8467L9.997 16.2438L12.472 13.846C12.5417 13.7785 12.6244 13.7251 12.7153 13.6886C12.8063 13.6522 12.9038 13.6335 13.0023 13.6336H17.4932V13.6329ZM5.875 10.0001C5.57663 10.0001 5.29048 9.88517 5.07951 9.68058C4.86853 9.476 4.75 9.19852 4.75 8.90918C4.75 8.61985 4.86853 8.34237 5.07951 8.13779C5.29048 7.9332 5.57663 7.81826 5.875 7.81826C6.17337 7.81826 6.45952 7.9332 6.6705 8.13779C6.88147 8.34237 7 8.61985 7 8.90918C7 9.19852 6.88147 9.476 6.6705 9.68058C6.45952 9.88517 6.17337 10.0001 5.875 10.0001ZM10 10.0001C9.70163 10.0001 9.41548 9.88517 9.20451 9.68058C8.99353 9.476 8.875 9.19852 8.875 8.90918C8.875 8.61985 8.99353 8.34237 9.20451 8.13779C9.41548 7.9332 9.70163 7.81826 10 7.81826C10.2984 7.81826 10.5845 7.9332 10.7955 8.13779C11.0065 8.34237 11.125 8.61985 11.125 8.90918C11.125 9.19852 11.0065 9.476 10.7955 9.68058C10.5845 9.88517 10.2984 10.0001 10 10.0001ZM14.125 10.0001C13.8266 10.0001 13.5405 9.88517 13.3295 9.68058C13.1185 9.476 13 9.19852 13 8.90918C13 8.61985 13.1185 8.34237 13.3295 8.13779C13.5405 7.9332 13.8266 7.81826 14.125 7.81826C14.4234 7.81826 14.7095 7.9332 14.9205 8.13779C15.1315 8.34237 15.25 8.61985 15.25 8.90918C15.25 9.19852 15.1315 9.476 14.9205 9.68058C14.7095 9.88517 14.4234 10.0001 14.125 10.0001Z"
+      fill="rgba(0, 0, 0, 0.4)"
+    />
+  </Svg>
+);
+const LikeIconSvg = () => (
+  <Svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <Path
+      d="M1.87465 17.5002C1.52861 17.5002 1.24976 17.2214 1.24976 16.8753V8.12343C1.24976 7.77739 1.52861 7.49854 1.87465 7.49854C2.22069 7.49854 2.49955 7.77739 2.49955 8.12343V16.872C2.49955 17.2214 2.22069 17.5002 1.87465 17.5002Z"
+      fill="#00D0AC"
+    />
+    <Path
+      d="M16.8788 7.49866H13.1799C13.4486 6.87377 13.7577 5.25777 13.5797 3.78625C13.4386 2.61709 12.7498 1.72006 11.7487 1.37738C11.0062 1.1254 10.22 1.24971 9.7967 1.67975C9.29276 2.19377 9.05758 3.16135 8.80561 4.18605C8.64098 4.85462 8.473 5.55006 8.26134 5.90955C7.65325 6.94432 6.37994 7.41467 6.1246 7.49866H4.37087C4.02482 7.49866 3.74597 7.77751 3.74597 8.12356V16.8721C3.74597 17.2181 4.02482 17.497 4.37087 17.497H6.06077C6.58488 17.7792 8.53011 18.7468 10.7844 18.7468H15.0008C15.6962 18.7468 16.8923 18.478 17.3391 17.7355C17.7893 16.983 18.7435 10.1427 18.7435 9.38678C18.7468 8.34529 17.7255 7.49866 16.8788 7.49866ZM16.2741 17.0938C16.18 17.2517 15.5619 17.497 15.0075 17.497H10.7878C8.55699 17.497 6.58488 16.2472 6.56472 16.2472C6.47065 16.2472 6.3665 16.2472 6.24891 16.2472H4.99912V8.74845H6.24891C6.29931 8.74845 6.34634 8.73165 6.39338 8.71821C6.40346 8.71485 6.41353 8.71821 6.42361 8.71485C6.42697 8.71149 6.44041 8.70814 6.45721 8.70478C6.47401 8.69806 6.49081 8.69806 6.5076 8.68798C6.88725 8.56367 8.50996 7.95893 9.34315 6.54116C9.64552 6.02713 9.8303 5.27457 10.0218 4.48169C10.1999 3.74257 10.425 2.82203 10.687 2.55661C10.7475 2.50622 11.0398 2.43903 11.406 2.58349C11.705 2.70108 12.2257 3.03369 12.3366 3.94415C12.5819 5.9465 11.7218 7.85142 11.7151 7.87158C11.6244 8.06644 11.6412 8.28482 11.7554 8.46288C11.8696 8.64094 12.0678 8.74509 12.2795 8.74509H16.8755C17.0468 8.74509 17.4937 9.03738 17.4937 9.38678C17.497 10.2233 16.5328 16.5025 16.2741 17.0938Z"
+      fill="#00D0AC"
+    />
+  </Svg>
+);
+
+const ArticleUpdatesCard2 = ({ username, description, avatarUrl, time, source, images }) => {
   return (
     <View style={styles.card}>
       {/* 卡片顶部部分 */}
@@ -10,28 +40,49 @@ const ArticleUpdatesCard2 = ({ username, description, avatarUrl, time }) => {
         <Avatar
           rounded
           source={{ uri: avatarUrl }}
-          size="medium"
+          size={32}
+          containerStyle={styles.avatar}
         />
         <View style={styles.headerText}>
           <Text style={styles.username}>{username}</Text>
-          <Text style={styles.time}>{time}</Text>
+          <Text style={styles.source}>{source}</Text>
         </View>
         <TouchableOpacity style={styles.moreIcon}>
-          <Icon name="more-horiz" type="material" />
+          <Icon name="more-horiz" type="material" color="#999"  size={20} />
         </TouchableOpacity>
       </View>
 
       {/* 描述文字 */}
       <Text style={styles.description}>{description}</Text>
 
+      {/* 图片展示区域 */}
+      {images && images.length > 0 && (
+        <View style={styles.imageContainer}>
+          {images.map((imageUrl, index) => (
+            <Image
+              key={index}
+              source={{ uri: imageUrl }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ))}
+        </View>
+      )}
+
       {/* 卡片底部部分 */}
       <View style={styles.cardFooter}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="thumb-up" type="material" color="#00C853" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="share" type="material" color="#00C853" />
-        </TouchableOpacity>
+        <Text style={styles.time}>{time}</Text>
+        <View style={styles.footerIcons}>
+          <TouchableOpacity style={styles.iconButton}>
+            <ShareIconSvg />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <CommentIconSvg />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <LikeIconSvg />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -40,16 +91,11 @@ const ArticleUpdatesCard2 = ({ username, description, avatarUrl, time }) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderRadius: 10, // 圆角边框
-    borderColor: '#E0E0E0', // 边框颜色改为灰色
-    borderWidth: 1, // 边框宽度
-    padding: 10,
-    marginVertical: 10,
-    // 移除阴影效果
-    shadowColor: 'transparent',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0,
-    elevation: 0,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(243, 243, 243, 1)',
+    padding: 16,
+    marginBottom: 12,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -57,30 +103,60 @@ const styles = StyleSheet.create({
   },
   headerText: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 8,
   },
   username: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  time: {
     fontSize: 12,
-    color: '#999',
+    fontWeight: '700',
+  },
+  source: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.4)',
   },
   moreIcon: {
     padding: 5,
   },
   description: {
-    marginVertical: 10,
-    fontSize: 14,
+    marginVertical: 12,
+    fontSize: 12,
+    fontWeight: '400',
     color: '#333',
   },
   cardFooter: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  footerIcons: {
+    flexDirection: 'row',
+    gap: 24,
+  },
+  time: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.4)',
   },
   iconButton: {
-    marginLeft: 15,
+    // padding: 4,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginVertical: 10,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderWidth: 0.5,
+    borderColor: 'rgba(0, 0, 0, 0.4)',
   },
 });
 

@@ -1,15 +1,34 @@
 // 首页
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, ScrollView } from 'react-native';
-import { Tab, TabView, Text } from '@rneui/themed';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, FlatList, StyleSheet, RefreshControl, Text, TouchableOpacity } from 'react-native';
 
 import MyFollowCard from '../../../components/MyFollowCard';
+import HistoryPositions from '../../../components/copyTrading/HistoryPositions';
 
 import request from '../../../utils/request';
 
+// 历史持仓模拟数据
+const mockHistoryPositions = [
+  {
+    symbol: 'BTC/USDT',
+    direction: 'LONG',
+    leverage: 20,
+    openTime: '2024-11-118 10:00',
+    closeTime: '2024-11-19 15:30',
+    profit: '13700',
+    openPrice: '90400',
+    closePrice: '91150',
+    amount: '18.2',
+    amountUnit: '个',
+    fee: '165',
+    traderName: '老恶魔',
+  }
+];
+
 const MyFollowsScreen = ({ navigation }) => {
   const [items, setItems] = useState([]);
-  const [index, setIndex] = React.useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [index, setIndex] = useState(0);
 
   const handleCancelFollowPress = async (orderId) => {
     // 在这里处理取消跟单的操作
@@ -45,7 +64,11 @@ const MyFollowsScreen = ({ navigation }) => {
     }
   }
 
-
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }, []);
 
   useEffect(() => {
 
@@ -55,6 +78,7 @@ const MyFollowsScreen = ({ navigation }) => {
   }, [navigation]);
 
   const renderItem = ({ item }) => (
+    // 当前跟单交易员卡片
     <MyFollowCard
       navigation={navigation}
       orderId={item.id}
@@ -69,57 +93,108 @@ const MyFollowsScreen = ({ navigation }) => {
   );
   
   return (
-    <ScrollView style={styles.scrollContainer}
-      showsVerticalScrollIndicator={false}
-      nestedScrollEnabled={true} // 确保子组件可以滚动
-    >
-      <View style={styles.screen}>
-        <FlatList
-          data={items}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          scrollEnabled={false} // 禁止 FlatList 自身滚动
-          nestedScrollEnabled={true}
-        />
-        {/* <MyFollowCard></MyFollowCard> */}
-          <Tab
-            value={index}
-            onChange={(e) => setIndex(e)}
-            indicatorStyle={{
-              backgroundColor: 'black',
-              height: 3,
-            }}
-
-          >
-            <Tab.Item title="当前持仓" titleStyle={{ fontSize: 12 }}/>
-            <Tab.Item title="历史持仓" titleStyle={{ fontSize: 12 }}/>
-          </Tab>
-          
-          <TabView value={index} onChange={setIndex} animationType="spring" style={{ flex: 1 }} >
-            <TabView.Item style={{ backgroundColor: 'red', flex: 1 }}>
-              <Text h1>当前持仓</Text>
-            </TabView.Item>
-            <TabView.Item style={{ backgroundColor: 'blue', flex: 1 }}>
-              <Text h1>历史持仓</Text>
-            </TabView.Item>
-          </TabView>
-      </View>
-    </ScrollView>
-
-
+    <View style={styles.screen}>
+      <FlatList
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#00D0AC']} // Android
+            tintColor="#00D0AC" // iOS
+          />
+        }
+        ListFooterComponent={
+          <View style={styles.tabSection}>
+            <View style={styles.tabContainer}>
+              <TouchableOpacity 
+                style={[
+                  styles.tabItem, 
+                  index === 0 && styles.tabItemActive
+                ]}
+                onPress={() => setIndex(0)}
+              >
+                <Text style={[
+                  styles.tabText,
+                  index === 0 && styles.tabTextActive
+                ]}>
+                  当前持仓
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[
+                  styles.tabItem,
+                  index === 1 && styles.tabItemActive
+                ]}
+                onPress={() => setIndex(1)}
+              >
+                <Text style={[
+                  styles.tabText,
+                  index === 1 && styles.tabTextActive
+                ]}>
+                  历史持仓
+                </Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.tabContent}>
+              {index === 0 ? (
+                <Text style={styles.tempText}>当前持仓内容</Text>
+              ) : (
+                <HistoryPositions data={mockHistoryPositions} />
+              )}
+            </View>
+          </View>
+        }
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    // flex: 1,
-  },
   screen: {
     flex: 1,
     backgroundColor: '#FFF',
-    paddingHorizontal: 16,
+    padding: 16,
   },
-
+  tabSection: {
+    marginTop: 20,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  tabItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 100,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: 'transparent', 
+  },
+  tabItemActive: {
+    backgroundColor: 'transparent',
+    borderColor: 'rgba(0, 0, 0, 1)', 
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#999',
+  },
+  tabTextActive: {
+    color: 'rgba(0, 0, 0, 1)',
+    fontWeight: '700',
+  },
+  tabContent: {
+    minHeight: 100,
+    marginBottom: 80,
+  },
+  tempText: {
+    fontSize: 14,
+    color: '#999',
+  },
 });
 
 export default MyFollowsScreen;

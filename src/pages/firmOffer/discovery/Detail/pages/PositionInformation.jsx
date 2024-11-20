@@ -8,6 +8,14 @@ const PositionInformationScreen = ({ route, navigation }) => {
   const [items, setItems] = useState([]);
 
   const InfoCard = ({ item }) => {
+    // 添加格式化函数
+    const formatToInteger = (number) => {
+      if (typeof number === 'string') {
+        return Math.floor(parseFloat(number)).toString();
+      }
+      return Math.floor(number).toString();
+    };
+
     return (
       <View style={styles.card}>
         {/* 第一行 */}
@@ -42,7 +50,9 @@ const PositionInformationScreen = ({ route, navigation }) => {
           </View>
           <View style={[styles.infoItem, styles.centerAlign]}>
             <Text style={[styles.label, styles.textCenter]}>保证金</Text>
-            <Text style={[styles.value, styles.textCenter]}>{item.margin} {item.marginUnit}</Text>
+            <Text style={[styles.value, styles.textCenter]}>
+              {formatToInteger(item.margin)} {item.marginUnit}
+            </Text>
           </View>
           <View style={[styles.infoItem, styles.rightAlign]}>
             <Text style={[styles.label, styles.textRight]}>仓位价值</Text>
@@ -58,7 +68,9 @@ const PositionInformationScreen = ({ route, navigation }) => {
           </View>
           <View style={[styles.infoItem, styles.centerAlign]}>
             <Text style={[styles.label, styles.textCenter]}>预计爆仓价</Text>
-            <Text style={[styles.value, styles.textCenter]}>${item.liquiPrice}</Text>
+            <Text style={[styles.value, styles.textCenter]}>
+              ${formatToInteger(item.liquiPrice)}
+            </Text>
           </View>
           <View style={styles.infoItem}></View>
         </View>

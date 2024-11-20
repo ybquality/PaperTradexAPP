@@ -11,6 +11,7 @@ const DetailScreen = ({ route, navigation }) => {
     console.log('DetailScreen:', id);
     
 
+    const [isSubscribed, setIsSubscribed] = useState(false);
     const [data, setData] = useState(null);  // 保存 API 请求返回的数据
     const [loading, setLoading] = useState(true);  // 加载状态
     const [error, setError] = useState(null);  // 错误信息
@@ -36,8 +37,18 @@ const DetailScreen = ({ route, navigation }) => {
                     }
                 });
 
-                // console.log('Data fetched:', response.data);
-                setData(response.data);  // 保存返回的数据
+                if (response.data.code === 200){
+                    
+                    const userInfo = response.data.data.userInfo;
+                    const isSubscribed = response.data.data.isSubscribed;
+                    setData(userInfo);
+                    setIsSubscribed(isSubscribed);
+                    console.log(isSubscribed);
+                    
+                } else {
+                    console.log('Error fetching data:', response.data.msg);
+                }
+
             } catch (err) {
                 console.error('Error fetching data:', err.message || err);
                 setError('Failed to fetch data');  // 保存错误信息
@@ -72,10 +83,11 @@ const DetailScreen = ({ route, navigation }) => {
         await request.post('/api/user/addSubscribeCopyer', { id })
         .then(response => {
             const responseData = response.data;
-            console.log(responseData);
+            // console.log(responseData);
             if (responseData.code === 200) {
                 // 显示提示信息
                 alert('订阅成功');
+                setIsSubscribed(true)
             } else {
                 // 显示错误信息
                 alert('Error: '+ responseData.msg);
@@ -86,6 +98,31 @@ const DetailScreen = ({ route, navigation }) => {
             console.error(error);
         });
 
+    }
+    
+    const cancelSubscribeCopyer = async ( id ) => {
+        await request.delete('/api/user/delSubscribeCopyer', { 
+            headers: {
+            'Content-Type': 'application/json', // 设置请求头
+            },
+            data: { id }, // 使用 `data` 传递 JSON 数据 
+        })
+        .then(response => {
+            const responseData = response.data;
+            console.log(responseData);
+            if (responseData.code === 200) {
+                // 显示提示信息
+                alert('取消订阅成功');
+                setIsSubscribed(false)
+            } else {
+                // 显示错误信息
+                alert('Error: '+ responseData.msg);
+            }
+
+        })
+        .catch(error => {
+            console.error(error);
+        });
     }
 
     // 页面渲染
@@ -107,9 +144,23 @@ const DetailScreen = ({ route, navigation }) => {
             </View>
 
             <View style={styles.bottomSection}>
-                <TouchableOpacity style={[styles.button, styles.leftButton]} onPress={() => addSubscribeCopyer(id)}>
+
+                {!isSubscribed ? (
+                <TouchableOpacity
+                    style={[styles.button, styles.leftButton]}
+                    onPress={() => addSubscribeCopyer(id)}
+                >
                     <Text style={styles.leftButtonText}>订阅</Text>
                 </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                    style={[styles.button, styles.leftButton]}
+                    onPress={() => cancelSubscribeCopyer(id)}
+                >
+                    <Text style={styles.leftButtonText}>取消订阅</Text>
+                </TouchableOpacity>
+                )}
+                
                 <View style={styles.buttonSpacer} /> 
                 <TouchableOpacity style={[styles.button, styles.rightButton]} onPress={() => navigation.navigate('DetailStack', {screen: 'CopyTrade', params: {traderId: id, nickName: data?.nickName, avatarUri: data?.userPic}})}>
                     <Text style={styles.rightButtonText}>立即跟单</Text>

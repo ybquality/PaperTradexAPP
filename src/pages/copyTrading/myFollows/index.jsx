@@ -1,6 +1,7 @@
 // 首页
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { Tab, TabView, Text } from '@rneui/themed';
 
 import MyFollowCard from '../../../components/MyFollowCard';
 
@@ -8,6 +9,7 @@ import request from '../../../utils/request';
 
 const MyFollowsScreen = ({ navigation }) => {
   const [items, setItems] = useState([]);
+  const [index, setIndex] = React.useState(0);
 
   const handleCancelFollowPress = async (orderId) => {
     // 在这里处理取消跟单的操作
@@ -67,25 +69,57 @@ const MyFollowsScreen = ({ navigation }) => {
   );
   
   return (
-    <View style={styles.screen}>
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        scrollEnabled={false}
-        nestedScrollEnabled={true}
-      />
-      {/* <MyFollowCard></MyFollowCard> */}
-    </View>
+    <ScrollView style={styles.scrollContainer}
+      showsVerticalScrollIndicator={false}
+      nestedScrollEnabled={true} // 确保子组件可以滚动
+    >
+      <View style={styles.screen}>
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false} // 禁止 FlatList 自身滚动
+          nestedScrollEnabled={true}
+        />
+        {/* <MyFollowCard></MyFollowCard> */}
+          <Tab
+            value={index}
+            onChange={(e) => setIndex(e)}
+            indicatorStyle={{
+              backgroundColor: 'black',
+              height: 3,
+            }}
+
+          >
+            <Tab.Item title="当前持仓" titleStyle={{ fontSize: 12 }}/>
+            <Tab.Item title="历史持仓" titleStyle={{ fontSize: 12 }}/>
+          </Tab>
+          
+          <TabView value={index} onChange={setIndex} animationType="spring" style={{ flex: 1 }} >
+            <TabView.Item style={{ backgroundColor: 'red', flex: 1 }}>
+              <Text h1>当前持仓</Text>
+            </TabView.Item>
+            <TabView.Item style={{ backgroundColor: 'blue', flex: 1 }}>
+              <Text h1>历史持仓</Text>
+            </TabView.Item>
+          </TabView>
+      </View>
+    </ScrollView>
+
+
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    // flex: 1,
+  },
   screen: {
     flex: 1,
     backgroundColor: '#FFF',
     paddingHorizontal: 16,
   },
+
 });
 
 export default MyFollowsScreen;

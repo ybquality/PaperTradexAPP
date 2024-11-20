@@ -187,7 +187,7 @@ const AccountScreen = ({ navigation }) => {
             <View style={styles.transactionAccountView}>
               <Icon name="link" type="font-awesome" color="#fff" size={16} />
               <Text style={styles.transactionAccountViewText}>交易账户</Text>
-              <TouchableOpacity style={styles.transactionAccountViewButton}>
+              <TouchableOpacity style={styles.transactionAccountViewButton} onPress={() => navigation.navigate('DetailStack', { screen: 'accessTradingAccount' })}>
                 <Text style={styles.transactionAccountViewButtonText}>接入</Text>
               </TouchableOpacity>
             </View>

@@ -15,6 +15,7 @@ import RegisterScreen from './Register';
 import AssetsDetail from './assets/';
 import AccountManage from './assets/AccountManage';
 import UserInfoScreen from './UserInfo';
+import BuyVipScreen from './payProgram/buyVip';
 
 const Stack = createStackNavigator();
 
@@ -122,6 +123,14 @@ const AccountStackNavigator = () => {
       <Stack.Screen 
         name="UserInfo"
         component={UserInfoScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="BuyVip"
+        component={BuyVipScreen}
         options={{
           headerShown: false
         }}

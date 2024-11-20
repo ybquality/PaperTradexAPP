@@ -210,7 +210,10 @@ const AccountScreen = ({ navigation }) => {
                 <Image source={require('../../../assets/VIP 1.png')} style={styles.vipIcon} />
                 <Text style={styles.vipText}>普通用户</Text>
               </View>
-              <TouchableOpacity style={styles.buyVipButton}>
+              <TouchableOpacity 
+                style={styles.buyVipButton}
+                onPress={() => navigation.navigate('AccountStack', { screen: 'BuyVip' })}
+              >
                 <Text style={styles.buyVipText}>购买VIP</Text>
               </TouchableOpacity>
             </View>

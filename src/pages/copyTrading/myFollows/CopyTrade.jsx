@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, FlatList, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, Platform, ScrollView } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Modal from 'react-native-modal';
 import { Slider } from '@rneui/themed';
@@ -16,15 +16,18 @@ const CopyTradeScreen = ({ route, navigation }) => {
         setSelectedOption(item);
         console.log('testClick');
         console.log(item);
-
-        
     }
 
     const data = {}
 
-    const traderId = route.params.traderId
-    const principal = route.params.principal
-    const copyRatio = route.params.copyRatio
+    const traderId = route.params.traderId;
+    const principal = route.params.principal;
+    const copyRatio = route.params.copyRatio;
+    const nickName = route.params.nickName;
+    const avatarUri = route.params.avatarUri;
+
+    console.log(traderId, principal, copyRatio, nickName, avatarUri);
+    
 
     const [value, setValue] = useState(traderId);
 
@@ -41,15 +44,17 @@ const CopyTradeScreen = ({ route, navigation }) => {
 
     // 页面加载时请求API
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = async (traderId) => {
             try {
                 // 这里替换成你的API接口
                 const response = await request.get('/api/exchange/getUserBindExchanges');
 
-                console.log(response.data.data);
-
                 // 假设API返回的数据结构如下
                 setOptions(response.data.data);
+
+                const matchingAccount = response.data.data.find(element => element.id === traderId);
+
+                setSelectedOption(matchingAccount);
             } catch (error) {
                 setError(err.message || 'Error fetching data');
             } finally {
@@ -57,8 +62,8 @@ const CopyTradeScreen = ({ route, navigation }) => {
             }
         };
 
-        fetchData();
-    }, []);
+        fetchData(traderId);
+    }, [traderId]);
 
 
     const balanceInquiry = async (options) => {
@@ -80,7 +85,7 @@ const CopyTradeScreen = ({ route, navigation }) => {
             single_translated: single_translated,
             followPrice: followPrice,
         }
-        // console.log(selectOption, singleTransslated, followPrice);
+        console.log(selectOption, singleTransslated, followPrice);
         await request.post('/api/exchange/change_user_copy_order', postBody)
         .then(response => {
             const responseData = response.data;
@@ -172,10 +177,10 @@ const CopyTradeScreen = ({ route, navigation }) => {
                         <Avatar
                             size="large"
                             rounded
-                            source={{ uri: data?.userPic }}  // 显示获取到的头像URL
+                            source={{ uri: avatarUri }}  // 显示获取到的头像URL
                             containerStyle={[styles.topAvatar, styles.topAvatarWithBorder]}
                         />
-                        <Text style={styles.topNickname}>{data?.nickName || 'No Name'}</Text>
+                        <Text style={styles.topNickname}>{nickName}</Text>
                     </View>
 
                     <View style={styles.middleSection}>

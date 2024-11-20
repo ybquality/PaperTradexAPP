@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import axios from 'axios';
 
 import DiscoveryDetailTobTabNavigator from './discoveryDetailTopTabNavigator';
 
-import config from '../../../../../config';
-import { BASE_URL } from '../../../../utils/pathMap';
 import request from '../../../../utils/request';
 
 const DetailScreen = ({ route, navigation }) => {
@@ -114,7 +111,7 @@ const DetailScreen = ({ route, navigation }) => {
                     <Text style={styles.leftButtonText}>订阅</Text>
                 </TouchableOpacity>
                 <View style={styles.buttonSpacer} /> 
-                <TouchableOpacity style={[styles.button, styles.rightButton]} onPress={() => navigation.navigate('DetailStack', {screen: 'CopyTrade', params: {traderId: id}})}>
+                <TouchableOpacity style={[styles.button, styles.rightButton]} onPress={() => navigation.navigate('DetailStack', {screen: 'CopyTrade', params: {traderId: id, nickName: data?.nickName, avatarUri: data?.userPic}})}>
                     <Text style={styles.rightButtonText}>立即跟单</Text>
                 </TouchableOpacity>
             </View>

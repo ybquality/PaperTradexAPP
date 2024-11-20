@@ -1,22 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, Platform, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, Platform, ScrollView } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
 import Modal from 'react-native-modal';
-
-import axios from 'axios';
-
-import DiscoveryDetailTobTabNavigator from './discoveryDetailTopTabNavigator';
-
-import config from '../../../../../config';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import request from '../../../../utils/request';
 
 
 const CopyTradeScreen = ({ route, navigation }) => {
     const data = {}
-    const traderId = route.params.traderId
+    const traderId = route.params.traderId;
+    const nickName = route.params.nickName;
+    const avatarUri = route.params.avatarUri;
+
 
     console.log('CopyTrade-traderId: ', traderId);
 
@@ -122,10 +117,10 @@ const CopyTradeScreen = ({ route, navigation }) => {
                         <Avatar
                             size="large"
                             rounded
-                            source={{ uri: data?.userPic }}  // 显示获取到的头像URL
+                            source={{ uri: avatarUri }}  // 显示获取到的头像URL
                             containerStyle={[styles.topAvatar, styles.topAvatarWithBorder]}
                         />
-                        <Text style={styles.topNickname}>{data?.nickName || 'No Name'}</Text>
+                        <Text style={styles.topNickname}>{nickName || 'No Name'}</Text>
                     </View>
 
                     <View style={styles.middleSection}>

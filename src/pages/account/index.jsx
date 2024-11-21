@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, StatusBar, FlatList, Alert, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert, ScrollView,StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from 'react-native-elements';
 import { getLoginStatus, getUserName, getUid } from '../../utils/tokenUtils';
@@ -8,6 +8,7 @@ import AssetOverview from '../../components/account/AssetOverview';
 import InviteCard from '../../components/InviteCard';
 
 import axios from 'axios';
+// import { StatusBar } from 'expo-status-bar';
 
 const getSettingsData = () => {
   return [
@@ -108,12 +109,16 @@ const AccountScreen = ({ navigation }) => {
   };
   return (
     
-    <ScrollView style={styles.scrollContainer}
+    <ScrollView style={[styles.scrollContainer, { backgroundColor: '#ffff' }]}
       showsVerticalScrollIndicator={false} // 隐藏垂直滚动条
     >
       <View style={{ flex: 1, marginBottom: 60 }}>
-        {/* 将 StatusBar 设置为透明，使其和背景融为一体 */}
-        <StatusBar translucent backgroundColor="transparent" />
+        {/* 状态栏配置 */}
+        <StatusBar 
+          //  backgroundColor="transparent"
+          //  barStyle="light-content"
+          //  translucent={true}
+        />
 
         {/* 背景渐变 */}
         <LinearGradient
@@ -132,6 +137,7 @@ const AccountScreen = ({ navigation }) => {
                             : require('../../../assets/adaptive-icon.png')
                         }
                         style={styles.avatar}
+                        resizeMode='cover'
                     />
                     <View style={styles.textContainer}>
                         <Text style={styles.username}>
@@ -174,24 +180,26 @@ const AccountScreen = ({ navigation }) => {
             )}
           </View>
 
-          {/* 新用户专享和交易账户按钮 */}
-          <View style={[{ flexDirection: 'row' }, styles.buttonContainer]}>
-            <View style={styles.newUserGiftView}>
-              <Icon name="gift" type="font-awesome" color="rgba(255, 228, 133, 1)" size={16} />
-              <Text style={styles.newUserGiftViewText}>新人专享</Text>
-              <TouchableOpacity style={styles.newUserGiftViewButton} onPress={testFunction}>
-                <Text style={styles.newUserGiftViewButtonText}>领取</Text>
-              </TouchableOpacity>
-            </View>
+          {/* 新用户专享和交易账户按钮 - 只在登录状态显示 */}
+          {isLogin && (
+            <View style={[{ flexDirection: 'row' }, styles.buttonContainer]}>
+              <View style={styles.newUserGiftView}>
+                <Icon name="gift" type="font-awesome" color="rgba(255, 228, 133, 1)" size={16} />
+                <Text style={styles.newUserGiftViewText}>新人专享</Text>
+                <TouchableOpacity style={styles.newUserGiftViewButton} onPress={testFunction}>
+                  <Text style={styles.newUserGiftViewButtonText}>领取</Text>
+                </TouchableOpacity>
+              </View>
 
-            <View style={styles.transactionAccountView}>
-              <Icon name="link" type="font-awesome" color="#fff" size={16} />
-              <Text style={styles.transactionAccountViewText}>交易账户</Text>
-              <TouchableOpacity style={styles.transactionAccountViewButton} onPress={() => navigation.navigate('DetailStack', { screen: 'accessTradingAccount' })}>
-                <Text style={styles.transactionAccountViewButtonText}>接入</Text>
-              </TouchableOpacity>
+              <View style={styles.transactionAccountView}>
+                <Icon name="link" type="font-awesome" color="#fff" size={16} />
+                <Text style={styles.transactionAccountViewText}>交易账户</Text>
+                <TouchableOpacity style={styles.transactionAccountViewButton} onPress={() => navigation.navigate('DetailStack', { screen: 'accessTradingAccount' })}>
+                  <Text style={styles.transactionAccountViewButtonText}>接入</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )}
 
           <LinearGradient
             colors={['#F4F4F4', '#AFAFAF']}
@@ -244,31 +252,27 @@ const AccountScreen = ({ navigation }) => {
 
           <View style={styles.Itemcontainer}>
             {/* 设置与服务部分 */}
-            <View style={styles.settingsSection}>
-              {/* 添加邀请卡片到设置区域内部最上方 */}
+            <View>
+              {/* 邀请返佣卡片 */}
               <View style={styles.inviteCardWrapper}>
-                <InviteCard 
-                  onPress={() => navigation.navigate('Invite')}
-                  style={{
-                    backgroundColor: '#F8F8F8',
-                  }}
+                <InviteCard />
+              </View>
+
+              {/* 设置与服务部分 */}
+              <View style={styles.settingsWrapper}>
+                <Text style={styles.settingsTitle}>设置与服务</Text>
+                <FlatList
+                  data={getSettingsData()}
+                  renderItem={renderItem}
+                  keyExtractor={item => item.id}
+                  scrollEnabled={false}
+                  style={styles.settingsList}
                 />
               </View>
 
-              <Text style={styles.settingsTitle}>设置与服务</Text>
-              <FlatList
-                data={getSettingsData()}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-                style={styles.settingsList}
-                scrollEnabled={false}
-                nestedScrollEnabled={true}
-              />
+              {/* 退出登录按钮 */}
               {isLogin && (
-                <TouchableOpacity 
-                  style={styles.logoutButton}
-                  onPress={handleLogout}
-                >
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                   <Text style={styles.logoutButtonText}>退出登录</Text>
                 </TouchableOpacity>
               )}
@@ -283,7 +287,7 @@ const AccountScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgb(255, 255, 255)',
   },
   gradientBackground: {
     flex: 1,
@@ -316,9 +320,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   username: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '700',
     color: 'rgba(255, 255, 255, 1)',
+    marginBottom: 4,
   },
   uid: {
     fontSize: 12,
@@ -463,6 +468,12 @@ const styles = StyleSheet.create({
 
   Itemcontainer: {
     flex: 1,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    overflow: 'hidden',
+    paddingTop: 12,
+    marginTop: 16,
   },
   inviteContainer: {
     position: 'relative',
@@ -509,32 +520,29 @@ const styles = StyleSheet.create({
     height: 80,
     marginLeft: 16,
   },
-  settingsSection: {
-    position: 'relative',
-    backgroundColor: '#fff',
-    paddingTop: 12,
-    paddingBottom: 50,
-    marginTop: 12,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderWidth: 0.5,
-    borderColor: 'rgba(0, 0, 0, 0.4)',
+  settingsWrapper: {
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#EEE',
+    backgroundColor: '#FFF',
+    marginBottom: 16,
   },
   settingsTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 16,
-    paddingHorizontal: 26,
   },
   settingsList: {
-    marginTop: 0,
+    width: '100%',
+    paddingHorizontal: 12,
   },
   listItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 16,
-    paddingHorizontal: 28,
     borderBottomWidth: 0.5,
     borderBottomColor: '#f5f5f5',
   },

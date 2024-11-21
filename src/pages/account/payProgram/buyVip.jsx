@@ -21,7 +21,7 @@ const BuyVipScreen = ({ navigation }) => {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#000000" /> */}
       <View style={styles.container}>
         <LinearGradient
           colors={['#000000', '#090909']}
@@ -89,29 +89,30 @@ const BuyVipScreen = ({ navigation }) => {
 
           {/* VIP套餐选择 */}
           {vipPlans.map((plan, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedPlan(index)}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#090909', '#4B4B4B']}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={[
-                  styles.planCard,
-                  selectedPlan === index && styles.selectedPlan
-                ]}
+            <View key={index} style={styles.planWrapper}>
+              <TouchableOpacity
+                onPress={() => setSelectedPlan(index)}
+                activeOpacity={0.8}
               >
-                <Text style={styles.planDuration}>{plan.months}个月</Text>
-                <Text style={styles.planPrice}>$ {plan.price}</Text>
-                {plan.tag && (
-                  <View style={styles.tagContainer}>
-                    <Text style={styles.tagText}>{plan.tag}</Text>
-                  </View>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
+                <LinearGradient
+                  colors={['#090909', '#4B4B4B']}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={[
+                    styles.planCard,
+                    selectedPlan === index && styles.selectedPlan
+                  ]}
+                >
+                  <Text style={styles.planDuration}>{plan.months}个月</Text>
+                  <Text style={styles.planPrice}>$ {plan.price}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              {plan.tag && (
+                <View style={styles.tagContainer}>
+                  <Text style={styles.tagText}>{plan.tag}</Text>
+                </View>
+              )}
+            </View>
           ))}
 
           {/* 底部按钮 */}
@@ -212,14 +213,17 @@ const styles = StyleSheet.create({
   benefitItemMargin: {
     marginBottom: 10,
   },
+  planWrapper: {
+    marginHorizontal: 36,
+    marginBottom: 24,
+    paddingTop: 10,
+  },
   planCard: {
     borderRadius: 16,
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
-    marginHorizontal: 36,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.4)',
   },
@@ -240,7 +244,7 @@ const styles = StyleSheet.create({
   tagContainer: {
     position: 'absolute',
     right: 16,
-    top: -10,
+    top: 0,
     backgroundColor: 'rgba(128, 255, 233, 1)',
     borderRadius: 100,
     paddingHorizontal: 8,

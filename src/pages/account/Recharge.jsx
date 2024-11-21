@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Modal, Clipboard } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { Tooltip } from 'react-native-elements';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const RechargePage = () => {
   const [selectedNetwork, setSelectedNetwork] = useState('');
   const [rechargeAmount, setRechargeAmount] = useState('5000');
   const [address, setAddress] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
+  const [tempNetwork, setTempNetwork] = useState('');
 
   // 模拟不同网络对应的地址数据
   const networkAddresses = {
@@ -43,21 +44,50 @@ const RechargePage = () => {
     }
   };
 
+  // 处理网络选择确认
+  const handleConfirmNetwork = () => {
+    setSelectedNetwork(tempNetwork);
+    setShowPicker(false);
+  };
+
+  // 处理取消选择
+  const handleCancelNetwork = () => {
+    setTempNetwork(selectedNetwork);
+    setShowPicker(false);
+  };
+
+  const getNetworkDisplayText = () => {
+    switch(selectedNetwork) {
+      case 'networkA':
+        return 'Tron（TRC20）';
+      case 'networkB':
+        return 'Ethereum（ERC20）';
+      default:
+        return '请选择';
+    }
+  };
+
+  // 定义下拉选项数据
+  const networkOptions = [
+    { label: 'Tron（TRC20）', value: 'networkA' },
+    { label: 'Ethereum（ERC20）', value: 'networkB' }
+  ];
+
   return (
     <View style={styles.container}>
       {/* 充币网络 */}
       <Text style={styles.label}>充币网络</Text>
-      <View style={styles.inputWrapper}>
-        <Picker
-          selectedValue={selectedNetwork}
-          onValueChange={(itemValue) => setSelectedNetwork(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="请选择" value="" />
-          <Picker.Item label="Tron（TRC20）" value="networkA" />
-          <Picker.Item label="Ethereum（ERC20）" value="networkB" />
-        </Picker>
-      </View>
+      <Dropdown
+        style={styles.dropdown}
+        data={networkOptions}
+        labelField="label"
+        valueField="value"
+        placeholder="请选择充值网络"
+        value={selectedNetwork}
+        onChange={item => {
+          setSelectedNetwork(item.value);
+        }}
+      />
 
       {/* 充值金额 */}
       <Text style={styles.label}>充值金额</Text>
@@ -68,6 +98,8 @@ const RechargePage = () => {
           onChangeText={setRechargeAmount}
           keyboardType="numeric"
           placeholder="请输入充值金额"
+          returnKeyType="done"
+    returnKeyLabel="完成" 
         />
         <TouchableOpacity 
           style={styles.copyButton}
@@ -211,6 +243,14 @@ const styles = StyleSheet.create({
   toastText: {
     color: '#FFFFFF',
     fontSize: 14,
+  },
+  dropdown: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    borderRadius: 32,
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
   },
 });
 

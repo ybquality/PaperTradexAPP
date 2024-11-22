@@ -6,6 +6,7 @@ import { getLoginStatus, getUserName, getUid } from '../../utils/tokenUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AssetOverview from '../../components/account/AssetOverview';
 import InviteCard from '../../components/InviteCard';
+import Modal from '../../components/common/modal';
 
 import axios from 'axios';
 // import { StatusBar } from 'expo-status-bar';
@@ -37,6 +38,7 @@ const AccountScreen = ({ navigation }) => {
   const [ isLogin, setIsLogin ] = useState(false);
   const [ userName, setUserName ] = useState('No Name');
   const [ uid, setUid ] = useState('');
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const loadData = async () => {
     console.log('加载数据...');
@@ -59,26 +61,11 @@ const AccountScreen = ({ navigation }) => {
   }, [navigation]);
 
   const handleLogout = async () => {
-    Alert.alert(
-      '退出登录',
-      '确定要退出登录吗？',
-      [
-        {
-          text: '取消',
-          style: 'cancel',
-        },
-        {
-          text: '确定',
-          onPress: async () => {
-            await AsyncStorage.clear();
-            setIsLogin(false);
-            setUserName('No Name');
-            setUid('');
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+    await AsyncStorage.clear();
+    setIsLogin(false);
+    setUserName('No Name');
+    setUid('');
+    setLogoutModalVisible(false);
   };
 
   const renderItem = ({ item }) => (
@@ -272,9 +259,28 @@ const AccountScreen = ({ navigation }) => {
 
               {/* 退出登录按钮 */}
               {isLogin && (
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                  <Text style={styles.logoutButtonText}>退出登录</Text>
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity
+                    style={styles.logoutButton}
+                    onPress={() => setLogoutModalVisible(true)}
+                  >
+                    <Text style={styles.logoutButtonText}>退出登录</Text>
+                  </TouchableOpacity>
+
+                  <Modal
+                    visible={logoutModalVisible}
+                    onClose={() => setLogoutModalVisible(false)}
+                    title="退出登录"
+                    showConfirmButton={true}
+                    showCancelButton={true}
+                    onConfirm={handleLogout}
+                    onCancel={() => setLogoutModalVisible(false)}
+                    confirmText="确定"
+                    cancelText="取消"
+                  >
+                    <Text style={styles.modalText}>确定要退出登录吗？</Text>
+                  </Modal>
+                </>
               )}
             </View>
           </View>

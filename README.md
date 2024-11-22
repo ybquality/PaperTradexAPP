@@ -60,16 +60,42 @@ return (
 | confirmText       | 确认按钮文字       | string          | '确定' |
 | cancelText        | 取消按钮文字       | string          | '取消' |
 
-### 样式变量
+## NavBar 导航栏组件
 
-| 名称            | 默认值             | 说明         |
-| --------------- | ------------------ | ------------ |
-| width           | 屏幕宽度的 80%     | 弹窗宽度     |
-| borderRadius    | 24px               | 圆角大小     |
-| backgroundColor | #FFFFFF            | 背景颜色     |
-| overlayColor    | rgba(0, 0, 0, 0.5) | 遮罩层颜色   |
-| padding         | 16px               | 内边距       |
-| titleFontSize   | 16px               | 标题字体大小 |
-| titleColor      | #333333            | 标题颜色     |
-| closeIconSize   | 24px               | 关闭图标大小 |
-| closeIconColor  | #999999            | 关闭图标颜色 |
+用于页面导航的顶部栏组件。
+
+### 引入
+
+```javascript
+import NavBar from "@/components/common/navbar";
+```
+
+### 基础用法
+
+```javascript
+// 基础用法
+<NavBar
+  onBack={() => navigation.goBack()}
+>
+  标题
+</NavBar>
+
+// 自定义左右内容
+<NavBar
+  left={<Text>左侧</Text>}
+  right={<Text>右侧</Text>}
+>
+  标题
+</NavBar>
+```
+
+### Props
+
+| 参数     | 说明                                         | 类型                 | 默认值 |
+| -------- | -------------------------------------------- | -------------------- | ------ |
+| back     | 返回区域的文字，如果为 null 则不显示返回区域 | ReactNode \| null    | ''     |
+| backIcon | 是否显示返回箭头，可传入 ReactNode 自定义    | boolean \| ReactNode | true   |
+| children | 标题内容                                     | ReactNode            | -      |
+| left     | 左侧内容，显示在返回区域右侧                 | ReactNode            | -      |
+| onBack   | 点击返回区域的回调函数                       | () => void           | -      |
+| right    | 右侧内容                                     | ReactNode            | -      |

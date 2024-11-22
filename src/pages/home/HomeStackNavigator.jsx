@@ -3,6 +3,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import TradeRankingScreen from './pages/home/TradeRanking';
+import ReferralScreen from './referral';
 
 const Stack = createStackNavigator();
 
@@ -16,7 +17,13 @@ const HomeStackNavigator = () => {
           headerShown: false
         }}
       />
-
+      <Stack.Screen 
+        name="Referral"
+        component={ReferralScreen}
+        options={{
+          headerShown: false
+        }}
+      />
     </Stack.Navigator>
 
     

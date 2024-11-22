@@ -1,10 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const InviteCard = ({ onPress }) => {
+const InviteCard = () => {
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    navigation.navigate('HomeStack', {
+      screen: 'Referral'
+    });
+  };
+
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity style={styles.container} onPress={onPress}>
+      <TouchableOpacity style={styles.container} onPress={handlePress}>
         <Image 
           source={require('../../assets/Vector.png')}
           style={styles.backgroundImage}

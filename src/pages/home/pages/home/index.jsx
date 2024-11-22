@@ -66,10 +66,7 @@ const HomeScreen = () => {
       {/* 快速菜单 */}
       <HomeQuickMenu />
       {/* 邀请返佣卡片 */}
-      <InviteCard onPress={() => {
-        // 处理邀请卡片点击事件
-        navigation.navigate('Invite');
-      }} />
+      <InviteCard />
 
       {/* 明星交易员部分 */}
       <StarTraders data={starTradersData} />

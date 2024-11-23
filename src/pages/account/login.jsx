@@ -5,8 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import request from '../../utils/request';
 import api from '../../utils/Interceptor';
 import { ACCOUNT_LOGIN, ACCOUNT_LOGIN_PHONE, GET_VERIFY_CODE } from '../../utils/pathMap';
-import { Button, Dialog } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Button, Dialog,Icon } from 'react-native-elements';
+// import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function LoginScreen({ navigation }) {
@@ -24,6 +24,12 @@ export default function LoginScreen({ navigation }) {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [isPhoneFocused, setIsPhoneFocused] = useState(false);
+  const [isCodeFocused, setIsCodeFocused] = useState(false);
+  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // 修改手机号校验函数，验证前几位格式
   const isValidPhone = (phone) => {
@@ -159,121 +165,177 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>登录</Text>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          <Text style={styles.title}>登录</Text>
 
-      {isPhoneLogin ? (
-        <>
-          {/* 手机号+验证码 登录 */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>手机号</Text>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.input}
-                value={phone}
-                onChangeText={setPhone}
-                placeholder="+86 请输入手机号"
-                keyboardType="phone-pad"
-              />
-            </View>
+          {/* 切换按钮 */}
+          <View style={styles.tabContainer}>
+            <TouchableOpacity 
+              style={[styles.tabButton, isPhoneLogin && styles.tabButtonActive]}
+              onPress={() => setIsPhoneLogin(true)}
+            >
+              <Text style={[styles.tabText, isPhoneLogin && styles.tabTextActive]}>手机号</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.tabButton, !isPhoneLogin && styles.tabButtonActive]}
+              onPress={() => setIsPhoneLogin(false)}
+            >
+              <Text style={[styles.tabText, !isPhoneLogin && styles.tabTextActive]}>用户名</Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>验证码</Text>
-            <View style={styles.inputWithButton}>
-              <TextInput
-                style={[styles.input, styles.inputFlex, styles.inputWrapper]} // 使输入框占用剩余空间
-                value={verificationCode}
-                onChangeText={setVerificationCode}
-                placeholder="请输入验证码"
-                keyboardType="number-pad"
-              />
-              <Button
-                loading={isLoading}
-                disabled={countdown > 0 || isLoading}
-                title={countdown > 0 ? `${countdown}s` : '获取验证码'}
-                onPress={() => sendVerifyCode(phone)}
-                buttonStyle={[
-                  styles.codeButton,
-                  countdown > 0 && styles.codeButtonDisabled
-                ]}
-                titleStyle={styles.codeButtonText}
-              />
-            </View>
+          {isPhoneLogin ? (
+            // 手机号登录
+            <>
+              <Text style={styles.label}>手机号</Text>
+              <View style={[
+                styles.inputContainer,
+                isPhoneFocused && styles.inputContainerFocused
+              ]}>
+                <Icon
+                  name="smartphone"
+                  type="feather"
+                  size={20}
+                  color="rgba(0, 0, 0, 0.4)"
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  value={phone}
+                  onChangeText={setPhone}
+                  style={styles.input}
+                  placeholder="请输入手机号"
+                  placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                  returnKeyType="next"
+                  keyboardType="number-pad"
+                  onFocus={() => setIsPhoneFocused(true)}
+                  onBlur={() => setIsPhoneFocused(false)}
+                />
+              </View>
+
+              <Text style={[styles.label, { marginTop: 24 }]}>验证码</Text>
+              <View style={[
+                styles.inputContainer,
+                isCodeFocused && styles.inputContainerFocused
+              ]}>
+                <Icon
+                  name="shield"
+                  type="feather"
+                  size={20}
+                  color="rgba(0, 0, 0, 0.4)"
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  value={verificationCode}
+                  onChangeText={setVerificationCode}
+                  style={styles.input}
+                  placeholder="请输入验证码"
+                  placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                  returnKeyType="done"
+                  keyboardType="number-pad"
+                  maxLength={4}
+                  onFocus={() => setIsCodeFocused(true)}
+                  onBlur={() => setIsCodeFocused(false)}
+                />
+                <TouchableOpacity 
+                  style={styles.codeButton}
+                  onPress={() => sendVerifyCode(phone)}
+                  disabled={countdown > 0}
+                >
+                  <Text style={styles.codeButtonText}>
+                    {countdown > 0 ? `${countdown}s` : '获取验证码'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            // 用户名密码登录
+            <>
+              <Text style={styles.label}>用户名</Text>
+              <View style={[
+                styles.inputContainer,
+                isUsernameFocused && styles.inputContainerFocused
+              ]}>
+                <Icon
+                  name="user"
+                  type="feather"
+                  size={20}
+                  color="rgba(0, 0, 0, 0.4)"
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  value={username}
+                  onChangeText={setUsername}
+                  style={styles.input}
+                  placeholder="请输入用户名"
+                  placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                  returnKeyType="next"
+                  onFocus={() => setIsUsernameFocused(true)}
+                  onBlur={() => setIsUsernameFocused(false)}
+                />
+              </View>
+
+              <Text style={[styles.label, { marginTop: 24 }]}>密码</Text>
+              <View style={[
+                styles.inputContainer,
+                isPasswordFocused && styles.inputContainerFocused
+              ]}>
+                <Icon
+                  name="lock"
+                  type="feather"
+                  size={20}
+                  color="rgba(0, 0, 0, 0.4)"
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  style={styles.input}
+                  placeholder="请输入密码"
+                  placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                  returnKeyType="done"
+                  secureTextEntry={!showPassword}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={() => setIsPasswordFocused(false)}
+                />
+                <TouchableOpacity 
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeButton}
+                >
+                  <Icon
+                    name={showPassword ? "eye" : "eye-off"}
+                    type="feather"
+                    size={20}
+                    color="rgba(0, 0, 0, 0.4)"
+                  />
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+          {/* 注册链接 */}
+          <View style={styles.registerContainer}>
+            <Text style={styles.footerText}>还没有账号？</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+              <Text style={styles.link}>注册</Text>
+            </TouchableOpacity>
           </View>
-        </>
-      ) : (
-        <>
-          {/* 用户名+密码 登录 */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>用户名</Text>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                value={username}
-                onChangeText={setUsername}
-                style={styles.input}
-                placeholder="请输入用户名"
-              />
-            </View>
-          </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>密码</Text>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                style={styles.input}
-                placeholder="请输入密码"
-                secureTextEntry
-              />
-            </View>
-          </View>
-        </>
-      )}
+          {/* 登录按钮 */}
+          <TouchableOpacity 
+            style={styles.submitButton}
+            onPress={() => isPhoneLogin 
+              ? handlePhoneLogin(phone, verificationCode, navigation)
+              : handleUsernamePasswordLogin(username, password, navigation)
+            }
+          >
+            <Text style={styles.submitText}>登录</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
-      {/* 切换登录方式按钮 */}
-      <TouchableOpacity onPress={() => setIsPhoneLogin(!isPhoneLogin)}>
-        <Text style={styles.switchText}>
-          {isPhoneLogin ? '使用用户名密码登录' : '使用手机号验证码登录'}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={[
-          styles.button,
-          (!isPhoneLogin && !isPasswordLoginValid()) || (isPhoneLogin && !isPhoneLoginValid())
-            ? styles.buttonDisabled 
-            : null
-        ]} 
-        onPress={() => 
-          isPhoneLogin 
-            ? handlePhoneLogin(phone, verificationCode, navigation) 
-            : handleUsernamePasswordLogin(username, password, navigation)
-        }
-        disabled={
-          (isPhoneLogin && !isPhoneLoginValid()) || 
-          (!isPhoneLogin && !isPasswordLoginValid())
-        }
-      >
-        <Text style={styles.buttonText}>登录</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity>
-        <Text style={styles.forgotPassword}>忘记密码？</Text>
-      </TouchableOpacity>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>还没有账号？</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.link}>注册</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Dialog
-        isVisible={dialogVisible}
-        overlayStyle={styles.dialog}
-      >
+      <Dialog isVisible={dialogVisible} overlayStyle={styles.dialog}>
         <View style={styles.dialogContent}>
           {loginLoading ? (
             <Dialog.Loading />
@@ -302,96 +364,124 @@ export default function LoginScreen({ navigation }) {
           )}
         </View>
       </Dialog>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 24,
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  inputWrapper: {
-    borderWidth: 1,
-    borderRadius: 25,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderColor: '#ddd',
-  },
-  input: {
-    fontSize: 16,
-  },
-  inputWithButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  inputFlex: {
+  safeArea: {
     flex: 1,
   },
-  codeButton: {
-    marginLeft: 8,
-    backgroundColor: '#00BFA5',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 25,
-    minWidth: 100, // 添加最小宽度确保按钮大小一致
+  content: {
+    flex: 1,
+    paddingHorizontal: 24,
+    // paddingTop: 24,
   },
-  codeButtonDisabled: {
-    backgroundColor: '#cccccc',
-  },
-  codeButtonText: {
-    color: '#fff',
-    fontSize: 14,
-  },
-  button: {
-    backgroundColor: '#000',
-    paddingVertical: 12,
-    borderRadius: 25,
-    alignItems: 'center',
+  title: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 1)',
     marginBottom: 24,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  label: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'rgba(0, 0, 0, 1)',
+    marginBottom: 8,
   },
-  switchText: {
-    color: '#00BFA5',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  forgotPassword: {
-    color: '#00BFA5',
-    textAlign: 'right',
-    marginBottom: 16,
-  },
-  footer: {
+  inputContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    height: 48,
+    paddingHorizontal: 16,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 1)',
+  },
+  inputContainerFocused: {
+    borderColor: 'rgba(0, 208, 172, 1)',
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.9)',
+    padding: 0,
+  },
+  codeButton: {
+    height: 32,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  codeButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'rgba(0, 208, 172, 1)',
+  },
+  eyeButton: {
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  submitButton: {
+    position: 'absolute',
+    bottom: 40,
+    left: 24,
+    right: 24,
+    height: 48,
+    backgroundColor: '#000000',
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  submitText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    marginBottom: 24,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    padding: 4,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  tabButtonActive: {
+    backgroundColor: '#FFFFFF',
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#666666',
+  },
+  tabTextActive: {
+    color: '#000000',
+    fontWeight: '500',
+  },
+  registerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
   },
   footerText: {
     fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.6)',
   },
   link: {
-    color: '#00BFA5',
-    marginLeft: 4,
     fontSize: 14,
-  },
-  buttonDisabled: {
-    backgroundColor: '#cccccc',
+    color: 'rgba(0, 208, 172, 1)',
+    marginLeft: 4,
   },
   dialog: {
     borderRadius: 10,

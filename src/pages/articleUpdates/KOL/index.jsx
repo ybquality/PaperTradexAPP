@@ -1,6 +1,7 @@
 // 首页
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import axios from 'axios';
 import ArticleUpdatesCard2 from '../../../components/ArticleUpdatesCard2';
 
 const KOLScreen = ({ navigation }) => {
@@ -8,21 +9,42 @@ const KOLScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
 
   const fetchMoments = async () => {
+    console.log('开始请求数据...');
     try {
-      const response = await fetch('https://chaininsight.vip/api/v0/query/moment?pageNum=1&pageSize=50');
-      const json = await response.json();
-      if (json.data && json.data.list) {
-        setData(json.data.list);
+      const { data: response } = await axios.get(
+        'https://chaininsight.vip/api/v0/query/moment',
+        {
+          params: {
+            pageNum: 1,
+            pageSize: 50
+          }
+        }
+      );
+      
+      console.log('请求响应:', response);
+      
+      if (response.data && response.data.list) {
+        setData(response.data.list);
+        console.log('数据设置成功，长度:', response.data.list.length);
+      } else {
+        console.log('响应数据格式不正确:', response);
       }
     } catch (error) {
       console.error('获取动态数据失败:', error);
+      console.error('错误详情:', error.response);
     } finally {
       setLoading(false);
+      console.log('加载状态设置完成');
     }
   };
 
   useEffect(() => {
+    console.log('组件挂载，准备请求数据...');
     fetchMoments();
+    
+    return () => {
+      console.log('组件卸载...');
+    };
   }, []);
 
   const formatTime = (timestamp) => {
@@ -51,6 +73,8 @@ const KOLScreen = ({ navigation }) => {
     />
   );
 
+  console.log('渲染状态:', { loading, dataLength: data.length });
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -66,6 +90,8 @@ const KOLScreen = ({ navigation }) => {
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
+        onRefresh={fetchMoments}
+        refreshing={loading}
       />
     </View>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
@@ -6,6 +6,10 @@ import NavBar from '../../components/common/navbar';
 import Switch from '../../components/common/switch';
 const NotificationSettingsScreen = () => {
   const navigation = useNavigation();
+  
+  const [notificationEnabled, setNotificationEnabled] = useState(true);
+  const [nightModeEnabled, setNightModeEnabled] = useState(false);
+  const [emailEnabled, setEmailEnabled] = useState(false);
   
   return (
     <View style={styles.container}>
@@ -18,18 +22,40 @@ const NotificationSettingsScreen = () => {
       </View>
       <View style={styles.content}>
         <View style={[styles.itemContainer, styles.withBorder]}>
-          <Text style={styles.itemLabel}>开启通知提示</Text>
-          <Switch defaultChecked/>
+          <Text style={[
+            styles.itemLabel,
+            notificationEnabled && styles.itemLabelActive
+          ]}>
+            开启通知提示
+          </Text>
+          <Switch 
+            defaultChecked
+            onChange={setNotificationEnabled}
+          />
         </View>
         <View style={[styles.itemContainer, styles.withBorder]}>
-          <Text style={styles.itemLabel}>夜间免打扰(00:00-08:00)</Text>
-          <Switch/>
+          <Text style={[
+            styles.itemLabel,
+            nightModeEnabled && styles.itemLabelActive
+          ]}>
+            夜间免打扰(00:00-08:00)
+          </Text>
+          <Switch
+            onChange={setNightModeEnabled}
+          />
         </View>
         
         <View style={styles.emailContainer}>
           <View style={[styles.emailItem, styles.emailItemBorder]}>
-            <Text style={styles.emailTitle}>邮箱通知</Text>
-            <Switch/>
+            <Text style={[
+              styles.emailTitle,
+              emailEnabled && styles.itemLabelActive
+            ]}>
+              邮箱通知
+            </Text>
+            <Switch
+              onChange={setEmailEnabled}
+            />
           </View>
           <View style={[styles.emailItem, styles.emailPadding]}>
             <Text style={styles.emailText}>邮箱号</Text>
@@ -83,6 +109,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: 'rgba(156, 163, 175, 1)',
+  },
+  itemLabelActive: {
+    color: 'rgba(0, 0, 0, 1)',
   },
   emailContainer: {
     width: '100%',

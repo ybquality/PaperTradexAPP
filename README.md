@@ -151,3 +151,88 @@ const [loading, setLoading] = useState(false);
 | disabled       | 是否禁用         | boolean                                     | false  |
 | loading        | 加载状态         | boolean                                     | false  |
 | onChange       | 变化时的回调函数 | (checked: boolean) => void \| Promise<void> | -      |
+
+## TopTabNavigator 标签页导航组件
+
+用于同层级内容的切换展示，支持横向滚动。
+
+### 引入
+
+```javascript
+import TopTabNavigator from "@/components/common/topTabNavigator";
+```
+
+### 基础用法
+
+```javascript
+const [activeTab, setActiveTab] = useState("tab1");
+
+const tabs = [
+  { key: "tab1", title: "推荐" },
+  { key: "tab2", title: "广场" },
+  { key: "tab3", title: "KOL" },
+];
+
+<TopTabNavigator
+  tabs={tabs}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+/>;
+```
+
+### Props
+
+| 参数               | 说明                 | 类型                                | 默认值 |
+| ------------------ | -------------------- | ----------------------------------- | ------ |
+| tabs               | 标签页配置           | Array<{key: string, title: string}> | []     |
+| activeTab          | 当前激活的标签页     | string                              | -      |
+| onTabChange        | 切换标签页的回调函数 | (key: string) => void               | -      |
+| tabStyle           | 标签样式             | ViewStyle                           | -      |
+| activeTabStyle     | 激活标签样式         | ViewStyle                           | -      |
+| tabTextStyle       | 标签文字样式         | TextStyle                           | -      |
+| activeTabTextStyle | 激活标签文字样式     | TextStyle                           | -      |
+| containerStyle     | 容器样式             | ViewStyle                           | -      |
+
+## Ellipsis 文本省略组件
+
+用于长文本的展开收起功能。
+
+### 引入
+
+```javascript
+import Ellipsis from "@/components/common/ellipsis";
+```
+
+### 基础用法
+
+```javascript
+// 单行省略
+<Ellipsis>这是一段很长的文本...</Ellipsis>
+
+// 多行省略
+<Ellipsis rows={3}>这是一段很长的文本...</Ellipsis>
+
+// 默认展开
+<Ellipsis rows={3} defaultExpanded>这是一段很长的文本...</Ellipsis>
+
+// 自定义样式
+<Ellipsis
+  rows={2}
+  style={{ fontSize: 16 }}
+  expandText="查看更多"
+  collapseText="收起内容"
+>
+  这是一段很长的文本...
+</Ellipsis>
+```
+
+### Props
+
+| 参数            | 说明         | 类型      | 默认值 |
+| --------------- | ------------ | --------- | ------ |
+| children        | 文本内容     | string    | -      |
+| rows            | 展示几行     | number    | 1      |
+| defaultExpanded | 是否默认展开 | boolean   | false  |
+| style           | 文本样式     | TextStyle | -      |
+| expandText      | 展开按钮文字 | string    | "展开" |
+| collapseText    | 收起按钮文字 | string    | "收起" |

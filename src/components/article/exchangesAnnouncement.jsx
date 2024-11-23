@@ -1,10 +1,18 @@
 import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Icon } from 'react-native-elements';
-import Ellipsis from './common/ellipsis';
+import Ellipsis from '../../components/common/ellipsis';
 
-const ArticleUpdatesCard1 = memo(({ title, pubDate, description }) => {
+const ExchangesAnnouncement = memo(({ title, pubDate, description, exchange }) => {
   const formattedTime = formatTime(pubDate);
+  
+  // 获取交易所显示名称
+  const getExchangeName = (exchange) => {
+    const names = {
+      binance: 'Binance',
+      bitget: 'Bitget'
+    };
+    return names[exchange] || exchange;
+  };
   
   return (
     <View style={styles.card}>
@@ -17,16 +25,10 @@ const ArticleUpdatesCard1 = memo(({ title, pubDate, description }) => {
         </Ellipsis>
       </View>
       <View style={styles.cardFooter}>
-        <Text style={styles.source}>TechFlow</Text>
+        <Text style={styles.source}>{getExchangeName(exchange)}</Text>
         <Text style={styles.time}>{formattedTime}</Text>
       </View>
     </View>
-  );
-}, (prevProps, nextProps) => {
-  return (
-    prevProps.title === nextProps.title &&
-    prevProps.pubDate === nextProps.pubDate &&
-    prevProps.description === nextProps.description
   );
 });
 
@@ -94,6 +96,6 @@ const styles = StyleSheet.create({
   },
 });
 
-ArticleUpdatesCard1.displayName = 'ArticleUpdatesCard1';
+ExchangesAnnouncement.displayName = 'ExchangesAnnouncement';
 
-export default ArticleUpdatesCard1;
+export default ExchangesAnnouncement;

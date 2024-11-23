@@ -99,3 +99,55 @@ import NavBar from "@/components/common/navbar";
 | left     | 左侧内容，显示在返回区域右侧                 | ReactNode            | -      |
 | onBack   | 点击返回区域的回调函数                       | () => void           | -      |
 | right    | 右侧内容                                     | ReactNode            | -      |
+
+## Switch 开关组件
+
+用于表示两种相互对立的状态间的切换，例如 开/关。
+
+### 引入
+
+```javascript
+import Switch from "@/components/common/switch";
+```
+
+### 基础用法
+
+```javascript
+// 基础用法
+<Switch />
+
+// 默认开启
+<Switch defaultChecked />
+
+// 禁用状态
+<Switch disabled />
+<Switch disabled defaultChecked />
+
+// 异步控制
+const [checked, setChecked] = useState(false);
+const [loading, setLoading] = useState(false);
+
+<Switch
+  checked={checked}
+  loading={loading}
+  onChange={async (val) => {
+    setLoading(true);
+    try {
+      await mockRequest();
+      setChecked(val);
+    } finally {
+      setLoading(false);
+    }
+  }}
+/>
+```
+
+### Props
+
+| 参数           | 说明             | 类型                                        | 默认值 |
+| -------------- | ---------------- | ------------------------------------------- | ------ |
+| checked        | 开关状态         | boolean                                     | -      |
+| defaultChecked | 默认开关状态     | boolean                                     | false  |
+| disabled       | 是否禁用         | boolean                                     | false  |
+| loading        | 加载状态         | boolean                                     | false  |
+| onChange       | 变化时的回调函数 | (checked: boolean) => void \| Promise<void> | -      |

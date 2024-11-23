@@ -19,6 +19,7 @@ import BuyVipScreen from './payProgram/buyVip';
 import EditUsernameScreen from './userinfo/EditUsername';
 import VerifyPhoneScreen from './userinfo/VerifyPhone';
 import SetNewPhoneScreen from './userinfo/SetNewPhone';
+import CommunityScreen from './Community';
 
 const Stack = createStackNavigator();
 
@@ -76,11 +77,11 @@ const AccountStackNavigator = () => {
       <Stack.Screen 
         name="NotificationSettings"
         component={NotificationSettingsScreen}
-        // options={{ headerShown: false }}
-        options={{
-            header: () => <CustomHeader />,
-            headerTintColor: '#fff', // 返回按钮颜色
-          }}
+        options={{ headerShown: false }}
+        // options={{
+        //     header: () => <CustomHeader />,
+        //     headerTintColor: '#fff', // 返回按钮颜色
+        //   }}
       />
 
       <Stack.Screen 
@@ -156,6 +157,14 @@ const AccountStackNavigator = () => {
       <Stack.Screen 
         name="SetNewPhone"
         component={SetNewPhoneScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="Community"
+        component={CommunityScreen}
         options={{
           headerShown: false
         }}

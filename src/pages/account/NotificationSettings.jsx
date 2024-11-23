@@ -1,51 +1,46 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, StyleSheet } from 'react-native';
-
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Icon } from '@rneui/themed';
+import NavBar from '../../components/common/navbar';
+import Switch from '../../components/common/switch';
 const NotificationSettingsScreen = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [nightModeEnabled, setNightModeEnabled] = useState(false);
+  const navigation = useNavigation();
   
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  const toggleNightMode = () => setNightModeEnabled(previousState => !previousState);
-
   return (
     <View style={styles.container}>
-      {/* 开启通知提醒 */}
-      <View style={styles.settingItem}>
-        <Text style={styles.label}>开启通知提醒</Text>
-        <Switch
-          trackColor={{ false: '#ddd', true: '#00C1A4' }}
-          thumbColor={isEnabled ? '#fff' : '#fff'}
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-        />
+      <View style={styles.navBarContainer}>
+        <NavBar
+          onBack={() => navigation.goBack()}
+        >
+          <Text style={styles.title}>推送设置</Text>
+        </NavBar>
       </View>
-
-      {/* 夜间免打扰 */}
-      <View style={styles.settingItem}>
-        <View style={styles.row}>
-          <Text style={styles.label}>夜间免打扰(00:00-08:00)</Text>
-          <TouchableOpacity onPress={toggleNightMode} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>✕</Text>
-          </TouchableOpacity>
+      <View style={styles.content}>
+        <View style={[styles.itemContainer, styles.withBorder]}>
+          <Text style={styles.itemLabel}>开启通知提示</Text>
+          <Switch defaultChecked/>
         </View>
-      </View>
-
-      {/* 邮箱通知 */}
-      <View style={[styles.settingItem, styles.emailNotification]}>
-        <View style={styles.row}>
-          <Text style={styles.label}>邮箱通知</Text>
-          <TouchableOpacity style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>✕</Text>
-          </TouchableOpacity>
+        <View style={[styles.itemContainer, styles.withBorder]}>
+          <Text style={styles.itemLabel}>夜间免打扰(00:00-08:00)</Text>
+          <Switch/>
         </View>
-        <View style={styles.emailInfo}>
-          <Text style={styles.emailLabel}>邮箱号</Text>
-          <Text style={styles.emailValue}>186****9512</Text>
+        
+        <View style={styles.emailContainer}>
+          <View style={[styles.emailItem, styles.emailItemBorder]}>
+            <Text style={styles.emailTitle}>邮箱通知</Text>
+            <Switch/>
+          </View>
+          <View style={[styles.emailItem, styles.emailPadding]}>
+            <Text style={styles.emailText}>邮箱号</Text>
+            <Text style={styles.emailValue}>1234567890@qq.com</Text>
+          </View>
+          <View style={styles.emailItem}>
+            <Text style={styles.emailText}>推送测试</Text>
+            <Text style={styles.emailValue}>立即测试</Text>
+          </View>
         </View>
-        <TouchableOpacity style={styles.testButton}>
-          <Text style={styles.testButtonText}>推送测试</Text>
-        </TouchableOpacity>
+        
       </View>
     </View>
   );
@@ -54,75 +49,79 @@ const NotificationSettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#F5F5F5',
+    // backgroundColor: '#FFFFFF',
   },
-  settingItem: {
-    backgroundColor: '#FFF',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-    elevation: 3,
+  navBarContainer: {
+    backgroundColor: '#FFFFFF',
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  label: {
+  title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: 'rgba(0, 0, 0, 0.9)',
   },
-  closeButton: {
-    backgroundColor: '#F0F0F0',
+  content: {
+    margin: 24,
+    padding: 16,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 12,
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  closeButtonText: {
-    fontSize: 18,
-    color: '#666',
-  },
-  emailNotification: {
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  emailInfo: {
-    marginTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingTop: 16,
+  itemContainer: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
   },
-  emailLabel: {
-    fontSize: 14,
-    color: '#888',
+  withBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(243, 244, 246, 1)',
+  },
+  itemLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'rgba(156, 163, 175, 1)',
+  },
+  emailContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 12,
+    padding: 12,
+  },
+  emailItem: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // paddingVertical: 4,
+  },
+  emailTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'rgba(156, 163, 175, 1)',
+  },
+  emailText: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.6)',
   },
   emailValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 1)',
   },
-  testButton: {
-    marginTop: 16,
-    alignSelf: 'flex-end',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#000',
-    borderRadius: 24,
+  emailItemBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(243, 244, 246, 1)',
+    paddingBottom: 12,
   },
-  testButtonText: {
-    color: '#FFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
+  emailPadding: {
+    paddingVertical: 12,
+  }
 });
 
 export default NotificationSettingsScreen;

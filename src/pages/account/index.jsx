@@ -15,8 +15,8 @@ const getSettingsData = () => {
   return [
     { id: '1', title: '账户与安全', gotoPage: 'AccountSecurity' },
     { id: '2', title: '推送设置', gotoPage: 'NotificationSettings' },
-    { id: '3', title: '在线客服', gotoPage: '' },
-    { id: '4', title: '加入社群', gotoPage: '' },
+    { id: '3', title: '联系我们', gotoPage: '' },
+    { id: '4', title: 'PaperTradex社群', gotoPage: 'Community' },
     { id: '5', title: '检查更新', gotoPage: '' },
     { id: '6', title: '分享应用', gotoPage: '' },
   ];

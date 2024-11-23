@@ -34,7 +34,7 @@ const NavBar = ({
 
   return (
     <View style={styles.navbar}>
-      <View style={styles.left}>
+      <View style={styles.side}>
         {(back !== null || backIcon) && (
           <TouchableOpacity 
             style={styles.backButton} 
@@ -44,19 +44,33 @@ const NavBar = ({
             {back && <Text style={styles.backText}>{back}</Text>}
           </TouchableOpacity>
         )}
-        {left}
+        {left && <View style={styles.left}>{left}</View>}
       </View>
 
       <View style={styles.title}>
         {typeof children === 'string' ? (
-          <Text style={styles.titleText}>{children}</Text>
+          <Text 
+            style={styles.titleText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {children}
+          </Text>
         ) : (
           children
         )}
       </View>
 
-      <View style={styles.right}>
-        <Text style={styles.rightText}>{right}</Text>
+      <View style={[styles.side, styles.rightSide]}>
+        {right && (
+          <View style={styles.right}>
+            {typeof right === 'string' ? (
+              <Text style={styles.rightText}>{right}</Text>
+            ) : (
+              right
+            )}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -65,41 +79,44 @@ const NavBar = ({
 const styles = StyleSheet.create({
   navbar: {
     height: 40,
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    // backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
   },
-  left: {
-    flex: 1,
+  side: {
+    minWidth: 40,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  rightSide: {
+    justifyContent: 'flex-end',
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
   },
   backText: {
     fontSize: 16,
     color: 'rgba(0, 0, 0, 0.9)',
     marginLeft: 4,
   },
+  left: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   title: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   titleText: {
     fontSize: 16,
     fontWeight: '700',
     color: 'rgba(0, 0, 0, 1)',
+    textAlign: 'center',
   },
   right: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   rightText: {

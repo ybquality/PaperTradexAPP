@@ -7,8 +7,8 @@ import CustomHeader from '../../components/CustomHeader';
 import BalanceScreen from './Balance';
 import RechargePage from './Recharge';
 import AccountSecurityScreen from './AccountSecurity'
-import BindEmailScreen from './BindEmail';
-import ResetPasswordScreen from './ResetPassword';
+import BindEmailScreen from './userinfo/BindEmail';
+import ResetPasswordScreen from './userinfo/ResetPassword';
 import NotificationSettingsScreen from './NotificationSettings';
 import LoginScreen from './login';
 import RegisterScreen from './Register';
@@ -16,6 +16,9 @@ import AssetsDetail from './assets/';
 import AccountManage from './assets/AccountManage';
 import UserInfoScreen from './UserInfo';
 import BuyVipScreen from './payProgram/buyVip';
+import EditUsernameScreen from './userinfo/EditUsername';
+import VerifyPhoneScreen from './userinfo/VerifyPhone';
+import SetNewPhoneScreen from './userinfo/SetNewPhone';
 
 const Stack = createStackNavigator();
 
@@ -45,31 +48,29 @@ const AccountStackNavigator = () => {
       <Stack.Screen 
         name="AccountSecurity"
         component={AccountSecurityScreen}
-        // options={{ headerShown: false }}
         options={{
-            header: () => <CustomHeader />,
-            headerTintColor: '#fff', // 返回按钮颜色
-          }}
+          headerShown: false
+        }}
+        // options={{
+        //     header: () => <CustomHeader />,
+        //     headerTintColor: '#fff', // 返回按钮颜色
+        //   }}
       />
       
       <Stack.Screen 
         name="BindEmail"
         component={BindEmailScreen}
-        // options={{ headerShown: false }}
         options={{
-            header: () => <CustomHeader />,
-            headerTintColor: '#fff', // 返回按钮颜色
-          }}
+          headerShown: false
+        }}
       />
 
       <Stack.Screen 
         name="ResetPassword"
         component={ResetPasswordScreen}
-        // options={{ headerShown: false }}
         options={{
-            header: () => <CustomHeader />,
-            headerTintColor: '#fff', // 返回按钮颜色
-          }}
+          headerShown: false
+        }}
       />
 
       <Stack.Screen 
@@ -131,6 +132,30 @@ const AccountStackNavigator = () => {
       <Stack.Screen 
         name="BuyVip"
         component={BuyVipScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="EditUsername"
+        component={EditUsernameScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="VerifyPhone"
+        component={VerifyPhoneScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="SetNewPhone"
+        component={SetNewPhoneScreen}
         options={{
           headerShown: false
         }}

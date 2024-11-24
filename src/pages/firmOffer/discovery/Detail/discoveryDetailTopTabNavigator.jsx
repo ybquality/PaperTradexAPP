@@ -10,10 +10,21 @@ const Tab = createMaterialTopTabNavigator();
 
 const DiscoveryDetailTobTabNavigator = ( {data} ) => {
   return (
-    // 使用自定义导航栏组件
     <Tab.Navigator
       initialRouteName="数据概览"
-      tabBar={(props) => (<CustomTopNavBar {...props}/>)}
+      tabBar={(props) => (
+        <CustomTopNavBar 
+          {...props}
+          customStyles={{
+            container: {
+              paddingLeft: 0,
+            },
+            tabItem: {
+              // 自定义样式
+            },
+          }}
+        />
+      )}
     >
       <Tab.Screen name="数据概览" component={DataOverviewScreen} initialParams={data} />
       <Tab.Screen name="持仓信息" component={PositionInformationScreen} initialParams={data}/>

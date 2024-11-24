@@ -196,11 +196,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     detailsButton: {
-        width: 48,
+        minWidth: 48,
         height: 24,
         paddingVertical: 4,
         paddingHorizontal: 12,
-        borderRadius: 12,
+        borderRadius: 32,
         backgroundColor: '#000000',
         position: 'absolute',
         right: 0,

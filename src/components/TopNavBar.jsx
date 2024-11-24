@@ -1,9 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const CustomTopNavBar = ({ state, descriptors, navigation }) => {
+const CustomTopNavBar = ({ state, descriptors, navigation, customStyles = {} }) => {
+  const combinedStyles = {
+    container: [styles.container, customStyles.container],
+    tabItem: [styles.tabItem, customStyles.tabItem],
+    tabText: [styles.tabText, customStyles.tabText],
+    activeTabText: [styles.activeTabText, customStyles.activeTabText],
+    activeTabUnderline: [styles.activeTabUnderline, customStyles.activeTabUnderline],
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={combinedStyles.container}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -30,13 +38,18 @@ const CustomTopNavBar = ({ state, descriptors, navigation }) => {
         return (
           <TouchableOpacity
             key={index}
-            style={styles.tabItem}
+            style={combinedStyles.tabItem}
             onPress={onPress}
           >
-            <Text style={[styles.tabText, isFocused && styles.activeTabText]}>
+            <Text 
+              style={[
+                combinedStyles.tabText,
+                isFocused && combinedStyles.activeTabText
+              ]}
+            >
               {label}
             </Text>
-            {isFocused && <View style={styles.activeTabUnderline} />}
+            {isFocused && <View style={combinedStyles.activeTabUnderline} />}
           </TouchableOpacity>
         );
       })}

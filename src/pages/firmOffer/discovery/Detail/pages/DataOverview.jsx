@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity } from 'react-native';
 
-import DataModelTopTabNavigator from './DataModelTopTabNavigator';
+// 导入两个图表组件
+import AllIncomeScreen from './pages/allIncome';
+import ProfitScreen from './pages/profit';
 import request from '../../../../../utils/request';
 
 // 卡片组件
@@ -35,6 +37,7 @@ const InfoCard = ({ label, date, description }) => {
 const AccountScreen = ({ route, navigation }) => {
 
     const [items, setItems] = useState([]);
+    const [index, setIndex] = useState(0); // 添加 tab 索引状态
 
     const data = route.params.data || {}
     const id = route.params.id || {}
@@ -126,7 +129,35 @@ const AccountScreen = ({ route, navigation }) => {
                 </View>
             </View>
 
-            <DataModelTopTabNavigator style={{ borderWidth: 2, borderColor: '#fff' }} data={id} />
+            {/* 累计收益和累计收益率 */}
+            <View style={styles.tabSection}>
+                <View style={styles.tabContainer}>
+                    <TouchableOpacity 
+                        style={[styles.tabItem, index === 0 && styles.tabItemActive]}
+                        onPress={() => setIndex(0)}
+                    >
+                        <Text style={[styles.tabText, index === 0 && styles.tabTextActive]}>
+                            累计收益率
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={[styles.tabItem, index === 1 && styles.tabItemActive]}
+                        onPress={() => setIndex(1)}
+                    >
+                        <Text style={[styles.tabText, index === 1 && styles.tabTextActive]}>
+                            累计收益
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                
+                <View style={styles.tabContent}>
+                    {index === 0 ? (
+                        <AllIncomeScreen route={{ params: { id } }} navigation={navigation} />
+                    ) : (
+                        <ProfitScreen route={{ params: { id } }} navigation={navigation} />
+                    )}
+                </View>
+            </View>
 
             {/* 最新操作 */}
             <Text style={styles.latestOperationText}>最新操作</Text>
@@ -149,11 +180,12 @@ const AccountScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
     scrollContainer: {
+        backgroundColor: '#fff',
         flex: 1,
       },
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        paddingTop: 16,
     },
     header: {
         flexDirection: 'row',
@@ -180,7 +212,7 @@ const styles = StyleSheet.create({
         color: 'rgba(0, 0, 0, 1)',
     },
     details: {
-        marginBottom: 24,
+       // marginBottom: 24,
     },
     detailsRow: {
         flexDirection: 'row',
@@ -271,6 +303,36 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '400',
         marginTop: 8,
+    },
+    tabSection: {
+        
+    },
+    tabContainer: {
+        flexDirection: 'row',
+    },
+    tabItem: {
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 100,
+        marginRight: 12,
+        borderWidth: 1,
+        borderColor: 'transparent',
+    },
+    tabItemActive: {
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(0, 0, 0, 1)',
+    },
+    tabText: {
+        fontSize: 14,
+        color: '#999',
+    },
+    tabTextActive: {
+        color: 'rgba(0, 0, 0, 1)',
+        fontWeight: '700',
+    },
+    tabContent: {
+        paddingTop: 12,
+        minHeight: 122,
     },
 });
 

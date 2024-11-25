@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 import request from '../../utils/request';
+import images from '../../../assets/Exchanges';
 
 const AssetOverview = ({ navigation }) => {
   
@@ -13,6 +14,8 @@ const AssetOverview = ({ navigation }) => {
     await request.get('/api/exchange/getUserBindExchanges')
     .then(response => {
       // Handle successful response
+      let response_data = response.data.data;
+
       setItems(response.data.data)
     })
     .catch(error => {
@@ -81,7 +84,7 @@ const AssetOverview = ({ navigation }) => {
             onPress={() => navigation.navigate('AccountStack', {screen: 'AssetsStack', params: {accountInfo: items, selectedAccount: account.account_name_new}})}
           >
             <View style={styles.accountLeft}>
-              <Image source={account.logo} style={styles.accountIcon} />
+              <Image source={images[account.logo]} style={styles.accountIcon} />
               <View style={styles.accountInfo}>
                 <View style={styles.nameContainer}>
                   <Text style={styles.accountName}>{account.account_name_new}</Text>

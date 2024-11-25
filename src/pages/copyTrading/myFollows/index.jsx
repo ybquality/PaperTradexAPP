@@ -13,7 +13,7 @@ const mockHistoryPositions = [
     symbol: 'BTC/USDT',
     direction: 'LONG',
     leverage: 20,
-    openTime: '2024-11-118 10:00',
+    openTime: '2024-11-18 10:00',
     closeTime: '2024-11-19 15:30',
     profit: '13700',
     openPrice: '90400',

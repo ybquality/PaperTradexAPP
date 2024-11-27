@@ -27,7 +27,7 @@ const OverviewScreen = ({ navigation }) => {
             selectedBar={selectedBar}
             setSelectedBar={setSelectedBar}
           />
-          <ExpertCard />
+          <ExpertCard navigation={navigation} />
         </View>
       </ScrollView>
     </TouchableWithoutFeedback>

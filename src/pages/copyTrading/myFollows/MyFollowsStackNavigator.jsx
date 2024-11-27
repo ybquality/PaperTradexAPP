@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import CustomHeader from '../../../components/CustomHeader';
 import CopyTradeScreen from './CopyTrade';
+import FollowTradePositionScreen from '../overview/FollowTradePositions';
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,11 @@ const MyFollowsStackNavigator = () => {
             header: () => <CustomHeader titleName='跟单设置' rightText='教程'/>,
             headerTintColor: '#fff', // 返回按钮颜色
           }}
+      />
+      <Stack.Screen
+        name="FollowTradePositions"
+        component={FollowTradePositionScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

@@ -83,12 +83,15 @@ const EditApiForm = ({ onClose, onSave, initialValues, userBindExchangeId }) => 
   // 遮挡显示函数
   const maskValue = (value, type) => {
     if (!value) return '';
+    const length = value.length;
+    
     switch (type) {
       case 'apiKey':
-        return value.substring(0, 6) + '*'.repeat(value.length - 6);
+        if (length <= 6) return value;
+        return value.substring(0, 6) + '*'.repeat(Math.min(length - 6, 50)); // 限制最大重复次数
       case 'secretKey':
       case 'password':
-        return '*'.repeat(value.length);
+        return '*'.repeat(Math.min(length, 50)); // 限制最大重复次数
       default:
         return value;
     }
@@ -98,17 +101,6 @@ const EditApiForm = ({ onClose, onSave, initialValues, userBindExchangeId }) => 
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>编辑API</Text>
-        <TouchableOpacity 
-          style={styles.closeButton}
-          onPress={onClose}
-        >
-          <Icon 
-            name="close" 
-            type="font-awesome" 
-            size={20} 
-            color="#999"
-          />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.form}>
@@ -127,7 +119,7 @@ const EditApiForm = ({ onClose, onSave, initialValues, userBindExchangeId }) => 
           () => setShowSecretKey(!showSecretKey)
         )}
         {renderInput(
-          '密码', 
+          '密码（选填）', 
           'password', 
           showPassword ? formData.password : maskValue(formData.password, 'password'),
           showPassword,
@@ -160,9 +152,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: 24,
+    fontWeight: '700',
+    color: 'rgba(17, 24, 39, 1)',
     textAlign: 'left',
   },
   closeButton: {
@@ -176,8 +168,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'rgba(17, 24, 39, 1)',
     marginBottom: 8,
   },
   inputWrapper: {

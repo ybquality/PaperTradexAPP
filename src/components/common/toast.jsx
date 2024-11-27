@@ -1,35 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal } from 'react-native';
+import { View, Text, StyleSheet, Modal, Platform } from 'react-native';
 
-let toastInstance = null;
+// 初始化 toastInstance
+const toastInstance = {
+  visible: false,
+  content: '',
+  icon: null,
+  timer: null,
+  setVisible: null,
+};
 
 const Toast = {
   show: ({ content, icon, duration = 2000 }) => {
-    // 如果已经有实例，先清除之前的定时器
-    if (toastInstance?.timer) {
+    console.log('Toast.show called:', { content });
+    
+    if (toastInstance.timer) {
       clearTimeout(toastInstance.timer);
     }
 
-    // 创建/更新 toast 实例
-    if (!toastInstance) {
-      toastInstance = {
-        visible: false,
-        content: '',
-        icon: null,
-        timer: null,
-        setVisible: null,
-      };
-    }
-
-    // 更新内容
     toastInstance.content = content;
     toastInstance.icon = icon;
 
-    // 显示 toast
     if (toastInstance.setVisible) {
       toastInstance.setVisible(true);
       
-      // 设置定时器自动关闭
       toastInstance.timer = setTimeout(() => {
         toastInstance.setVisible(false);
       }, duration);
@@ -37,14 +31,15 @@ const Toast = {
   }
 };
 
-// Toast 容器组件
 export const ToastContainer = () => {
   const [visible, setVisible] = React.useState(false);
 
   React.useEffect(() => {
+    // 确保 toastInstance 存在
     if (toastInstance) {
       toastInstance.setVisible = setVisible;
     }
+    
     return () => {
       if (toastInstance) {
         toastInstance.setVisible = null;
@@ -57,13 +52,18 @@ export const ToastContainer = () => {
       visible={visible}
       transparent={true}
       animationType="fade"
+      statusBarTranslucent={true}
+      hardwareAccelerated={Platform.OS === 'android'}
     >
       <View style={styles.overlay}>
-        <View style={styles.container}>
-          {toastInstance?.icon && (
+        <View style={[
+          styles.container,
+          Platform.OS === 'android' && styles.androidShadow
+        ]}>
+          {toastInstance.icon && (
             <View style={styles.icon}>{toastInstance.icon}</View>
           )}
-          <Text style={styles.content}>{toastInstance?.content}</Text>
+          <Text style={styles.content}>{toastInstance.content}</Text>
         </View>
       </View>
     </Modal>
@@ -84,6 +84,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     maxWidth: '80%',
+    minWidth: 100,
+    ...Platform.select({
+      android: {
+        elevation: 24,
+      },
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+    }),
+  },
+  androidShadow: {
+    elevation: 24,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
   },
   icon: {
     marginRight: 8,
@@ -91,6 +110,7 @@ const styles = StyleSheet.create({
   content: {
     color: '#FFFFFF',
     fontSize: 14,
+    textAlign: 'center',
   },
 });
 

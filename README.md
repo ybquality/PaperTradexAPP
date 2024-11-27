@@ -277,3 +277,104 @@ Toast.show({
 | content  | 提示内容             | string    | -      |
 | icon     | 图标节点             | ReactNode | null   |
 | duration | 显示时长，单位为毫秒 | number    | 2000   |
+
+## Popup 弹出层组件
+
+从底部、顶部或两侧滑出的弹出层组件，支持手势滑动关闭。
+
+### 引入
+
+```javascript
+import Popup from "@/components/common/popup";
+```
+
+### 用法
+
+```javascript
+const [visible, setVisible] = useState(false);
+
+return (
+  <>
+    <Button onPress={() => setVisible(true)}>
+      显示弹出层
+    </Button>
+
+    <Popup
+      visible={visible}
+      onClose={() => setVisible(false)}
+    >
+      <Text>这是弹出层内容</Text>
+    </Popup>
+  </>
+);
+
+// 顶部弹出
+<Popup position="top" visible={visible} onClose={() => setVisible(false)}>
+  <Text>顶部弹出内容</Text>
+</Popup>
+
+// 左侧弹出
+<Popup position="left" visible={visible} onClose={() => setVisible(false)}>
+  <Text>左侧弹出内容</Text>
+</Popup>
+
+// 右侧弹出
+<Popup position="right" visible={visible} onClose={() => setVisible(false)}>
+  <Text>右侧弹出内容</Text>
+</Popup>
+
+// 修改内容区域样式
+<Popup
+  visible={visible}
+  bodyStyle={{
+    padding: 16,                    // 修改内边距
+    borderTopLeftRadius: 32,        // 修改圆角
+    borderTopRightRadius: 32,
+    backgroundColor: '#ffffff',     // 修改背景色
+    maxHeight: '80%',               // 限制最大高度
+  }}
+>
+  <Text>自定义样式内容</Text>
+</Popup>
+
+// 完全自定义内容区域
+<Popup visible={visible}>
+  <View style={styles.customContainer}>
+    {/* 自定义滑动指示器 */}
+    <View style={styles.indicator} />
+
+    {/* 自定义内容 */}
+    <View style={styles.content}>
+      <Text>完全自定义的内容</Text>
+    </View>
+
+    {/* 自定义底部 */}
+    <View style={styles.footer}>
+      <Button title="确定" />
+    </View>
+  </View>
+</Popup>
+```
+
+### Props
+
+| 参数             | 说明               | 类型                                   | 默认值   |
+| ---------------- | ------------------ | -------------------------------------- | -------- |
+| visible          | 是否显示弹出层     | boolean                                | false    |
+| position         | 弹出位置           | 'bottom' \| 'top' \| 'left' \| 'right' | 'bottom' |
+| mask             | 是否显示遮罩层     | boolean                                | true     |
+| closeOnMaskClick | 点击遮罩层是否关闭 | boolean                                | false    |
+| closeOnSwipe     | 是否支持滑动关闭   | boolean                                | true     |
+| onClose          | 关闭时触发         | () => void                             | -        |
+| onMaskClick      | 点击遮罩层时触发   | (event) => void                        | -        |
+| afterClose       | 完全关闭后触发     | () => void                             | -        |
+| afterShow        | 完全展示后触发     | () => void                             | -        |
+| bodyStyle        | 内容区域自定义样式 | ViewStyle                              | -        |
+| children         | 弹出层内容         | ReactNode                              | -        |
+
+注意事项：
+
+1. bodyStyle 会覆盖组件默认样式
+2. 可以通过 children 完全自定义内容区域
+3. 弹出位置不同时注意调整相应的圆角和内边距
+4. 建议保留滑动指示器以提升用户体验

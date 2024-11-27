@@ -58,9 +58,9 @@ const Modal = ({
               <Text style={styles.title}>{title}</Text>
             )}
             {children && (
-              <Text style={styles.children}>
-                {children}
-              </Text>
+              typeof children === 'string' 
+                ? <Text style={styles.children}>{children}</Text>
+                : children
             )}
           </View>
           {hasButtons && (

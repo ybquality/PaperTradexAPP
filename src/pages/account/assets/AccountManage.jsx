@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
-import { BottomSheet } from '@rneui/themed';
+import Popup from '../../../components/common/popup';
 import EditApiForm from '../../../components/account/EditApiForm';
+import Modal from '../../../components/common/modal';
 
 import request from '../../../utils/request';
 
@@ -32,12 +33,15 @@ const AccountManage = ({ navigation, route }) => {
   // 添加遮挡显示函数
   const maskValue = (value, type) => {
     if (!value) return '';
+    const length = value.length;
+    
     switch (type) {
       case 'apiKey':
-        return value.substring(0, 6) + '*'.repeat(value.length - 6);
+        if (length <= 6) return value;
+        return value.substring(0, 6) + '*'.repeat(Math.min(length - 6, 50));
       case 'secretKey':
       case 'password':
-        return '*'.repeat(value.length);
+        return '*'.repeat(Math.min(length, 50));
       default:
         return value;
     }
@@ -172,14 +176,14 @@ const AccountManage = ({ navigation, route }) => {
       </ScrollView>
 
       {/* 底部编辑弹窗 */}
-      <BottomSheet
-        isVisible={isBottomSheetVisible}
-        onBackdropPress={() => setIsBottomSheetVisible(false)}
-        modalProps={{
-          statusBarTranslucent: true,  // 添加这个属性使遮罩层覆盖状态栏
-          animationType: 'fade',
-        }}
-        backdropStyle={styles.backdrop}  // 添加自定义遮罩层样式
+      <Popup
+        visible={isBottomSheetVisible}
+        position="bottom"
+        closeOnMaskClick
+        closeOnSwipe
+        mask={true}
+        onClose={() => setIsBottomSheetVisible(false)}
+        onMaskClick={() => setIsBottomSheetVisible(false)}
       >
         <EditApiForm 
           onClose={() => setIsBottomSheetVisible(false)}
@@ -193,76 +197,47 @@ const AccountManage = ({ navigation, route }) => {
           initialValues={apiConfig}
           userBindExchangeId={accountInfo.id}
         />
-      </BottomSheet>
+      </Popup>
 
       {/* 删除api账户 */}
       <Modal
         visible={isDeleteModalVisible}
-        transparent={true}
-        animationType="fade"
-        statusBarTranslucent={true}
+        title="删除"
+        showConfirmButton
+        showCancelButton
+        onClose={() => setIsDeleteModalVisible(false)}
+        onCancel={() => setIsDeleteModalVisible(false)}
+        onConfirm={() => handleDelete(accountInfo.id)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>删除</Text>
-            <Text style={styles.modalMessage}>确定要删除 {accountName} 吗？</Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.modalCancelButton]}
-                onPress={() => setIsDeleteModalVisible(false)}
-              >
-                <Text style={styles.modalCancelText}>取消</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.modalConfirmButton]}
-                onPress={() => {handleDelete(accountInfo.id)}}
-              >
-                <Text style={styles.modalConfirmText}>确定</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <Text style={styles.modalText}>
+          确定要删除 {accountName} 吗？
+        </Text>
       </Modal>
 
-      {/* 修改账户名称 */}
+      {/* 修改账户名称弹窗 */}
       <Modal
         visible={isEditingName}
-        transparent={true}
-        animationType="fade"
-        statusBarTranslucent={true}
+        title="修改账户名称"
+        showConfirmButton
+        showCancelButton
+        onClose={() => setIsEditingName(false)}
+        onCancel={() => {
+          setEditedName(editedName);
+          setIsEditingName(false);
+        }}
+        onConfirm={() => {
+          changeExchangeApiName(editedName, accountInfo.id);
+          setIsEditingName(false);
+        }}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>修改账户名称</Text>
-            <TextInput
-              style={styles.nameInput}
-              value={editedName}
-              onChangeText={setEditedName}
-              placeholder="请输入账户名称"
-              placeholderTextColor="#999"
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.modalCancelButton]}
-                onPress={() => {
-                  setEditedName(editedName);
-                  setIsEditingName(false);
-                }}
-              >
-                <Text style={styles.modalCancelText}>取消</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.modalConfirmButton]}
-                onPress={() => {
-                  // 这里可以添加保存名称的逻辑
-                  changeExchangeApiName(editedName, accountInfo.id);
-                  setIsEditingName(false);
-                }}
-              >
-                <Text style={styles.modalConfirmText}>确定</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        <View style={styles.modalContent}>
+          <TextInput
+            style={styles.nameInput}
+            value={editedName}
+            onChangeText={setEditedName}
+            placeholder="请输入账户名称"
+            placeholderTextColor="#999"
+          />
         </View>
       </Modal>
     </View>
@@ -471,65 +446,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-  },
-  backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  modalMessage: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  modalButton: {
-    flex: 1,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  modalCancelButton: {
-    backgroundColor: '#f5f5f5',
-  },
-  modalConfirmButton: {
-    backgroundColor: '#80FFE9',
-  },
-  modalCancelText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  modalConfirmText: {
-    fontSize: 16,
-    color: '#000',
+    maxHeight: '80%',
+    width: '100%',
   },
   nameEditContainer: {
     flexDirection: 'row',
@@ -549,7 +467,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     backgroundColor: '#fff',
-    marginBottom: 24,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
+  modalContent: {
+    width: '100%',
+    paddingHorizontal: 16,
   },
 });
 

@@ -10,16 +10,18 @@ import { ToastContainer } from './src/components/common/toast';
 export default function App() {
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{flex: 1}}>
-        <StatusBar style="auto" />
-        <NavigationContainer screenOptions={{
-          cardStyle: { backgroundColor: '#f0f0f0' },
-        }}>
-          <BottomTabStackNavigator/>
-        </NavigationContainer>
-        <GlobalLoader />
-        <ToastContainer />
-      </SafeAreaView>
+      <NavigationContainer screenOptions={{
+        cardStyle: { backgroundColor: '#f0f0f0' },
+      }}>
+        <View style={{ flex: 1 }}>
+          <SafeAreaView style={{flex: 1}}>
+            <StatusBar style="auto" />
+            <BottomTabStackNavigator/>
+            <GlobalLoader />
+          </SafeAreaView>
+          <ToastContainer />
+        </View>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }

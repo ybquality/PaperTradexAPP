@@ -236,3 +236,44 @@ import Ellipsis from "@/components/common/ellipsis";
 | style           | 文本样式     | TextStyle | -      |
 | expandText      | 展开按钮文字 | string    | "展开" |
 | collapseText    | 收起按钮文字 | string    | "收起" |
+
+## Toast 轻提示组件
+
+用于对操作结果的轻量级反馈，无需用户操作即可自行消失。
+
+### 引入
+
+```javascript
+import Toast from "@/components/common/toast";
+```
+
+### 基础用法
+
+```javascript
+// 带icon的用法
+<Button
+  onPress={() =>
+    Toast.show({
+      icon: <Icon name="success" type="feather" color="#07C160" size={20} />,
+      content: "保存成功",
+    })
+  }
+>
+  成功
+</Button>;
+
+// 自定义显示时长
+Toast.show({
+  icon: <Icon name="error" type="feather" color="#07C160" size={20} />,
+  content: "操作失败",
+  duration: 3000,
+});
+```
+
+### Options
+
+| 参数     | 说明                 | 类型      | 默认值 |
+| -------- | -------------------- | --------- | ------ |
+| content  | 提示内容             | string    | -      |
+| icon     | 图标节点             | ReactNode | null   |
+| duration | 显示时长，单位为毫秒 | number    | 2000   |

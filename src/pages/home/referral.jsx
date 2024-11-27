@@ -8,14 +8,35 @@ import {
   ImageBackground,
   Image,
   TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import NavBar from '../../components/common/navbar';
 import { Icon } from '@rneui/themed';
+import Toast from '../../components/common/toast';
 
 const ReferralScreen = ({ navigation }) => {
   // 邀请码数据
   const inviteCode = '6666';
+
+  // 添加邀请码输入状态
+  const [inputCode, setInputCode] = React.useState('');
+
+  // 处理绑定按钮点击
+  const handleBind = () => {
+    if (!inputCode) {
+      Toast.show({
+        content: '请输入邀请码'
+      });
+      return;
+    }
+
+    // 这里添加绑定邀请码的逻辑
+    Toast.show({
+      content: '暂时无法绑定邀请用户'
+    });
+    setInputCode('');
+  };
 
   return (
     <View style={styles.container}>
@@ -98,10 +119,15 @@ const ReferralScreen = ({ navigation }) => {
                       placeholderTextColor="rgba(255, 255, 255, 0.4)"
                       style={styles.input}
                       returnKeyType="done"
+                      value={inputCode}
+                      onChangeText={setInputCode}
                     />
-                    <View style={styles.bindButton}>
+                    <TouchableOpacity 
+                      style={styles.bindButton}
+                      onPress={handleBind}
+                    >
                       <Text style={styles.bindText}>绑定</Text>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                 </LinearGradient>
               </View>

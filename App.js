@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context"; // 安全边界
 import { NavigationContainer } from '@react-navigation/native';
 import BottomTabStackNavigator from './src/components/BottomTabNavigator';
 import GlobalLoader from './src/components/GlobalLoader';
+import { ToastContainer } from './src/components/common/toast';
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <BottomTabStackNavigator/>
         </NavigationContainer>
         <GlobalLoader />
+        <ToastContainer />
       </SafeAreaView>
     </SafeAreaProvider>
   );

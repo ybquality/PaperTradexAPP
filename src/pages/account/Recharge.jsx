@@ -1,24 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Modal, Clipboard } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Clipboard, Image } from 'react-native';
+import Popup from '../../components/common/popup';
+import { Icon } from '@rneui/themed';
+import QRCode from 'react-native-qrcode-svg';
 
 const RechargePage = () => {
   const [selectedNetwork, setSelectedNetwork] = useState('');
-  const [rechargeAmount, setRechargeAmount] = useState('5000');
+  const [rechargeAmount, setRechargeAmount] = useState('100');
   const [address, setAddress] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [tempNetwork, setTempNetwork] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [showNetworkPopup, setShowNetworkPopup] = useState(true);
 
-  // 模拟不同网络对应的地址数据
+  // 用户UUID
+  const userUUID = '7656';
+
+  // 请求充值链上地址
   const networkAddresses = {
-    'networkA': {
-      address: 'T9zsjL2vmTXCjTiv1xGPuAbbi1ygzTrPuo',
-      qrCode: 'https://files.catbox.moe/cply95.png'
+    'TRC20': {
+      address: 'T9zsjL2vmTXCjTiv1xGPuAbbi1ygzTrPuo'
     },
-    'networkB': {
-      address: '0x1E13e0f60990bF010FadBf1C8Ed98B3042149D12',
-      qrCode: 'https://files.catbox.moe/cply95.png'
+    'ERC20': {
+      address: '0x1E13e0f60990bF010FadBf1C8Ed98B3042149D12'
+    },
+    'BEP20': {
+      address: '0x1E13e0f60990bF010FadBf1C8Ed98B3042149D12'
+    },
+    'POLYGON': {
+      address: '0x1E13e0f60990bF010FadBf1C8Ed98B3042149D12'
+    },
+    'ARBITRUM': {
+      address: '0x1E13e0f60990bF010FadBf1C8Ed98B3042149D12'
+    },
+    'OPTIMISM': {
+      address: '0x1E13e0f60990bF010FadBf1C8Ed98B3042149D12'
+    },
+    'BASE': {
+      address: '0x1E13e0f60990bF010FadBf1C8Ed98B3042149D12'
     }
   };
 
@@ -57,62 +77,180 @@ const RechargePage = () => {
   };
 
   const getNetworkDisplayText = () => {
-    switch(selectedNetwork) {
-      case 'networkA':
-        return 'Tron（TRC20）';
-      case 'networkB':
-        return 'Ethereum（ERC20）';
-      default:
-        return '请选择';
-    }
+    const network = networkOptions.find(option => option.value === selectedNetwork);
+    return network ? network.label : '请选择';
   };
 
   // 定义下拉选项数据
   const networkOptions = [
-    { label: 'Tron（TRC20）', value: 'networkA' },
-    { label: 'Ethereum（ERC20）', value: 'networkB' }
+    { 
+      label: 'Tron（TRC20）', 
+      value: 'TRC20',
+      icon: require('../../../assets/icon/tron.png')
+    },
+    { 
+      label: 'Ethereum（ERC20）', 
+      value: 'ERC20',
+      icon: require('../../../assets/icon/eth.png')
+    },
+    { 
+      label: 'BNB Smart Chain（BEP20）', 
+      value: 'BEP20',
+      icon: require('../../../assets/icon/bsc.png')
+    },
+    { 
+      label: 'Polygon POS', 
+      value: 'POLYGON',
+      icon: require('../../../assets/icon/polygon.png')
+    },
+    { 
+      label: 'Arbitrum One', 
+      value: 'ARBITRUM',
+      icon: require('../../../assets/icon/arbitrum.png')
+    },
+    { 
+      label: 'Optimism', 
+      value: 'OPTIMISM',
+      icon: require('../../../assets/icon/optimism.png')
+    },
+    { 
+      label: 'Base', 
+      value: 'BASE',
+      icon: require('../../../assets/icon/base.png')
+    }
   ];
+
+  // 处理充值金额的变化
+  const handleAmountChange = (value) => {
+    // 只允许输入数字
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setRechargeAmount(numericValue);
+  };
+
+  // 处理输入框获得焦点
+  const handleFocus = () => {
+    setIsEditing(true);
+  };
+
+  // 处理输入框失去焦点
+  const handleBlur = () => {
+    setIsEditing(false);
+  };
+
+  // 获取显示值
+  const getDisplayAmount = () => {
+    // 编辑时显示纯数字
+    if (isEditing) {
+      return rechargeAmount;
+    }
+    // 非编辑状态显示带 UUID 的值
+    return rechargeAmount ? `${rechargeAmount}.${userUUID}` : '';
+  };
+
+  // 获取用于复制的值
+  const getCopyAmount = () => {
+    return rechargeAmount ? `${rechargeAmount}.${userUUID}` : '';
+  };
+
+  // 处理网络选择
+  const handleNetworkSelect = (network) => {
+    setSelectedNetwork(network);
+    setShowNetworkPopup(false);
+  };
 
   return (
     <View style={styles.container}>
       {/* 充币网络 */}
       <Text style={styles.label}>充币网络</Text>
-      <Dropdown
-        style={styles.dropdown}
-        data={networkOptions}
-        labelField="label"
-        valueField="value"
-        placeholder="请选择充值网络"
-        value={selectedNetwork}
-        onChange={item => {
-          setSelectedNetwork(item.value);
-        }}
-      />
+      <TouchableOpacity 
+        style={styles.networkSelector} 
+        onPress={() => setShowNetworkPopup(true)}
+      >
+        <Text style={[
+          styles.networkText,
+          !selectedNetwork && styles.placeholderText
+        ]}>
+          {selectedNetwork ? getNetworkDisplayText() : '请选择充值网络'}
+        </Text>
+        <Icon
+          name="chevron-down"
+          type="feather"
+          size={20}
+          color="#999"
+        />
+      </TouchableOpacity>
+
+      {/* 网络选择弹窗 */}
+      <Popup
+        visible={showNetworkPopup}
+        onClose={() => setShowNetworkPopup(false)}
+        closeOnMaskClick={true}
+        position="bottom"
+      >
+        <View style={styles.popupContent}>
+          <Text style={styles.popupTitle}>选择充值网络</Text>
+          <Text style={styles.networkTip}>
+            所有充值网络地址只接收USDT，请务必确认您发送的是对应网络的USDT，否则资产将无法找回
+          </Text>
+          {networkOptions.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={styles.networkOption}
+              onPress={() => handleNetworkSelect(option.value)}
+            >
+              <View style={styles.networkOptionLeft}>
+                <Image 
+                  source={option.icon}
+                  style={styles.networkIcon}
+                />
+                <Text style={[
+                  styles.networkOptionText,
+                  selectedNetwork === option.value && styles.networkOptionSelected
+                ]}>
+                  {option.label}
+                </Text>
+              </View>
+              {selectedNetwork === option.value && (
+                <Icon
+                  name="check"
+                  type="feather"
+                  size={20}
+                  color="#007AFF"
+                />
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+      </Popup>
 
       {/* 充值金额 */}
       <Text style={styles.label}>充值金额</Text>
       <View style={styles.inputWrapper}>
         <TextInput
           style={styles.input}
-          value={rechargeAmount}
-          onChangeText={setRechargeAmount}
+          value={getDisplayAmount()}
+          onChangeText={handleAmountChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           keyboardType="numeric"
           placeholder="请输入充值金额"
           returnKeyType="done"
-    returnKeyLabel="完成" 
+          returnKeyLabel="完成"
         />
         <TouchableOpacity 
           style={styles.copyButton}
-          onPress={() => copyToClipboard(rechargeAmount)}
+          onPress={() => copyToClipboard(getCopyAmount())}
         >
-          <Image 
-            source={require('../../../assets/icon/copy.png')} 
-            style={styles.copyIcon}
+          <Icon
+            name="copy"
+            type="feather"
+            size={20}
+            color="#999"
           />
         </TouchableOpacity>
       </View>
       <Text style={styles.warningText}>
-        务必按照充值金额+UUID生成的特定金额充值，若小数位后数值不匹配，将无法入账
+        此地址只支持USDT，务必按照充值金额+UUID生成的特定金额充值，若小数位后数值不匹配，将无法入账
       </Text>
 
       {/* 充币地址 */}
@@ -130,19 +268,27 @@ const RechargePage = () => {
           disabled={!address}
           onPress={() => address && copyToClipboard(address)}
         >
-          <Image 
-            source={require('../../../assets/icon/copy.png')} 
-            style={[styles.copyIcon, !address && styles.iconDisabled]}
+          <Icon
+            name="copy"
+            type="feather"
+            size={20}
+            color="#999"
           />
         </TouchableOpacity>
       </View>
 
       {/* 二维码 - 根据选择的网络显示 */}
-      {selectedNetwork && (
+      {selectedNetwork && address && (
         <View style={styles.qrContainer}>
-          <Image
-            source={{ uri: networkAddresses[selectedNetwork].qrCode }}
-            style={styles.qrCode}
+          <QRCode
+            value={address || ''}
+            size={200}
+            backgroundColor="white"
+            color="black"
+            logo={require('../../../assets/icon/usdt.png')}
+            logoSize={32}
+            logoBackgroundColor='white'
+            logoMargin={2}
           />
         </View>
       )}
@@ -244,13 +390,70 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
   },
-  dropdown: {
+  networkSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     height: 48,
+    paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: '#EEEEEE',
     borderRadius: 32,
-    paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
+  },
+  networkText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  placeholderText: {
+    color: '#999',
+  },
+  arrowIcon: {
+    width: 20,
+    height: 20,
+  },
+  popupContent: {
+    padding: 16,
+  },
+  popupTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: 'rgba(17, 24, 39, 1)',
+    marginBottom: 12,
+  },
+  networkOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  networkOptionText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  networkOptionSelected: {
+    color: '#007AFF',
+  },
+  checkIcon: {
+    width: 20,
+    height: 20,
+  },
+  networkOptionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  networkIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 12,
+  },
+  networkTip: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.6)',
+    marginBottom: 12,
   },
 });
 

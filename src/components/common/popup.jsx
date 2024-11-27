@@ -13,9 +13,21 @@ import {
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SWIPE_THRESHOLD = 50;
-const ANIMATION_DURATION = 300; // 基础动画时长
-const MASK_ANIMATION_DURATION = 400; // 遮罩层动画时长
-const SLIDE_ANIMATION_DURATION = 500; // 内容滑动动画时长，设置更长一些
+const MASK_ANIMATION_DURATION = 200; // 遮罩层动画时长
+const SLIDE_ANIMATION_DURATION = 150; // 弹出层动画时长
+
+// 修改动画配置
+const SPRING_CONFIG = {
+  tension: 120,  // 弹簧张力，控制动画速度
+  friction: 24,  // 摩擦力，控制回弹
+  useNativeDriver: true,
+};
+
+const TIMING_CONFIG = {
+  duration: 250,
+  easing: Easing.bezier(0.4, 0, 0.2, 1), // Material Design 标准缓动曲线
+  useNativeDriver: true,
+};
 
 export const Popup = ({
   visible = false,
@@ -61,85 +73,52 @@ export const Popup = ({
   useEffect(() => {
     if (visible) {
       setModalVisible(true);
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: ANIMATION_DURATION,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.ease),
-        }),
+      Animated.sequence([
+        // 遮罩层渐入
         Animated.timing(maskAnim, {
           toValue: 1,
-          duration: MASK_ANIMATION_DURATION,
+          duration: 200,
+          easing: Easing.ease,
           useNativeDriver: true,
-          easing: Easing.out(Easing.ease),
+        }),
+        // 内容弹出使用弹簧动画
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          ...SPRING_CONFIG,
         })
       ]).start(() => {
         afterShow?.();
       });
     } else {
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: SCREEN_HEIGHT,
-          duration: ANIMATION_DURATION,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.ease),
-        }),
-        Animated.timing(maskAnim, {
-          toValue: 0,
-          duration: MASK_ANIMATION_DURATION,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.ease),
-        })
-      ]).start(() => {
-        setModalVisible(false);
-        afterClose?.();
-      });
+      handleClose();
     }
   }, [visible]);
 
   const handleClose = () => {
-    Animated.sequence([
+    // 关闭时使用 timing 动画，更自然
+    Animated.timing(slideAnim, {
+      toValue: SCREEN_HEIGHT,
+      ...TIMING_CONFIG,
+    }).start(() => {
+      // 弹出层消失后执行遮罩层消失动画
       Animated.timing(maskAnim, {
         toValue: 0,
-        duration: MASK_ANIMATION_DURATION,
+        duration: 200,
+        easing: Easing.ease,
         useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }),
-      Animated.timing(slideAnim, {
-        toValue: SCREEN_HEIGHT,
-        duration: SLIDE_ANIMATION_DURATION,
-        useNativeDriver: true,
-        easing: Easing.bezier(0.4, 0, 0.2, 1),
-      })
-    ]).start(() => {
-      setModalVisible(false);
-      onClose?.();
-      afterClose?.();
+        easing: Easing.ease,
+      }).start(() => {
+        setModalVisible(false);
+        onClose?.();
+        afterClose?.();
+      });
     });
   };
 
   const handleMaskClick = (event) => {
     onMaskClick?.(event);
     if (closeOnMaskClick) {
-      Animated.sequence([
-        Animated.timing(maskAnim, {
-          toValue: 0,
-          duration: MASK_ANIMATION_DURATION,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.ease),
-        }),
-        Animated.timing(slideAnim, {
-          toValue: SCREEN_HEIGHT,
-          duration: SLIDE_ANIMATION_DURATION,
-          useNativeDriver: true,
-          easing: Easing.bezier(0.4, 0, 0.2, 1),
-        })
-      ]).start(() => {
-        setModalVisible(false);
-        onClose?.();
-        afterClose?.();
-      });
+      handleClose();
     }
   };
 
@@ -236,17 +215,17 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     paddingHorizontal: 16,
     paddingBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 24,
-      },
-    }),
+    // ...Platform.select({
+    //   ios: {
+    //     shadowColor: '#000',
+    //     shadowOffset: { width: 0, height: -3 },
+    //     shadowOpacity: 0.1,
+    //     shadowRadius: 3,
+    //   },
+    //   android: {
+    //     elevation: 24,
+    //   },
+    // }),
   },
   bottom: {
     bottom: 0,

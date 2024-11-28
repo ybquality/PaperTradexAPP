@@ -1,12 +1,9 @@
 // 当前持仓和PositionInformation一致
 // 当前持仓
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
-import request from '../../../../../utils/request';
-
 const CurrentPositionsScreen = ({ data }) => {
-    const [items, setItems] = useState([]);
     const CurrentPositionsCard = ({ item }) => {
 
         // 添加格式化函数
@@ -80,30 +77,14 @@ const CurrentPositionsScreen = ({ data }) => {
     };
 
     const renderItem = ({ item }) => (
-        <InfoCard
+        <CurrentPositionsCard
         item={item}
         />);
-
-    const fetchData = async () => {
-
-        await request.get('/test/api/getPositionInformation?traderId=' + route.params.id)
-            .then(response => {
-            console.log('response: ', response.data);
-            setItems(response.data.data);
-            })
-            .catch(error => {
-            console.log('error: ', error);
-            });
-        };
-    
-    useEffect(() => {
-        // fetchData();
-        }, []);
 
     return (
         <View style={styles.screen}>
             <FlatList
-            data={items}
+            data={data}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             // scrollEnabled={false}

@@ -4,6 +4,7 @@ import { View, FlatList, StyleSheet, RefreshControl, Text, TouchableOpacity } fr
 
 import MyFollowCard from '../../../components/MyFollowCard';
 import HistoryPositions from '../../../components/copyTrading/HistoryPositions';
+import CurrentPositionsScreen from '../../../components/copyTrading/CurrentPositions';
 
 import request from '../../../utils/request';
 
@@ -26,6 +27,8 @@ const mockHistoryPositions = [
 ];
 
 const MyFollowsScreen = ({ navigation }) => {
+  const [currentPosition, setCurrentPosition] = useState([]);
+  const [historyPositions, setHistoryPositions] = useState([]);
   const [items, setItems] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [index, setIndex] = useState(0);
@@ -46,6 +49,38 @@ const MyFollowsScreen = ({ navigation }) => {
     
     await fetchData();
   };
+
+
+  const getCurrentPostions = async () => {
+    try {
+      const response = await request.get('/api/exchange/getUserCurrentPositions');
+
+      if (response.data.code === 200) {
+        console.log(response.data.data);
+        setCurrentPosition(response.data.data);
+      }
+    }catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+
+    
+  }
+
+  const getHistoricalPostions = async () => {
+    try {
+      const response = await request.get('/api/exchange/getUserHistoricalPositions');
+
+      if (response.data.code === 200) {
+        console.log(response.data.data);
+        setHistoryPositions(response.data.data);
+      }
+    }catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+
+    
+  }
+
   
   async function fetchData() {
     try {
@@ -57,8 +92,8 @@ const MyFollowsScreen = ({ navigation }) => {
         setItems(response.data.data);
         alert(response.data.msg)
       }
-
-      
+      await getCurrentPostions()
+      await getHistoricalPostions()
     } catch (error) {
       console.error("Failed to fetch data:", error);
     }
@@ -142,9 +177,10 @@ const MyFollowsScreen = ({ navigation }) => {
             
             <View style={styles.tabContent}>
               {index === 0 ? (
-                <Text style={styles.tempText}>当前持仓内容</Text>
+                // <Text style={styles.tempText}>当前持仓内容</Text>
+                <CurrentPositionsScreen data={currentPosition} />
               ) : (
-                <HistoryPositions data={mockHistoryPositions} />
+                <HistoryPositions data={historyPositions} />
               )}
             </View>
           </View>

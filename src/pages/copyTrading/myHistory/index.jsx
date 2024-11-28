@@ -1,6 +1,8 @@
 // 跟单历史
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, RefreshControl } from 'react-native';
+
+import request from '../../../utils/request';
 
 const MyHistoryScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -20,9 +22,28 @@ const MyHistoryScreen = ({ navigation }) => {
       date: '2024/08/01-2024/08/01'
     },
   ]);
+  const fetchHistoryData = async () => {
+    try{
+      const response = await request.get('/api/exchange/getMyHistory');
+
+      if (response.data.code === 200) {
+        console.log(response.data.data);
+        setHistoryData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+
+  };
+
+  useEffect(() => {
+    // 模拟请求数据
+    fetchHistoryData();
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    fetchHistoryData();
     // 这里添加刷新数据的逻辑
     // fetchHistoryData().then(() => {
     //   setRefreshing(false);
@@ -38,7 +59,7 @@ const MyHistoryScreen = ({ navigation }) => {
     <View style={styles.card}>
       <View style={styles.userInfo}>
         <Image 
-          source={{ uri: item.avatar }}
+          source={{ uri: item.avatarUri }}
           style={styles.avatar}
         />
         <Text style={styles.userName}>{item.name}</Text>
@@ -47,7 +68,7 @@ const MyHistoryScreen = ({ navigation }) => {
       <View style={styles.detailsContainer}>
         <View>
           <Text style={styles.label}>跟单总收益</Text>
-          <Text style={styles.profitValue}>{item.profit}</Text>
+          <Text style={styles.profitValue}>$ {item.profit}</Text>
         </View>
         <View>
           <Text style={[styles.label, styles.rightAlign]}>跟单时间</Text>

@@ -5,7 +5,7 @@ import { Icon } from 'react-native-elements';
 import request from '../../utils/request';
 import images from '../../../assets/Exchanges';
 
-const AssetOverview = ({ navigation }) => {
+const AssetOverview = ({ navigation, onRefresh, isRefreshing }) => {
   
   const [items, setItems] = useState([]);
 
@@ -22,8 +22,16 @@ const AssetOverview = ({ navigation }) => {
       // Handle error
       console.error(error);
     });
-  }
+  };
 
+  // 监听刷新状态
+  useEffect(() => {
+    if (isRefreshing) {
+      fetchData();
+    }
+  }, [isRefreshing]);
+
+  // 初始加载数据
   useEffect(() => {
     fetchData();
   }, []);

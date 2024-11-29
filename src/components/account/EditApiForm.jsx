@@ -63,6 +63,7 @@ const EditApiForm = ({ onClose, onSave, initialValues, userBindExchangeId }) => 
             placeholder={`请输入${label}`}
             placeholderTextColor="#999"
             secureTextEntry={!showValue}
+            returnKeyType="done"
           />
           <TouchableOpacity 
             onPress={toggleShow}

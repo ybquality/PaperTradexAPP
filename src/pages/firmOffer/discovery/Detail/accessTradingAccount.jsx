@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  ScrollView,
+  Platform  // 添加 Platform 导入
+} from 'react-native';
 import InviteCard from '../../../../components/InviteCard';  // 导入 InviteCard 组件
 import request from '../../../../utils/request';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
 
@@ -79,7 +88,15 @@ const ExchangeSettings = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAwareScrollView
+    enableOnAndroid
+    enableResetScrollToCoords={false}
+    keyboardShouldPersistTaps="handled"
+    extraScrollHeight={Platform.OS === 'ios' ? 120 : 80}
+    contentContainerStyle={styles.container}
+    showsVerticalScrollIndicator={false}
+    bounces={false}
+  >
       {/* 添加 InviteCard 组件 */}
       <View style={styles.cardContainer}>
         <InviteCard />
@@ -153,7 +170,7 @@ const ExchangeSettings = () => {
         <Text style={styles.connectButtonText}>接入</Text>
       </TouchableOpacity>
 
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 

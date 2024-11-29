@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Keyboard, Platform } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 import Popup from '../../../components/common/popup';
 import EditApiForm from '../../../components/account/EditApiForm';
 import Modal from '../../../components/common/modal';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import request from '../../../utils/request';
 
@@ -118,6 +119,33 @@ const AccountManage = ({ navigation, route }) => {
     })
   }
 
+  const scrollViewRef = useRef(null);
+
+  // 修改初始高度状态
+  const [popupHeight, setPopupHeight] = useState('60%');
+
+  // 添加键盘监听
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      'keyboardWillShow',
+      () => {
+        setPopupHeight('80%');
+      }
+    );
+
+    const keyboardWillHide = Keyboard.addListener(
+      'keyboardWillHide',
+      () => {
+        setPopupHeight('60%');
+      }
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* 导航 */}
@@ -182,21 +210,54 @@ const AccountManage = ({ navigation, route }) => {
         closeOnMaskClick
         closeOnSwipe
         mask={true}
-        onClose={() => setIsBottomSheetVisible(false)}
-        onMaskClick={() => setIsBottomSheetVisible(false)}
+        onClose={() => {
+          Keyboard.dismiss();
+          setIsBottomSheetVisible(false);
+        }}
+        onMaskClick={() => {
+          Keyboard.dismiss();
+          setIsBottomSheetVisible(false);
+        }}
+        bodyStyle={{ height: popupHeight }}
       >
-        <EditApiForm 
-          onClose={() => setIsBottomSheetVisible(false)}
-          onSave={(newConfig) => {
-            setApiConfig({
-              ...apiConfig,
-              ...newConfig
-            });
-            setIsBottomSheetVisible(false);
-          }}
-          initialValues={apiConfig}
-          userBindExchangeId={accountInfo.id}
-        />
+      <KeyboardAwareScrollView
+  enableOnAndroid
+  enableResetScrollToCoords={false}
+  keyboardShouldPersistTaps="handled"
+  extraScrollHeight={Platform.OS === 'ios' ? 20 : 10}
+  contentContainerStyle={{ 
+    flexGrow: 1,
+    paddingBottom: 20 
+  }}
+  showsVerticalScrollIndicator={false}
+  bounces={false}
+  scrollEventThrottle={8}  // 降低滚动事件节流时间
+  overScrollMode="never"
+  scrollToOverflowEnabled={false}
+  enableAutomaticScroll={true}
+  keyboardOpeningTime={10}  // 设置非常短的动画时间
+  keyboardDismissMode="interactive"
+  scrollAnimationDuration={10}  // 添加快速的滚动动画时间
+  onKeyboardWillShow={() => setPopupHeight('80%')}
+  onKeyboardWillHide={() => setPopupHeight('60%')}
+>
+          <EditApiForm 
+            onClose={() => {
+              Keyboard.dismiss();
+              setIsBottomSheetVisible(false);
+            }}
+            onSave={(newConfig) => {
+              Keyboard.dismiss();
+              setApiConfig({
+                ...apiConfig,
+                ...newConfig
+              });
+              setIsBottomSheetVisible(false);
+            }}
+            initialValues={apiConfig}
+            userBindExchangeId={accountInfo.id}
+          />
+        </KeyboardAwareScrollView>
       </Popup>
 
       {/* 删除api账户 */}

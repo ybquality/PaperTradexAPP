@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert, ScrollView,StatusBar } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert, ScrollView,StatusBar, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from 'react-native-elements';
 import { getLoginStatus, getUserName, getUid } from '../../utils/tokenUtils';
@@ -15,9 +15,9 @@ const getSettingsData = () => {
   return [
     { id: '1', title: '账户与安全', gotoPage: 'AccountSecurity' },
     { id: '2', title: '推送设置', gotoPage: 'NotificationSettings' },
-    { id: '3', title: '联系我们', gotoPage: '' },
-    { id: '4', title: 'PaperTradex社群', gotoPage: 'Community' },
-    { id: '5', title: '检查更新', gotoPage: '' },
+    { id: '3', title: '帮助中心', gotoPage: '' },
+    { id: '4', title: '关于我们', gotoPage: '' },
+    { id: '5', title: 'PaperTradex社群', gotoPage: 'Community' },
     { id: '6', title: '分享应用', gotoPage: '' },
   ];
 };
@@ -39,6 +39,7 @@ const AccountScreen = ({ navigation }) => {
   const [ userName, setUserName ] = useState('No Name');
   const [ uid, setUid ] = useState('');
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async () => {
     console.log('加载数据...');
@@ -94,10 +95,30 @@ const AccountScreen = ({ navigation }) => {
 
     Alert.alert("提示", "点击了余额按钮");
   };
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await loadData();
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
   return (
     
-    <ScrollView style={[styles.scrollContainer, { backgroundColor: '#ffff' }]}
-      showsVerticalScrollIndicator={false} // 隐藏垂直滚动条
+    <ScrollView 
+      style={[styles.scrollContainer, { backgroundColor: '#ffff' }]}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor="#00D0AC"  // 加载图标的颜色
+          // title="下拉刷新"
+          titleColor="#00D0AC" // iOS专用
+        />
+      }
     >
       <View style={{ flex: 1, marginBottom: 60 }}>
         {/* 状态栏配置 */}
@@ -235,7 +256,10 @@ const AccountScreen = ({ navigation }) => {
             </View>
           </LinearGradient>
           {/* 资产总览部分 */}
-          <AssetOverview navigation={navigation} />
+          <AssetOverview 
+            navigation={navigation} 
+            isRefreshing={refreshing}
+          />
 
           <View style={styles.Itemcontainer}>
             {/* 设置与服务部分 */}

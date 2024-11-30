@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 import AccountDetail from '../../../components/account/AccountDetail';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import request from '../../../utils/request';
 
@@ -58,116 +59,131 @@ const AssetsDetail = ({ navigation, route }) => {
   const renderContent = () => {
     if (selectedTab === '总览') {
       return (
-        <ScrollView 
-          style={styles.overviewContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={['#00D0AC']}  // Android
-              tintColor="#00D0AC"   // iOS
-            />
-          }
-        >
-          {/* 总资产区域 */}
-          <View style={styles.assetSection}>
-            <View style={styles.assetHeader}>
-              <Text style={styles.assetTitle}>总资产折合[USDT]</Text>
-              <Icon name="eye-outline" type="ionicon" size={18} color="#666" />
-            </View>
-            <View style={styles.assetRow}>
-              <Text style={styles.assetAmount}>5.19116118</Text>
-              <Text style={styles.assetUSD}>≈ $5.19</Text>
-            </View>
-          </View>
-
-          {/* 盈亏信息区域 */}
-          <View style={styles.profitSection}>
-            <View style={styles.profitRow}>
-              <View style={styles.profitItem}>
-                <Text style={styles.profitLabel}>今日盈亏</Text>
-                <Text style={styles.profitValue}>+0.00</Text>
+        <View style={styles.overviewContainer}>
+          {/* 固定的顶部区域 */}
+          <View>
+            {/* 总资产区域 */}
+            <View style={styles.assetSection}>
+              <View style={styles.assetHeader}>
+                <Text style={styles.assetTitle}>总资产折合（USDT）</Text>
+                <Icon name="eye-outline" type="ionicon" size={18} color="#666" />
               </View>
-              <View style={styles.profitItem}>
-                <Text style={styles.profitLabel}>历史盈亏</Text>
-                <Text style={styles.profitValue}>+0.00</Text>
+              <View style={styles.assetRow}>
+                <Text style={styles.assetAmount}>5.19116118</Text>
+                <Text style={styles.assetUSD}>≈ $5.19</Text>
               </View>
             </View>
-          </View>
 
-          {/* 操作按钮区域 */}
-          <View style={styles.actionSection}>
-            <Button
-              title="接入账户"
-              containerStyle={[styles.buttonContainer, styles.firstButton]}
-              buttonStyle={styles.primaryButton}
-              titleStyle={styles.primaryButtonText}
-              onPress={() => {/* 处理接入账户 */}}
-            />
-            <Button
-              title="充值"
-              containerStyle={styles.buttonContainer}
-              buttonStyle={styles.normalButton}
-              titleStyle={styles.buttonText}
-              onPress={() => {/* 处理充值 */}}
-            />
-            <Button
-              title="提现"
-              containerStyle={styles.buttonContainer}
-              buttonStyle={styles.normalButton}
-              titleStyle={styles.buttonText}
-              onPress={() => {/* 处理提现 */}}
-            />
-            <Button
-              title="划转"
-              containerStyle={styles.buttonContainer}
-              buttonStyle={styles.normalButton}
-              titleStyle={styles.buttonText}
-              onPress={() => {/* 处理划转 */}}
-            />
-          </View>
+            {/* 盈亏信息区域 */}
+            <View style={styles.profitSection}>
+              <View style={styles.profitRow}>
+                <View style={styles.profitItem}>
+                  <Text style={styles.profitLabel}>今日盈亏</Text>
+                  <Text style={styles.profitValue}>+0.00</Text>
+                </View>
+                <View style={styles.profitItem}>
+                  <Text style={styles.profitLabel}>历史盈亏</Text>
+                  <Text style={styles.profitValue}>+0.00</Text>
+                </View>
+              </View>
+            </View>
 
+            {/* 操作按钮区域 */}
+            <View style={styles.actionSection}>
+              <TouchableOpacity style={styles.buttonContainer}>
+                <Icon
+                  name="link-variant"
+                  type="material-community"
+                  size={24}
+                  color="#000"
+                />
+                <Text style={styles.buttonText}>接入账户</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonContainer}>
+                <Icon
+                  name="download"
+                  type="feather"
+                  size={24}
+                  color="#000"
+                />
+                <Text style={styles.buttonText}>充值</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonContainer}>
+                <Icon
+                  name="upload"
+                  type="feather"
+                  size={24}
+                  color="#000"
+                />
+                <Text style={styles.buttonText}>提现</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonContainer}>
+                <Icon
+                  name="repeat"
+                  type="feather"
+                  size={24}
+                  color="#000"
+                />
+                <Text style={styles.buttonText}>划转</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           {/* 账户分布标题 */}
           <View style={styles.distributionHeader}>
             <Text style={styles.distributionTitle}>账户分布</Text>
           </View>
-
-          {/* 账户列表 */}
-          <View style={styles.accountList}>
-            {accountList.map((account, index) => (
-              <TouchableOpacity 
-                key={index}
-                style={styles.accountItem}
-                onPress={() => setSelectedTab(account.account_name_new)}
-              >
-                <View style={styles.accountLeft}>
-                  <Image 
-                    source={require('../../../../assets/Exchanges/okx2.png')}
-                    style={styles.accountIcon}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.accountName}>{account.account_name_new}</Text>
-                  {/* 异常状态标签 */}
-                  {account.account_name_new === 'OKX-1' && (
-                    <View style={styles.statusTag}>
-                      <Text style={styles.statusText}>异常</Text>
-                    </View>
-                  )}
-                </View>
-                <View style={styles.accountRight}>
-                  <Text style={styles.accountBalance}>5.19116118</Text>
-                  <Icon 
-                    name="chevron-right" 
-                    type="font-awesome" 
-                    size={14} 
-                    color="#666"
-                    containerStyle={styles.arrowIcon}
-                  />
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
+          {/* 可滚动的账户列表 */}
+          <ScrollView 
+            style={styles.accountListContainer}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={['#00D0AC']}
+                tintColor="#00D0AC"
+              />
+            }
+          >
+            <View style={styles.accountList}>
+              {accountList.map((account, index) => (
+                <TouchableOpacity 
+                  key={index}
+                  style={styles.accountItem}
+                  onPress={() => setSelectedTab(account.account_name_new)}
+                >
+                  <View style={styles.accountLeft}>
+                    <Image 
+                      source={require('../../../../assets/Exchanges/okx2.png')}
+                      style={styles.accountIcon}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.accountName}>{account.account_name_new}</Text>
+                    {/* 异常状态标签 */}
+                    {account.account_name_new === 'OKX-1' && (
+                      <View style={styles.statusTag}>
+                        <Text style={styles.statusText}>异常</Text>
+                      </View>
+                    )}
+                  </View>
+                  <View style={styles.accountRight}>
+                    <Text style={styles.accountBalance}>5.19116118</Text>
+                    <Icon 
+                      name="chevron-right" 
+                      type="font-awesome" 
+                      size={12} 
+                      color="rgba(0, 0, 0, 0.4)"
+                      containerStyle={styles.arrowIcon}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
       );
     }
     return <AccountDetail accountName={selectedTab} navigation={navigation} accountsInfo={route.params?.accountInfo}/>;
@@ -180,42 +196,69 @@ const AssetsDetail = ({ navigation, route }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Icon name="chevron-left" type="font-awesome" size={20} color="#333" />
+          <Icon 
+            name="arrow-left" 
+            type="feather"
+            size={24}
+            color="rgba(0, 0, 0, 0.9)" 
+          />
         </TouchableOpacity>
         
-        <View style={styles.tabContainer}>
-          {/* 总览标签固定显示 */}
-          <TouchableOpacity
-            style={styles.tabItem}
-            onPress={() => setSelectedTab('总览')}
+        <View style={styles.tabScrollContainer}>
+          <ScrollView 
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.tabContainer}
+            contentContainerStyle={styles.tabContentContainer}
           >
-            <Text style={[
-              styles.tabText,
-              selectedTab === '总览' && styles.tabTextActive
-            ]}>
-              总览
-            </Text>
-          </TouchableOpacity>
-
-          {/* 动态账户列表 */}
-          {accountList.map((account, index) => (
+            {/* 总览标签固定显示 */}
             <TouchableOpacity
-              key={index}
               style={styles.tabItem}
-              onPress={() => setSelectedTab(account.account_name_new)}
+              onPress={() => setSelectedTab('总览')}
             >
               <Text style={[
                 styles.tabText,
-                selectedTab === account.account_name_new && styles.tabTextActive
+                selectedTab === '总览' && styles.tabTextActive
               ]}>
-                {account.account_name_new}
+                总览
               </Text>
             </TouchableOpacity>
-          ))}
+
+            {/* 动态账户列表 */}
+            {accountList.map((account, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.tabItem}
+                onPress={() => setSelectedTab(account.account_name_new)}
+              >
+                <Text style={[
+                  styles.tabText,
+                  selectedTab === account.account_name_new && styles.tabTextActive
+                ]}>
+                  {account.account_name_new}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          
+          <LinearGradient
+            colors={['rgba(255,255,255,0)', '#fff']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientMask}
+            pointerEvents="none"
+          />
         </View>
 
         <TouchableOpacity style={styles.menuButton}>
-          <Icon name="ellipsis-h" type="font-awesome" size={20} color="#333" />
+          <View style={styles.menuIconContainer}>
+            <Icon 
+              name="more-horizontal" 
+              type="feather"
+              size={24}
+              color="rgba(0, 0, 0, 0.9)" 
+            />
+          </View>
         </TouchableOpacity>
       </View>
       {renderContent()}
@@ -229,50 +272,57 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
+    height: 40,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 44,
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e6e6e6',
     backgroundColor: '#fff',
   },
   backButton: {
-    width: 28,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: 0,
+    // minWidth: 40,
+    height: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   menuButton: {
-    width: 28,
-    height: 44,
+    width: 32,
+    height: 40,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'flex-end',
-    padding: 0,
+  },
+  menuIconContainer: {
+    width: 32,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabScrollContainer: {
+    flex: 1,
+    position: 'relative',
+    marginRight: 8,
   },
   tabContainer: {
     flex: 1,
+  },
+  tabContentContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginLeft: 8,
-    height: '100%',
     alignItems: 'center',
+    height: '100%',
   },
   tabItem: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   tabText: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 16,
+    color: 'rgba(0, 0, 0, 0.4)',
+    lineHeight: 40,
   },
   tabTextActive: {
-    color: '#333',
-    fontWeight: '600',
+    color: 'rgba(0, 0, 0, 0.9)',
+    fontWeight: '700',
   },
   overviewContainer: {
     flex: 1,
@@ -281,7 +331,6 @@ const styles = StyleSheet.create({
   assetSection: {
     padding: 16,
     paddingBottom: 0,
-    backgroundColor: '#fff',
   },
   assetHeader: {
     flexDirection: 'row',
@@ -289,8 +338,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   assetTitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 1)',
   },
   assetRow: {
     flexDirection: 'row',
@@ -299,16 +349,17 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   assetAmount: {
-    fontSize: 32,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: 24,
+    fontWeight: '700',
+    color: 'rgba(0, 0, 0, 1)',
     letterSpacing: 0,
   },
   assetUSD: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.4)',
     alignSelf: 'flex-end',
-    paddingBottom: 6,
+    paddingBottom: 4,
   },
   profitSection: {
     paddingHorizontal: 16,
@@ -323,37 +374,33 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',  // 左对齐
   },
   profitLabel: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.4)',
     marginBottom: 8,
   },
   profitValue: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#00b386',
+    color: 'rgba(0, 208, 172, 1)',
   },
   distributionHeader: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   distributionTitle: {
-    fontSize: 17,
-    color: '#1a1a1a',
+    fontSize: 16,
+    color: 'rgba(0, 0, 0, 1)',
     fontWeight: '600',
   },
   accountList: {
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
   },
   accountItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   accountLeft: {
     flexDirection: 'row',
@@ -400,38 +447,33 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 8,
-    borderBottomColor: '#f5f5f5',
     backgroundColor: '#fff',
+    gap: 8,
   },
   buttonContainer: {
     flex: 1,
-    marginLeft: 8,
-  },
-  firstButton: {
-    marginLeft: 0,
-  },
-  primaryButton: {
-    backgroundColor: '#80FFE9',
-    height: 38,
-    padding: 0,
-    elevation: 0,  // 移除 Android 阴影
-    shadowColor: 'transparent',  // 移除 iOS 阴影
-    shadowOffset: { width: 0, height: 0 },
-  },
-  normalButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
     backgroundColor: '#f5f5f5',
-    borderColor: '#f5f5f5',
-    height: 38,
-    padding: 0,
+    borderRadius: 8,
+    paddingVertical: 8,
+    marginHorizontal: 0,
   },
   buttonText: {
+    fontSize: 12,
     color: '#333',
-    fontSize: 14,
+    marginTop: 4,
   },
-  primaryButtonText: {
-    color: '#000',
-    fontSize: 14,
+  gradientMask: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 32,
+    height: '100%',
+  },
+  accountListContainer: {
+    flex: 1,
   },
 });
 

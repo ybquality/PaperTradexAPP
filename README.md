@@ -378,3 +378,65 @@ return (
 2. 可以通过 children 完全自定义内容区域
 3. 弹出位置不同时注意调整相应的圆角和内边距
 4. 建议保留滑动指示器以提升用户体验
+
+## Collapse 折叠面板组件
+
+用于对复杂区域进行分组和隐藏，保持页面的整洁。
+
+### 引入
+
+```javascript
+import Collapse from "@/components/common/Collapse";
+```
+
+### 基础用法
+
+```javascript
+// 基础用法
+<Collapse title="基础用法">
+  <Text>这是折叠面板的内容</Text>
+</Collapse>
+
+// 默认展开
+<Collapse title="默认展开" defaultExpanded>
+  <Text>这是默认展开的内容</Text>
+</Collapse>
+
+// 自定义样式
+<Collapse
+  title="自定义样式"
+  titleStyle={{ backgroundColor: '#f5f5f5' }}
+  contentStyle={{ padding: 20 }}
+>
+  <Text>自定义样式的内容</Text>
+</Collapse>
+
+// 自定义标题渲染
+<Collapse
+  renderTitle={(expanded) => (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Icon name="info" size={20} />
+      <Text style={{ marginLeft: 8 }}>
+        {expanded ? '收起' : '展开'}自定义标题
+      </Text>
+    </View>
+  )}
+>
+  <Text>自定义标题渲染的内容</Text>
+</Collapse>
+```
+
+### Props
+
+| 参数            | 说明              | 类型                             | 默认值             |
+| --------------- | ----------------- | -------------------------------- | ------------------ |
+| title           | 面板标题          | string                           | -                  |
+| children        | 面板内容          | ReactNode                        | -                  |
+| defaultExpanded | 是否默认展开      | boolean                          | false              |
+| titleStyle      | 标题容器样式      | ViewStyle                        | -                  |
+| contentStyle    | 内容容器样式      | ViewStyle                        | -                  |
+| containerStyle  | 最外层容器样式    | ViewStyle                        | -                  |
+| showArrow       | 是否显示箭头图标  | boolean                          | true               |
+| arrowColor      | 箭头图标颜色      | string                           | rgba(0, 0, 0, 0.4) |
+| renderTitle     | 自定义渲染标题    | (expanded: boolean) => ReactNode | -                  |
+| onToggle        | 展开/收起时的回调 | (expanded: boolean) => void      | -                  |

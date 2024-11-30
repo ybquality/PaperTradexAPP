@@ -20,7 +20,8 @@ import EditUsernameScreen from './userinfo/EditUsername';
 import VerifyPhoneScreen from './userinfo/VerifyPhone';
 import SetNewPhoneScreen from './userinfo/SetNewPhone';
 import CommunityScreen from './Community';
-
+import AboutUsScreen from './aboutUs';
+import HelpScreen from './help';
 const Stack = createStackNavigator();
 
 const AccountStackNavigator = () => {
@@ -165,6 +166,22 @@ const AccountStackNavigator = () => {
       <Stack.Screen 
         name="Community"
         component={CommunityScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="AboutUs"
+        component={AboutUsScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="Help"
+        component={HelpScreen}
         options={{
           headerShown: false
         }}

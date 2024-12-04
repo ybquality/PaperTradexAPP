@@ -10,16 +10,69 @@ import {
 import NavBar from '../../../components/common/navbar';
 import { Icon } from '@rneui/themed';
 
+import request from '../../../utils/request';
+
+
 const VerifyPhoneScreen = ({ navigation }) => {
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
   const [isCodeFocused, setIsCodeFocused] = useState(false);
 
-  const handleSubmit = () => {
+  const getVerifyCode = async( phone ) => {
+    // 需要添加参数验证判断
+    if (phone === '') {
+      alert('请输入手机号');
+      return;
+    }
+    // 发送请求获取验证码
+    try {
+      const res = await request.post('/api/user/auth/getCode', {
+        phone: phone,
+      });
+      // 处理返回结果
+      if (res.data.code === 200) {
+        // 验证码发送成功
+        alert(res.data.msg);
+        console.log(res.data.msg);
+        
+      } else {
+        // 验证码发送失败
+        alert(res.data.msg);
+        console.log(res.data.msg);
+        
+      }
+    } catch (error) {
+      // 处理错误
+      console.error(error);
+    }
+  };
+  const handleSubmit = async (phone, code) => {
+    // navigation.navigate('SetNewPhone');
     // 添加验证逻辑
-    // 跳转至设置新手机号页面
-    navigation.navigate('SetNewPhone');
+    try {
+      const res = await request.post('/api/user/verifyPhone', {
+        phone: phone,
+        verifyCode: code,
+      });
+      // 处理返回结果
+      if (res.data.code === 200) {
+        // 验证成功
+        if (res.data.data){
+          alert(res.data.msg);
+          console.log(res.data.msg);
+          // 跳转至设置新手机号页面
+          navigation.navigate('SetNewPhone', {oldPhone: phone});
+        }
+      } else {
+        // 验证失败
+        alert(res.data.msg);
+        console.log(res.data.msg);
+      }
+    
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -83,14 +136,14 @@ const VerifyPhoneScreen = ({ navigation }) => {
               keyboardType="number-pad"
               maxLength={6}
             />
-            <TouchableOpacity style={styles.codeButton}>
+            <TouchableOpacity style={styles.codeButton} onPress={() => getVerifyCode(phone)}>
               <Text style={styles.codeButtonText}>获取验证码</Text>
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity 
             style={styles.submitButton}
-            onPress={handleSubmit}
+            onPress={() => handleSubmit(phone, code)}
           >
             <Text style={styles.submitText}>确定</Text>
           </TouchableOpacity>

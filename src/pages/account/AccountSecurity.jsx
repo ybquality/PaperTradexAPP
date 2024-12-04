@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import NavBar from '../../components/common/navbar';
 
+
+// 需要读取数据库中的手机号
 const AccountSecurityScreen = () => {
   const navigation = useNavigation();
   
@@ -24,7 +26,7 @@ const AccountSecurityScreen = () => {
           onPress={() => navigation.navigate('VerifyPhone')}
         >
           <Text style={styles.itemLabel}>手机号</Text>
-          <Text style={styles.itemValue}>186****9512</Text>
+          <Text style={styles.itemValue}>186****9512</Text> 
         </TouchableOpacity>
 
         {/* 邮箱部分 */}

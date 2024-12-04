@@ -10,7 +10,11 @@ import {
 import NavBar from '../../../components/common/navbar';
 import { Icon } from '@rneui/themed';
 
+import request from '../../../utils/request';
+
+
 const ResetPasswordScreen = ({ navigation }) => {
+  
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
@@ -23,15 +27,58 @@ const ResetPasswordScreen = ({ navigation }) => {
   const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async (phone, code, password, confirmPassword) => {
     if (password !== confirmPassword) {
       setIsError(true);
       // 错误提示，等做完功能我来处理错误提示
     } else {
       setIsError(false);
       // 处理提交逻辑
+      try {
+        const res = await request.post('/api/user/auth/resetPassword', {
+          phone: phone,
+          verifyCode: code,
+          new_password: confirmPassword,
+        });
+        // 处理返回结果
+        if (res.data.code === 200) {
+          // 密码修改成功
+          alert(res.data.msg)
+          console.log(res.data.msg);
+          
+       } else {}
+      }catch (error) {
+        // 处理错误
+        console.error(error);
+      }
     }
   };
+
+  const getVerifyCode = async( phone ) => {
+    if (phone === '') {
+      alert('请输入手机号');
+      return;
+    }
+    // 发送请求获取验证码
+    try {
+      const res = await request.post('/api/user/auth/getCode', {
+        phone: phone,
+      });
+      // 处理返回结果
+      if (res.data.code === 200) {
+        // 验证码发送成功
+        alert(res.data.msg)
+        console.log(res.data.msg);
+        
+      } else {
+        // 验证码发送失败
+      }
+    } catch (error) {
+      // 处理错误
+      console.error(error);
+    }
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -94,7 +141,7 @@ const ResetPasswordScreen = ({ navigation }) => {
               keyboardType="number-pad"
               maxLength={6}
             />
-            <TouchableOpacity style={styles.codeButton}>
+            <TouchableOpacity style={styles.codeButton} onPress={() => getVerifyCode(phone)}>
               <Text style={styles.codeButtonText}>获取验证码</Text>
             </TouchableOpacity>
           </View>
@@ -175,7 +222,7 @@ const ResetPasswordScreen = ({ navigation }) => {
 
           <TouchableOpacity 
             style={styles.submitButton}
-            onPress={handleSubmit}
+            onPress={() => handleSubmit(phone, code, password, confirmPassword)}
           >
             <Text style={styles.submitText}>确定</Text>
           </TouchableOpacity>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
-const ProfitCard = () => {
+const ProfitCard = ({tatalProfit, todayProfit, totalTradeCount, totalWinRate}) => {
   return (
     <View style={styles.card}>
       {/* 添加背景图片 */}
@@ -14,21 +14,21 @@ const ProfitCard = () => {
       <Text style={styles.title}>跟单总收益(USDT)</Text>
 
       {/* Total Profit */}
-      <Text style={styles.totalProfit}>-2283.04</Text>
+      <Text style={styles.totalProfit}>{tatalProfit}</Text>
 
       {/* Stats Row */}
       <View style={styles.statsContainer}>
         <View style={[styles.statItem, styles.leftAlign]}>
           <Text style={styles.statText}>今日收益</Text>
-          <Text style={styles.statValue}>$N/A</Text>
+          <Text style={styles.statValue}>${todayProfit}</Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statText}>总交易笔数</Text>
-          <Text style={styles.statValue}>31</Text>
+          <Text style={styles.statValue}>{totalTradeCount}</Text>
         </View>
         <View style={[styles.statItem, styles.rightAlign]}>
           <Text style={styles.statText}>胜率</Text>
-          <Text style={[styles.statValue, { color: '#22B573' }]}>22.12%</Text>
+          <Text style={[styles.statValue, { color: '#22B573' }]}>{totalWinRate}%</Text>
         </View>
       </View>
     </View>

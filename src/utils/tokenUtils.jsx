@@ -29,3 +29,18 @@ export const getUserName = async () => {
 export const getUid = async () => {
   return await AsyncStorage.getItem('Uid');
 };
+
+export const getMobilePhone = async () => {
+  return await AsyncStorage.getItem('mobilePhone');
+};
+
+export const getEmail = async () => {
+  return await AsyncStorage.getItem('email');
+};
+
+export const getIsBindEmail = async () => {
+  const email = await AsyncStorage.getItem('email');
+  console.log(email !== 'default@example.com');
+  
+  return email !== 'default@example.com';
+};

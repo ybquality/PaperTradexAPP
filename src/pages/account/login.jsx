@@ -92,13 +92,19 @@ export default function LoginScreen({ navigation }) {
       });
 
       if (response.data.code === 200) {
-        const { accessToken, refreshToken, userName, Uid } = response.data.data;
+        let { accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl } = response.data.data;
+        email = email || 'default@example.com';
+        console.log(accessToken, refreshToken, userName, Uid, mobilePhone, email);
+        
         // 存储 token
         await AsyncStorage.multiSet([
           ['accessToken', accessToken],
           ['refreshToken', refreshToken],
           ['userName', userName],
           ['Uid', Uid],
+          ['mobilePhone', mobilePhone],
+          ['email', email],
+          ['avatarUrl', avatarUrl]
           ['isLogin', 'true']
         ]);
 
@@ -142,12 +148,17 @@ export default function LoginScreen({ navigation }) {
       });
       
       if (response.data.code == 200) {
-        const { accessToken, refreshToken, userName, Uid } = response.data.data;
+        let { accessToken, refreshToken, userName, Uid, mobilePhone, email } = response.data.data;
+        email = email || 'default@example.com';
+        console.log(accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl);
         await AsyncStorage.multiSet([
           ['accessToken', accessToken],
           ['refreshToken', refreshToken],
           ['userName', userName],
           ['Uid', Uid],
+          ['mobilePhone', mobilePhone],
+          ['email', email],
+          ['avatarUrl', avatarUrl]
           ['isLogin', 'true']
         ]);
         setLoginSuccess(true);

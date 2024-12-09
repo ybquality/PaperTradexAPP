@@ -22,6 +22,8 @@ import SetNewPhoneScreen from './userinfo/SetNewPhone';
 import CommunityScreen from './Community';
 import AboutUsScreen from './aboutUs';
 import HelpScreen from './help';
+import VerifyEmailScreen from './userinfo/VerifyEmail';
+import SetNewEmailScreen from './userinfo/SetNewEmail';
 const Stack = createStackNavigator();
 
 const AccountStackNavigator = () => {
@@ -182,6 +184,22 @@ const AccountStackNavigator = () => {
       <Stack.Screen 
         name="Help"
         component={HelpScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="VerifyEmail"
+        component={VerifyEmailScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen 
+        name="SetNewEmail"
+        component={SetNewEmailScreen}
         options={{
           headerShown: false
         }}

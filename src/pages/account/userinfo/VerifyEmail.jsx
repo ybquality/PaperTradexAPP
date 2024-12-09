@@ -11,47 +11,67 @@ import NavBar from '../../../components/common/navbar';
 import { Icon } from '@rneui/themed';
 
 import request from '../../../utils/request';
-import { updateUserInfo } from '../../../utils/utils';
 
-const BindEmailScren = ({ navigation }) => {
+
+const VerifyEmailScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPhoneFocused, setIsPhoneFocused] = useState(false);
   const [isCodeFocused, setIsCodeFocused] = useState(false);
 
-
-  const getVerifyCode = async (email) => {
-    try{
-      const res = await request.post('/api/user/getEmailVerificationCode', {email: email})
+  const getVerifyCode = async( email ) => {
+    // 需要添加参数验证判断
+    if (email === '') {
+      alert('请输入手机号');
+      return;
+    }
+    // 发送请求获取验证码
+    try {
+      const res = await request.post('/api/user/getEmailVerificationCode', {
+        email: email,
+      });
+      // 处理返回结果
       if (res.data.code === 200) {
-        alert(res.data.msg)
-        console.log(res.data.msg)
+        // 验证码发送成功
+        alert(res.data.msg);
+        console.log(res.data.msg);
+        
       } else {
-        alert(res.data.msg)
-        console.log(res.data.msg)
+        // 验证码发送失败
+        alert(res.data.msg);
+        console.log(res.data.msg);
+        
       }
-    } catch (err) {
-      console.log(err)
+    } catch (error) {
+      // 处理错误
+      console.error(error);
     }
   };
-
-  const handleSubmit = async (email, verifyCode) => {
+  const handleSubmit = async (email, code) => {
+    // navigation.navigate('SetNewPhone');
+    // 添加验证逻辑
     try {
-      const res = await request.post('/api/user/bindEmail', {
+      const res = await request.post('/api/user/verifyEmail', {
         email: email,
-        verifyCode: verifyCode,
+        verifyCode: code,
       });
+      // 处理返回结果
       if (res.data.code === 200) {
-        alert(res.data.msg)
-        console.log(res.data.msg)
-        await updateUserInfo();
-        navigation.goBack()
+        // 验证成功
+        if (res.data.data){
+          alert(res.data.msg);
+          console.log(res.data.msg);
+          // 跳转至设置新手机号页面
+          navigation.navigate('SetNewEmail', {oldEmail: email});
+        }
       } else {
-        alert(res.data.msg)
-        console.log(res.data.msg)
-     }
-    } catch (err) {
-      console.log(err)
+        // 验证失败
+        alert(res.data.msg);
+        console.log(res.data.msg);
+      }
+    
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -66,14 +86,14 @@ const BindEmailScren = ({ navigation }) => {
         </View>
         
         <View style={styles.content}>
-        <Text style={styles.title}>绑定邮箱</Text>
-          <Text style={styles.label}>邮箱</Text>
+        <Text style={styles.title}>验证邮箱</Text>
+        <Text style={styles.label}>当前邮箱</Text>
           <View style={[
             styles.inputContainer,
-            isEmailFocused && styles.inputContainerFocused
+            isPhoneFocused && styles.inputContainerFocused
           ]}>
             <Icon
-              name="mail"
+              name="smartphone"
               type="feather"
               size={20}
               color="rgba(0, 0, 0, 0.4)"
@@ -83,11 +103,12 @@ const BindEmailScren = ({ navigation }) => {
               value={email}
               onChangeText={setEmail}
               style={styles.input}
-              placeholder="请输入邮箱"
+              placeholder="请输入当前邮箱"
               placeholderTextColor="rgba(0, 0, 0, 0.4)"
               returnKeyType="done"
-              onFocus={() => setIsEmailFocused(true)}
-              onBlur={() => setIsEmailFocused(false)}
+              keyboardType="number-pad"
+              onFocus={() => setIsPhoneFocused(true)}
+              onBlur={() => setIsPhoneFocused(false)}
             />
           </View>
 
@@ -120,8 +141,11 @@ const BindEmailScren = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.submitButton} onPress={() => handleSubmit(email, code)}>
-            <Text style={styles.submitText}>绑定</Text>
+          <TouchableOpacity 
+            style={styles.submitButton}
+            onPress={() => handleSubmit(email, code)}
+          >
+            <Text style={styles.submitText}>确定</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -206,4 +230,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BindEmailScren;
+export default VerifyEmailScreen;

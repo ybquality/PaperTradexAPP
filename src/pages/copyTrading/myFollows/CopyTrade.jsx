@@ -10,7 +10,7 @@ import request from '../../../utils/request';
 
 const CopyTradeScreen = ({ route, navigation }) => {
 
-    const testClick = async (item) =>{
+    const testClick = async (item) => {
         balanceInquiry(item.id);
         setValue(item.id)
         setSelectedOption(item);
@@ -27,7 +27,7 @@ const CopyTradeScreen = ({ route, navigation }) => {
     const avatarUri = route.params.avatarUri;
 
     console.log(traderId, principal, copyRatio, nickName, avatarUri);
-    
+
 
     const [value, setValue] = useState(traderId);
 
@@ -65,7 +65,71 @@ const CopyTradeScreen = ({ route, navigation }) => {
         fetchData(traderId);
     }, [traderId]);
 
+    // 移除单笔跟单输入框非数字字符
+    const handleSingleTransslatedInputChange = (text) => {
+        // 允许输入数字和一个小数点
+        let numericValue = text.replace(/[^0-9.]/g, "");
 
+        // 防止输入多个小数点
+        if ((numericValue.match(/\./g) || []).length > 1) {
+            return;
+        }
+
+        setSingleTransslated(numericValue);
+    };
+    // 校准单笔跟单输入框跟单金额 10-200000
+    const handleSingleTransslatedBlur = () => {
+        // 当输入框失去焦点时，校正范围
+        if (singleTransslated === "" || singleTransslated === ".") {
+            setSingleTransslated(""); // 如果为空或只输入了小数点，清空输入
+            return;
+        }
+
+        let numericValue = parseFloat(singleTransslated); // 转换为浮点数
+        const minNumber = 0.01;
+        const maxNumber = 1000;
+
+        // 校正范围
+        if (numericValue < minNumber) {
+            setSingleTransslated(minNumber.toString());
+        } else if (numericValue > maxNumber) {
+            setSingleTransslated(maxNumber.toString());
+        } else {
+            setSingleTransslated(numericValue.toString()); // 格式化为合法数字
+        }
+    };
+
+
+    // 移除最大跟单金额输入框非数字字符
+    const handleFollowPriceInputChange = (text) => {
+        let numericValue = text.replace(/[^0-9.]/g, "");
+
+        // 防止输入多个小数点
+        if ((numericValue.match(/\./g) || []).length > 1) {
+            return;
+        }
+        // 更新状态，允许用户完整输入
+        setFollowPrice(numericValue);
+    };
+    // 校准最大跟单金额输入框跟单金额 10-200000
+    const handleFollowPriceBlur = () => {
+        // 当输入框失去焦点时，校正输入值
+        if (followPrice === "" || followPrice === ".") {
+            setFollowPrice("");
+            return; // 如果输入为空，直接退出
+        }
+
+        let numericValue = parseFloat(followPrice, 10);
+        const minNumber = 10;
+        const maxNumber = 200000;
+
+        // 校正范围
+        if (numericValue < minNumber) {
+            setFollowPrice(minNumber.toString());
+        } else if (numericValue > maxNumber) {
+            setFollowPrice(maxNumber.toString());
+        }
+    };
     const balanceInquiry = async (options) => {
 
         await request.get(`/api/exchange/get_total_balance?user_bind_exchange_id=${options}`)
@@ -78,7 +142,7 @@ const CopyTradeScreen = ({ route, navigation }) => {
             });
     }
 
-    const changeCopyTrade = async (selectOption, single_translated, followPrice, traderId) =>{
+    const changeCopyTrade = async (selectOption, single_translated, followPrice, traderId) => {
         const postBody = {
             change_order_id_after: traderId,
             change_order_id_before: selectOption ? selectOption.id : null,
@@ -87,30 +151,30 @@ const CopyTradeScreen = ({ route, navigation }) => {
         }
         console.log(selectOption, singleTransslated, followPrice);
         await request.post('/api/exchange/change_user_copy_order', postBody)
-        .then(response => {
-            const responseData = response.data;
-            console.log(responseData);
-            // if (responseData.code === 200) {
-            //     // 显示提示信息
-            //     Alert.alert('Success', responseData.msg);
-            //     navigation.goBack();
-            // } else {
-            //     // 显示错误信息
-            //     Alert.alert('Error', responseData.msg);
-            // }
+            .then(response => {
+                const responseData = response.data;
+                console.log(responseData);
+                // if (responseData.code === 200) {
+                //     // 显示提示信息
+                //     Alert.alert('Success', responseData.msg);
+                //     navigation.goBack();
+                // } else {
+                //     // 显示错误信息
+                //     Alert.alert('Error', responseData.msg);
+                // }
 
-            if (responseData.code === 200) {
-                Alert.alert('成功！', '跟单设置修改成功', [
-                    { text: '确定', onPress: () => navigation.goBack() }
-                ]);
-            } else {
-                Alert.alert('失败', responseData.msg || '修改失败，请联系管理员');
-            }
-        })
-        .catch(error => {
-            console.error(error);
-            Alert.alert('错误', '网络请求失败');
-        });
+                if (responseData.code === 200) {
+                    Alert.alert('成功！', '跟单设置修改成功', [
+                        { text: '确定', onPress: () => navigation.goBack() }
+                    ]);
+                } else {
+                    Alert.alert('失败', responseData.msg || '修改失败，请联系管理员');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                Alert.alert('错误', '网络请求失败');
+            });
     }
 
 
@@ -148,13 +212,13 @@ const CopyTradeScreen = ({ route, navigation }) => {
     const isFormValid = () => {
         const singleValue = parseFloat(singleTransslated);
         const followValue = parseFloat(followPrice);
-        
+
         return value && // 跟单账户已选择
-               singleTransslated && // 单笔跟单不为空
-               followPrice && // 最大跟单金额不为空
-               !isNaN(singleValue) && // 确保是有效数字
-               !isNaN(followValue) && 
-               followValue > 0; // 跟单金额大于0
+            singleTransslated && // 单笔跟单不为空
+            followPrice && // 最大跟单金额不为空
+            !isNaN(singleValue) && // 确保是有效数字
+            !isNaN(followValue) &&
+            followValue > 0; // 跟单金额大于0
     };
 
     if (loading) {
@@ -166,8 +230,8 @@ const CopyTradeScreen = ({ route, navigation }) => {
     }
     return (
         <View style={styles.container}>
-            <ScrollView 
-                style={styles.scrollContent} 
+            <ScrollView
+                style={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
@@ -208,10 +272,11 @@ const CopyTradeScreen = ({ route, navigation }) => {
                                 <Text style={styles.rightLabel}>按比例</Text>
                             </View>
                             <View style={styles.inputWithUnit}>
-                                <TextInput 
-                                    value={singleTransslated} 
-                                    onChangeText={text => setSingleTransslated(text)} 
-                                    style={[styles.middleInput, styles.inputWithRightUnit]} 
+                                <TextInput
+                                    value={singleTransslated}
+                                    onChangeText={handleSingleTransslatedInputChange}
+                                    onBlur={handleSingleTransslatedBlur}
+                                    style={[styles.middleInput, styles.inputWithRightUnit]}
                                     placeholder="0.01 - 1000"
                                     keyboardType="numeric" // 添加数字键盘类型
                                     returnKeyType="done"
@@ -229,10 +294,11 @@ const CopyTradeScreen = ({ route, navigation }) => {
                                 </Text>
                             </View>
                             <View style={styles.inputWithUnit}>
-                                <TextInput 
-                                    value={followPrice} 
-                                    onChangeText={text => setFollowPrice(text)} 
-                                    style={[styles.middleInput, styles.inputWithRightUnit]} 
+                                <TextInput
+                                    value={followPrice}
+                                    onChangeText={handleFollowPriceInputChange}
+                                    onBlur={handleFollowPriceBlur}
+                                    style={[styles.middleInput, styles.inputWithRightUnit]}
                                     placeholder="10 - 200000"
                                     keyboardType="numeric" // 添加数字键盘类型
                                     returnKeyType="done"
@@ -270,19 +336,19 @@ const CopyTradeScreen = ({ route, navigation }) => {
 
             {/* 底部按钮 */}
             <View style={styles.bottomSection}>
-                <TouchableOpacity 
-                    style={[styles.bottomButton, styles.bottomButtonLeft]} 
+                <TouchableOpacity
+                    style={[styles.bottomButton, styles.bottomButtonLeft]}
                     onPress={() => { navigation.goBack(); }}>
                     <Text style={styles.bottomButtonText}>取消</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={[
-                        styles.bottomButton, 
+                        styles.bottomButton,
                         styles.bottomButtonRight,
                         !isFormValid() && styles.bottomButtonDisabled
-                    ]} 
+                    ]}
                     disabled={!isFormValid()}
-                    onPress={() => { 
+                    onPress={() => {
                         const singleValue = parseFloat(singleTransslated);
                         const followValue = parseFloat(followPrice);
                         changeCopyTrade(selectOption, singleValue, followValue, traderId);

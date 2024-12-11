@@ -94,7 +94,8 @@ export default function LoginScreen({ navigation }) {
       if (response.data.code === 200) {
         let { accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl } = response.data.data;
         email = email || 'default@example.com';
-        console.log(accessToken, refreshToken, userName, Uid, mobilePhone, email);
+        avatarUrl = avatarUrl || 'NoAvatar';
+        console.log(accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl);
         
         // 存储 token
         await AsyncStorage.multiSet([
@@ -104,7 +105,7 @@ export default function LoginScreen({ navigation }) {
           ['Uid', Uid],
           ['mobilePhone', mobilePhone],
           ['email', email],
-          ['avatarUrl', avatarUrl]
+          ['avatarUrl', avatarUrl],
           ['isLogin', 'true']
         ]);
 
@@ -148,8 +149,9 @@ export default function LoginScreen({ navigation }) {
       });
       
       if (response.data.code == 200) {
-        let { accessToken, refreshToken, userName, Uid, mobilePhone, email } = response.data.data;
+        let { accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl } = response.data.data;
         email = email || 'default@example.com';
+        avatarUrl = avatarUrl || 'NoAvatar';
         console.log(accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl);
         await AsyncStorage.multiSet([
           ['accessToken', accessToken],
@@ -158,9 +160,10 @@ export default function LoginScreen({ navigation }) {
           ['Uid', Uid],
           ['mobilePhone', mobilePhone],
           ['email', email],
-          ['avatarUrl', avatarUrl]
+          ['avatarUrl', avatarUrl],
           ['isLogin', 'true']
         ]);
+        
         setLoginSuccess(true);
       } else {
         setErrorMessage(response.data.msg);

@@ -77,7 +77,7 @@ const CopyTradeScreen = ({ route, navigation }) => {
 
         setSingleTransslated(numericValue);
     };
-    // 校准单笔跟单输入框跟单金额 10-200000
+    // 校准单笔跟单输入框跟单金额 0.01 - 1000
     const handleSingleTransslatedBlur = () => {
         // 当输入框失去焦点时，校正范围
         if (singleTransslated === "" || singleTransslated === ".") {
@@ -102,24 +102,20 @@ const CopyTradeScreen = ({ route, navigation }) => {
 
     // 移除最大跟单金额输入框非数字字符
     const handleFollowPriceInputChange = (text) => {
-        let numericValue = text.replace(/[^0-9.]/g, "");
-
-        // 防止输入多个小数点
-        if ((numericValue.match(/\./g) || []).length > 1) {
-            return;
-        }
+        // 移除非数字字符
+        let numericValue = text.replace(/[^0-9]/g, "");
         // 更新状态，允许用户完整输入
         setFollowPrice(numericValue);
     };
     // 校准最大跟单金额输入框跟单金额 10-200000
     const handleFollowPriceBlur = () => {
         // 当输入框失去焦点时，校正输入值
-        if (followPrice === "" || followPrice === ".") {
+        if (followPrice === "") {
             setFollowPrice("");
             return; // 如果输入为空，直接退出
         }
 
-        let numericValue = parseFloat(followPrice, 10);
+        let numericValue = parseInt(followPrice, 10); // 将输入值解析为整数
         const minNumber = 10;
         const maxNumber = 200000;
 
@@ -128,8 +124,11 @@ const CopyTradeScreen = ({ route, navigation }) => {
             setFollowPrice(minNumber.toString());
         } else if (numericValue > maxNumber) {
             setFollowPrice(maxNumber.toString());
+        } else {
+            setFollowPrice(numericValue.toString()); // 确保去掉可能存在的前导零
         }
     };
+    
     const balanceInquiry = async (options) => {
 
         await request.get(`/api/exchange/get_total_balance?user_bind_exchange_id=${options}`)

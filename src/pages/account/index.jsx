@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert, ScrollView,StatusBar, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from 'react-native-elements';
-import { getLoginStatus, getUserName, getUid } from '../../utils/tokenUtils';
+import { getLoginStatus, getUserName, getUid, getAccountBalance } from '../../utils/tokenUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AssetOverview from '../../components/account/AssetOverview';
 import InviteCard from '../../components/InviteCard';
@@ -40,17 +40,14 @@ const AccountScreen = ({ navigation }) => {
   const [ uid, setUid ] = useState('');
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [balance, setBalance] = useState(0);
 
   const loadData = async () => {
     console.log('加载数据...');
     setUserName(await getUserName());
     setUid(await getUid());
     setIsLogin(await getLoginStatus());
-    
-    console.log('uid:', uid);
-    console.log('isLogin:', isLogin);
-    console.log('userName:', userName);
-    
+    setBalance(await getAccountBalance() || 0);
   };
 
   
@@ -67,6 +64,7 @@ const AccountScreen = ({ navigation }) => {
     setUserName('No Name');
     setUid('');
     setLogoutModalVisible(false);
+    setBalance(0);
   };
 
   const renderItem = ({ item }) => (
@@ -249,7 +247,7 @@ const AccountScreen = ({ navigation }) => {
                 style={styles.detailBox}
               >
                 <View style={styles.detailContent}>
-                  <Text style={styles.detailNumber}>0</Text>
+                  <Text style={styles.detailNumber}>{balance}</Text>
                   <Text style={styles.detailText}>余额</Text>
                 </View>
               </TouchableOpacity>

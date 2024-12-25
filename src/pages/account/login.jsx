@@ -92,20 +92,24 @@ export default function LoginScreen({ navigation }) {
       });
 
       if (response.data.code === 200) {
-        let { accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl } = response.data.data;
+        let { accessToken, refreshToken, id, userName, Uid, mobilePhone, email, avatarUrl, balance } = response.data.data;
         email = email || 'default@example.com';
         avatarUrl = avatarUrl || 'NoAvatar';
-        console.log(accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl);
+        id = id.toString();
+        balance = balance.toString();
+        console.log(accessToken, refreshToken, id, userName, Uid, mobilePhone, email, avatarUrl, balance);
         
         // 存储 token
         await AsyncStorage.multiSet([
           ['accessToken', accessToken],
           ['refreshToken', refreshToken],
+          ['id', id],
           ['userName', userName],
           ['Uid', Uid],
           ['mobilePhone', mobilePhone],
           ['email', email],
           ['avatarUrl', avatarUrl],
+          ['AccountBalance', balance],
           ['isLogin', 'true']
         ]);
 
@@ -149,18 +153,22 @@ export default function LoginScreen({ navigation }) {
       });
       
       if (response.data.code == 200) {
-        let { accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl } = response.data.data;
+        let { accessToken, refreshToken, id, userName, Uid, mobilePhone, email, avatarUrl, balance } = response.data.data;
         email = email || 'default@example.com';
         avatarUrl = avatarUrl || 'NoAvatar';
-        console.log(accessToken, refreshToken, userName, Uid, mobilePhone, email, avatarUrl);
+        id = id.toString();
+        balance = balance.toString();
+        console.log(accessToken, refreshToken, id, userName, Uid, mobilePhone, email, avatarUrl, balance);
         await AsyncStorage.multiSet([
           ['accessToken', accessToken],
           ['refreshToken', refreshToken],
+          ['id', id],
           ['userName', userName],
           ['Uid', Uid],
           ['mobilePhone', mobilePhone],
           ['email', email],
           ['avatarUrl', avatarUrl],
+          ['AccountBalance', balance],
           ['isLogin', 'true']
         ]);
         

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Platform } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+
+import { getAccountBalance } from '../../utils/tokenUtils';
 
 const icons = {
   icon01: `<svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,13 +28,33 @@ const icons = {
 };
 
 const BalanceScreen = ({ navigation }) => {
+  const [balance, setBalance] = useState(0);
+  // 获取存储的余额
+  const getBalance = async () => {
+    try {
+      const savedBalance = await getAccountBalance();
+      if (savedBalance !== null) {
+        setBalance(parseFloat(savedBalance));
+      }
+    } catch (error) {
+      console.log('Error reading balance from AsyncStorage', error);
+    }
+  };
+
+  // 在页面获得焦点时检查是否需要更新余额
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      await getBalance();
+    });
+    return unsubscribe;
+  }, [navigation]);
   const renderIcon = (iconXml) => {
     if (Platform.OS === 'web') {
       // Web 平台直接使用 dangerouslySetInnerHTML
       return (
-        <div 
+        <div
           style={{ width: 24, height: 24 }}
-          dangerouslySetInnerHTML={{ __html: iconXml }} 
+          dangerouslySetInnerHTML={{ __html: iconXml }}
         />
       );
     }
@@ -43,17 +65,17 @@ const BalanceScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.balanceContainer}>
-        <ImageBackground 
-          source={require('../../../assets/img/Vector.png')} 
+        <ImageBackground
+          source={require('../../../assets/img/Vector.png')}
           style={styles.backgroundImage}
           resizeMode="cover"
         />
         <View style={styles.balanceBox}>
-          <Text style={styles.balanceText}>0</Text>
+          <Text style={styles.balanceText}>{balance}</Text>
           <Text style={styles.descriptionText}>可用余额</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.rechargeButton}
-            onPress={() => navigation.navigate('AccountStack', {screen: 'Recharge'})}
+            onPress={() => navigation.navigate('AccountStack', { screen: 'Recharge' })}
           >
             <Text style={styles.rechargeButtonText}>充值</Text>
           </TouchableOpacity>

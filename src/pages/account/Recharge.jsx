@@ -1,8 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Clipboard, Image } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Clipboard, Image, AppState } from 'react-native';
 import Popup from '../../components/common/popup';
 import { Icon } from '@rneui/themed';
 import QRCode from 'react-native-qrcode-svg';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+import { getId } from '../../utils/tokenUtils';
+import request from '../../utils/request';
+import { use } from 'react';
+
+
+// 订单状态请求函数
+const fetchOrderStatus = async (orderId) => {
+  try {
+    const res = await request.post('/api/rechargeRecord/getRechargeStatus', { orderId });
+    const data = res.data;
+
+    console.log('Order status:', data.data.status);
+    return data;
+  } catch (error) {
+    console.error('Error fetching order status:', error);
+    return null;
+  }
+};
 
 const RechargePage = () => {
   const [selectedNetwork, setSelectedNetwork] = useState('');
@@ -14,8 +36,29 @@ const RechargePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showNetworkPopup, setShowNetworkPopup] = useState(true);
 
+  const [userUUID, setUserUUID] = useState(null);
+  const [orderId, setOrderId] = useState(null); // 用来存储orderId
+  const [paymentSuccess, setPaymentSuccess] = useState(false); // 支付状态
+  const intervalRef = useRef(null); // 用来存储 intervalId
+  const timeoutRef = useRef(null); // 用来存储 timeoutId
+
   // 用户UUID
-  const userUUID = '7656';
+  useEffect(() => {
+
+    const fetchData = async () => {
+      setUserUUID(await getId());
+    }
+    fetchData();
+  }, []);
+
+  
+
+  const getUserBalance = async () => {
+    const res = await request.get('/api/user/getAccountBalance')
+    if(res.data.code === 200) {
+      AsyncStorage.setItem('AccountBalance', res.data.data.balance.toString());
+    }
+  }
 
   // 请求充值链上地址
   const networkAddresses = {
@@ -42,6 +85,78 @@ const RechargePage = () => {
     }
   };
 
+  // 请求支付状态的定时器函数
+  const startPolling = useCallback(() => {
+    if (orderId) {
+      // 创建请求状态的定时器
+      intervalRef.current = setInterval(async () => {
+        const data = await fetchOrderStatus(orderId);
+        if (data && data.data.status === 1) {
+          console.log('Payment successful');
+          setPaymentSuccess(true); // 支付成功
+          clearInterval(intervalRef.current); // 停止定时器
+          clearTimeout(timeoutRef.current); // 清除超时定时器
+          await getUserBalance();
+        }
+      }, 15000); // 每 15 秒请求一次
+
+      // 设置一个小时的超时定时器
+      timeoutRef.current = setTimeout(() => {
+        console.log('Polling timed out after 1 hour');
+        clearInterval(intervalRef.current); // 停止定时器
+      }, 3600000); // 1小时（3600000ms）
+    }
+  }, [orderId]);
+
+
+  // 停止定时器
+  const stopPolling = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }, []);
+
+
+  // 订单创建函数
+  const createOrder = async (chainName) => {
+    try {
+      const ret = await request.post('/api/rechargeRecord/createOrder', {
+        chainName
+      });
+
+      if (ret.data.code === 200) {
+        console.log(ret.data)
+        const newOrderId = ret.data.data.orderId;
+        setOrderId(newOrderId);
+        startPolling(); // 启动定时器
+      } else {
+        console.log(ret.data.msg)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
+  // 使用 useEffect 监听 orderId 的变化，当 orderId 变动时启动轮询
+  useEffect(() => {
+    if (orderId) {
+      startPolling(); // 只有 orderId 存在时才开始轮询
+    }
+
+    // 清理函数，组件卸载时清除定时器
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [orderId, startPolling]); // 依赖 orderId
+
   // 当选择网络时自动更新地址和二维码
   useEffect(() => {
     if (selectedNetwork && networkAddresses[selectedNetwork]) {
@@ -49,6 +164,7 @@ const RechargePage = () => {
     } else {
       setAddress('');
     }
+
   }, [selectedNetwork]);
 
   // 复制文本到剪贴板
@@ -83,42 +199,44 @@ const RechargePage = () => {
 
   // 定义下拉选项数据
   const networkOptions = [
-    { 
-      label: 'Tron（TRC20）', 
+    {
+      label: 'Tron（TRC20）',
       value: 'TRC20',
       icon: require('../../../assets/icon/tron.png')
     },
-    { 
-      label: 'Ethereum（ERC20）', 
+    {
+      label: 'Ethereum（ERC20）',
       value: 'ERC20',
       icon: require('../../../assets/icon/eth.png')
     },
-    { 
-      label: 'BNB Smart Chain（BEP20）', 
+    {
+      label: 'BNB Smart Chain（BEP20）',
       value: 'BEP20',
       icon: require('../../../assets/icon/bsc.png')
     },
-    { 
-      label: 'Polygon POS', 
+    {
+      label: 'Polygon POS',
       value: 'POLYGON',
       icon: require('../../../assets/icon/polygon.png')
     },
-    { 
-      label: 'Arbitrum One', 
+    {
+      label: 'Arbitrum One',
       value: 'ARBITRUM',
       icon: require('../../../assets/icon/arbitrum.png')
     },
-    { 
-      label: 'Optimism', 
+    {
+      label: 'Optimism',
       value: 'OPTIMISM',
       icon: require('../../../assets/icon/optimism.png')
     },
-    { 
-      label: 'Base', 
+    {
+      label: 'Base',
       value: 'BASE',
       icon: require('../../../assets/icon/base.png')
     }
   ];
+
+
 
   // 处理充值金额的变化
   const handleAmountChange = (value) => {
@@ -153,7 +271,7 @@ const RechargePage = () => {
   };
 
   // 处理网络选择
-  const handleNetworkSelect = (network) => {
+  const handleNetworkSelect = async (network) => {
     setSelectedNetwork(network);
     setShowNetworkPopup(false);
   };
@@ -162,8 +280,8 @@ const RechargePage = () => {
     <View style={styles.container}>
       {/* 充币网络 */}
       <Text style={styles.label}>充币网络</Text>
-      <TouchableOpacity 
-        style={styles.networkSelector} 
+      <TouchableOpacity
+        style={styles.networkSelector}
         onPress={() => setShowNetworkPopup(true)}
       >
         <Text style={[
@@ -196,10 +314,14 @@ const RechargePage = () => {
             <TouchableOpacity
               key={option.value}
               style={styles.networkOption}
-              onPress={() => handleNetworkSelect(option.value)}
+              onPress={() => {
+                handleNetworkSelect(option.value);
+                createOrder(option.value);
+                console.log('选择了网络');
+              }}
             >
               <View style={styles.networkOptionLeft}>
-                <Image 
+                <Image
                   source={option.icon}
                   style={styles.networkIcon}
                 />
@@ -237,7 +359,7 @@ const RechargePage = () => {
           returnKeyType="done"
           returnKeyLabel="完成"
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.copyButton}
           onPress={() => copyToClipboard(getCopyAmount())}
         >
@@ -263,7 +385,7 @@ const RechargePage = () => {
           placeholder="请选择充币网络"
           placeholderTextColor="#999"
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.copyButton}
           disabled={!address}
           onPress={() => address && copyToClipboard(address)}

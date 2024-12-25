@@ -44,3 +44,11 @@ export const getIsBindEmail = async () => {
   
   return email !== 'default@example.com';
 };
+
+export const getAccountBalance = async () => {
+  return await AsyncStorage.getItem('AccountBalance');
+};
+
+export const getId = async () => {
+  return await AsyncStorage.getItem('id');
+};

@@ -97,6 +97,11 @@ const RechargePage = () => {
           clearInterval(intervalRef.current); // 停止定时器
           clearTimeout(timeoutRef.current); // 清除超时定时器
           await getUserBalance();
+        } else if (data && data.data.status === 2) {
+          console.log('Payment failed');
+          setPaymentSuccess(false); // 支付失败
+          clearInterval(intervalRef.current); // 停止定时器
+          clearTimeout(timeoutRef.current); // 清除超时定时器
         }
       }, 15000); // 每 15 秒请求一次
 

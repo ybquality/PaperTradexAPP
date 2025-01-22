@@ -1,8 +1,13 @@
 {
   "expo": {
     "name": "PaperTradex",
-    "slug": "PaperTradex",
+    "slug": "papertradex",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
+    "sdkVersion": "52.0.0",
     "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,26 +18,40 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.zhituan.papertradex",
+      "buildNumber": "1"
     },
     "android": {
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.beifeng.MyProject",
-      "permissions": ["INTERNET"]
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "package": "com.zhituan.PaperTradex",
+      "permissions": [
+        "INTERNET"
+      ]
     },
     "plugins": [
       "expo-router"
     ],
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "018186bf-de10-4908-b52b-f098a03024c0"
+        "projectId": "3e3cca1b-d83e-46a0-a842-79a1b711204b"
       }
-    }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/3e3cca1b-d83e-46a0-a842-79a1b711204b",
+      "enabled": true,
+      "checkAutomatically": "NEVER",
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "owner": "beifeng"
   }
 }

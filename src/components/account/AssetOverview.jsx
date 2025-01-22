@@ -4,8 +4,7 @@ import { Icon } from 'react-native-elements';
 
 import request from '../../utils/request';
 import images from '../../../assets/Exchanges';
-
-const AssetOverview = ({ navigation, onRefresh, isRefreshing }) => {
+const AssetOverview = ({ navigation, onRefresh, isRefreshing, isLogin }) => {
   
   const [items, setItems] = useState([]);
 
@@ -26,14 +25,20 @@ const AssetOverview = ({ navigation, onRefresh, isRefreshing }) => {
 
   // 监听刷新状态
   useEffect(() => {
-    if (isRefreshing) {
-      fetchData();
+    console.log(isLogin);
+    if (isLogin){
+      if (isRefreshing) {
+        fetchData();
+      }
     }
   }, [isRefreshing]);
 
   // 初始加载数据
   useEffect(() => {
-    fetchData();
+    console.log(isLogin);
+    if (isLogin){
+      fetchData();
+    }
   }, []);
   
   
@@ -60,9 +65,10 @@ const AssetOverview = ({ navigation, onRefresh, isRefreshing }) => {
   ];
 
   return (
+    // 还需要添加登录后立刻刷新资产总览 （未完成
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>资产总览</Text>
+        <Text style={styles.title}>资产总览112233</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('AccountStack', { screen: 'AssetsStack', params: {accountInfo: items}})}
           style={styles.moreButton}

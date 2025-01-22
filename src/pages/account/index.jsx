@@ -257,6 +257,7 @@ const AccountScreen = ({ navigation }) => {
           <AssetOverview 
             navigation={navigation} 
             isRefreshing={refreshing}
+            isLogin={isLogin}
           />
 
           <View style={styles.Itemcontainer}>

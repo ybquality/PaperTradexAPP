@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Linking } from 'react-native';
 import { Icon } from '@rneui/themed';
 import NavBar from '../../components/common/navbar';
-import { color } from '@rneui/base';
 
 // 定义列表数据
 const communityLinks = [

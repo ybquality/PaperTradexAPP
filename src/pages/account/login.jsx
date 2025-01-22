@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import request from '../../utils/request';
 import api from '../../utils/Interceptor';
 import { ACCOUNT_LOGIN, ACCOUNT_LOGIN_PHONE, GET_VERIFY_CODE } from '../../utils/pathMap';
-import { Button, Dialog,Icon } from 'react-native-elements';
+import { Button, Dialog, Icon } from 'react-native-elements';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
@@ -13,10 +13,10 @@ export default function LoginScreen({ navigation }) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
+
   const [phone, setPhone] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  
+
   const [isPhoneLogin, setIsPhoneLogin] = useState(true); // 控制切换
   const [countdown, setCountdown] = useState(0); // 移动到组件内部
   const [isLoading, setIsLoading] = useState(false); // 添加加载状态
@@ -98,7 +98,7 @@ export default function LoginScreen({ navigation }) {
         id = id.toString();
         balance = balance.toString();
         console.log(accessToken, refreshToken, id, userName, Uid, mobilePhone, email, avatarUrl, balance);
-        
+
         // 存储 token
         await AsyncStorage.multiSet([
           ['accessToken', accessToken],
@@ -151,7 +151,7 @@ export default function LoginScreen({ navigation }) {
         username,
         password,
       });
-      
+
       if (response.data.code == 200) {
         let { accessToken, refreshToken, id, userName, Uid, mobilePhone, email, avatarUrl, balance } = response.data.data;
         email = email || 'default@example.com';
@@ -171,7 +171,7 @@ export default function LoginScreen({ navigation }) {
           ['AccountBalance', balance],
           ['isLogin', 'true']
         ]);
-        
+
         setLoginSuccess(true);
       } else {
         setErrorMessage(response.data.msg);
@@ -194,13 +194,13 @@ export default function LoginScreen({ navigation }) {
 
           {/* 切换按钮 */}
           <View style={styles.tabContainer}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.tabButton, isPhoneLogin && styles.tabButtonActive]}
               onPress={() => setIsPhoneLogin(true)}
             >
               <Text style={[styles.tabText, isPhoneLogin && styles.tabTextActive]}>手机号</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.tabButton, !isPhoneLogin && styles.tabButtonActive]}
               onPress={() => setIsPhoneLogin(false)}
             >
@@ -260,7 +260,7 @@ export default function LoginScreen({ navigation }) {
                   onFocus={() => setIsCodeFocused(true)}
                   onBlur={() => setIsCodeFocused(false)}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.codeButton}
                   onPress={() => sendVerifyCode(phone)}
                   disabled={countdown > 0}
@@ -321,7 +321,7 @@ export default function LoginScreen({ navigation }) {
                   onFocus={() => setIsPasswordFocused(true)}
                   onBlur={() => setIsPasswordFocused(false)}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
                   style={styles.eyeButton}
                 >
@@ -345,9 +345,9 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           {/* 登录按钮 */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.submitButton}
-            onPress={() => isPhoneLogin 
+            onPress={() => isPhoneLogin
               ? handlePhoneLogin(phone, verificationCode, navigation)
               : handleUsernamePasswordLogin(username, password, navigation)
             }

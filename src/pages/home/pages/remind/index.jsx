@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const RemindScreen = ({ navigation }) => {
   return (
     <View style={styles.screen}>
-      <Text>Remind Screen</Text>
+      <Text>Remind Screen11111</Text>
     </View>
   );
 };

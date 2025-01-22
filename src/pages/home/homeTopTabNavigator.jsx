@@ -10,7 +10,7 @@ const Tab = createMaterialTopTabNavigator();
 const HomeTobTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="首页"
       tabBar={(props) => <CustomTopNavBar {...props} />} // 使用自定义导航栏组件
     >
       <Tab.Screen name="首页" component={HomeScreen} />

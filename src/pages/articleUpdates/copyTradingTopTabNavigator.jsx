@@ -12,7 +12,7 @@ const Tab = createMaterialTopTabNavigator();
 const ArticleUpdatesTopTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="推荐"
       tabBar={(props) => <CustomTopNavBar {...props} />} // 使用自定义导航栏组件
     >
       <Tab.Screen name="推荐" component={RecommendedScreen} />

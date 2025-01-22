@@ -12,7 +12,7 @@ const Tab = createMaterialTopTabNavigator();
 const CopyTradingTopTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="发现"
       tabBar={(props) => <CustomTopNavBar {...props} />} // 使用自定义导航栏组件
     >
       <Tab.Screen name="发现" component={OverviewScreen} />

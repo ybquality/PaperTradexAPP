@@ -2,6 +2,11 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+- set http_proxy=http://127.0.0.1:7890
+- set https_proxy=http://127.0.0.1:7890
+- git config --global http.proxy http://127.0.0.1:7890
+- git config --global https.proxy http://127.0.0.1:7890
+
 ## Get started
 
 1. Install dependencies
